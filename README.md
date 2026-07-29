@@ -4,6 +4,8 @@ Entorno de desarrollo **todo-en-uno con Docker**: programa en Python (API + fron
 
 Base de datos de trabajo: **`bdfacturas`** (facturación con clientes, vendedores, productos, facturas y control de acceso por roles).
 
+> 📖 **Documentación:** [Guía del estudiante paso a paso](docs/GUIA_ESTUDIANTE.md) · [Conceptos clave del proyecto](docs/CONCEPTOS.md) · [Cómo se construyó este entorno](docs/TUTORIAL_CONSTRUCCION.md)
+
 ---
 
 ## Requisitos (solo 3 cosas)
