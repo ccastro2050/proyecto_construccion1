@@ -6,15 +6,17 @@ Pasos para dejar el entorno funcionando en su máquina. Cada paso tiene una expl
 
 ## Paso 0 — Instalar (solo la primera vez)
 
-1. Instale **Docker Desktop**: https://www.docker.com/products/docker-desktop/
-2. Instale **VS Code**: https://code.visualstudio.com/
-3. Instale **Git**: https://git-scm.com/
+1. Instale **Docker Desktop para Windows**: https://docs.docker.com/desktop/setup/install/windows-install/
+2. Instale **VS Code para Windows**: https://code.visualstudio.com/download
+3. Instale **Git para Windows**: https://git-scm.com/download/win
 
 > **Importante:** Docker Desktop debe estar **abierto** antes de continuar.
 
-## Paso 1 — Verificar que Docker está corriendo
+## Paso 1 — Abrir VS Code y su terminal
 
-Abra una terminal: presione la **tecla Windows**, escriba `powershell` y presione **Enter**. Ahí ejecute:
+1. Abra **VS Code**.
+2. Abra la terminal integrada: menú **Terminal → New Terminal** (o `Ctrl + ñ`).
+3. En esa terminal ejecute:
 
 ```powershell
 docker --version
@@ -22,11 +24,13 @@ docker --version
 
 **Qué hace:** muestra la versión de Docker. Si da error, Docker Desktop no está instalado o no está abierto.
 
-> Los comandos de los pasos 2, 3 y 4 se ejecutan en esta misma ventana de PowerShell.
+> **Todos los comandos de esta guía se ejecutan en esa misma terminal de VS Code.**
 
 ## Paso 2 — Instalar la extensión Dev Containers
 
-```bash
+En la misma terminal de VS Code:
+
+```powershell
 code --install-extension ms-vscode-remote.remote-containers
 ```
 
@@ -34,20 +38,24 @@ code --install-extension ms-vscode-remote.remote-containers
 
 ## Paso 3 — Clonar el repositorio
 
-```bash
+En la misma terminal:
+
+```powershell
 git clone https://github.com/ccastro2050/proyecto_paradigmas.git
 ```
 
 **Qué hace:** descarga el proyecto completo a una carpeta `proyecto_paradigmas` en su máquina.
 
-## Paso 4 — Abrir el proyecto en VS Code
+## Paso 4 — Abrir la carpeta del proyecto
 
-```bash
+En la misma terminal:
+
+```powershell
 cd proyecto_paradigmas
-code .
+code . -r
 ```
 
-**Qué hace:** entra a la carpeta y abre VS Code ahí.
+**Qué hace:** entra a la carpeta y la abre en la ventana actual de VS Code.
 
 ## Paso 5 — Abrir dentro del contenedor (el paso clave)
 
