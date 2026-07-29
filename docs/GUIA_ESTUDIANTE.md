@@ -45,7 +45,27 @@ docker compose up -d --build
 
 Abra en el navegador: **http://localhost:8000** — debe ver los 3 motores en verde (SQL Server tarda 1–2 minutos).
 
-## Paso 5 — Programar
+## Paso 5 — Su primera consulta contra una base de datos
+
+En esa misma página (http://localhost:8000):
+
+1. En **Motor** deje `PostgreSQL` y haga clic en el botón **Productos** → la tabla que aparece viene de la base de datos PostgreSQL, consultada en vivo por la API de Python.
+2. Clic en **Facturas (JOIN)** → una consulta que une 5 tablas.
+3. En la caja de texto escriba una consulta y clic en **Ejecutar SQL**:
+
+```sql
+SELECT * FROM persona
+```
+
+4. Ahora cambie **Motor** a `MariaDB` o `SQL Server` y repita: **es la misma base de datos y el mismo código Python, pero otro motor**. De eso se trata el curso.
+
+También puede verlo desde la terminal:
+
+```powershell
+curl http://localhost:8000/api/postgres/productos
+```
+
+## Paso 6 — Programar
 
 Abra la carpeta en VS Code: menú **File → Open Folder** → `proyecto_paradigmas`.
 
