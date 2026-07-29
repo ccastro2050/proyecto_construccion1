@@ -39,14 +39,11 @@ cd proyecto_paradigmas
 docker compose up -d --build
 ```
 
-**Qué hace:** construye y arranca los 4 contenedores — la API de Python y las 3 bases de datos (PostgreSQL, MariaDB, SQL Server), cada una cargada con la base de datos `bdfacturas`.
-
-> La **primera vez tarda varios minutos** (descarga las imágenes). Las siguientes veces arranca en segundos.
+> La **primera vez tarda varios minutos**. Las siguientes veces arranca en segundos.
 
 ## Paso 4 — Verificar
 
-- http://localhost:8000 → frontend con el semáforo de los 3 motores en verde (SQL Server tarda 1–2 minutos en ponerse verde)
-- http://localhost:8000/docs → documentación interactiva de la API
+Abra en el navegador: **http://localhost:8000** — debe ver los 3 motores en verde (SQL Server tarda 1–2 minutos).
 
 ## Paso 5 — Programar
 
@@ -57,17 +54,19 @@ Abra la carpeta en VS Code: menú **File → Open Folder** → `proyecto_paradig
 | Escribir la API en Python | carpeta `api/` — al guardar, la API se recarga sola |
 | Escribir el frontend (HTML/JS) | carpeta `front/` — recargue el navegador para ver los cambios |
 
-## Paso 6 (opcional) — Administrar las BD desde VS Code
+**Hasta aquí llega la puesta en marcha.** Lo que sigue es material de consulta para más adelante.
 
-Si quiere explorar las bases de datos con clics (tablas, datos, SQL):
+---
+
+## Administrar las bases de datos (más adelante)
+
+Cuando necesite explorar tablas y ejecutar SQL con clics:
 
 1. Instale la extensión **Dev Containers** (`Ctrl+Shift+X` → buscar "Dev Containers" → Install).
 2. Con la carpeta del proyecto abierta: `F1` → **Dev Containers: Reopen in Container**.
 3. Aparece el icono de **SQLTools** (cilindro) con las 3 conexiones ya configuradas. `Ctrl+E Ctrl+E` ejecuta la consulta seleccionada.
 
 También puede usar cualquier herramienta externa (DBeaver, HeidiSQL, SSMS) con las credenciales de abajo.
-
----
 
 ## Comandos útiles del día a día
 
