@@ -78,6 +78,35 @@ Abra la carpeta en VS Code: menú **File → Open Folder** → `proyecto_paradig
 
 ---
 
+## Cuando vuelva (la próxima clase)
+
+La descarga grande fue **una sola vez**. Para retomar el trabajo:
+
+1. Abra **Docker Desktop** y espere a que arranque.
+2. En la terminal de VS Code, dentro de la carpeta del proyecto:
+
+```powershell
+docker compose up -d
+```
+
+Arranca en **segundos** y con **todos sus datos intactos**.
+
+**Por qué:** las imágenes ya quedaron descargadas en su PC, y los datos de las bases de datos viven en **volúmenes** de Docker — un disco persistente que sobrevive a apagar los contenedores e incluso a reiniciar el computador. Solo se borran si usted lo pide con `docker compose down -v`.
+
+Casos especiales:
+
+```powershell
+# El profesor publicó cambios en el repositorio
+git pull
+docker compose up -d --build
+
+# Quiere las BD como nuevas (borra lo que usted insertó o modificó)
+docker compose down -v
+docker compose up -d
+```
+
+---
+
 ## Administrar las bases de datos (más adelante)
 
 Cuando necesite explorar tablas y ejecutar SQL con clics:
