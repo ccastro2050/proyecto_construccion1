@@ -20,7 +20,6 @@
             ],
             "settings": {
                 "python.defaultInterpreterPath": "/usr/local/bin/python",
-                "task.allowAutomaticTasks": "on",
                 "sqltools.connections": [
                     {
                         "name": "PostgreSQL — bdfacturas",

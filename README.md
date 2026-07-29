@@ -18,13 +18,15 @@ Base de datos de trabajo: **`bdfacturas`** (facturación con clientes, vendedore
 
 ---
 
-## Puesta en marcha (un solo paso)
+## Puesta en marcha (un solo comando)
+
+En la terminal de VS Code:
 
 ```bash
 git clone https://github.com/ccastro2050/proyecto_paradigmas.git
+cd proyecto_paradigmas
+docker compose up -d --build
 ```
-
-Abre la carpeta en VS Code. Cuando aparezca la notificación, haz clic en **"Reopen in Container"** (o presiona `F1` → *Dev Containers: Reopen in Container*).
 
 **Eso es todo.** La primera vez tarda unos minutos (descarga las imágenes). Al terminar tendrás:
 
@@ -36,17 +38,13 @@ Abre la carpeta en VS Code. Cuando aparezca la notificación, haz clic en **"Reo
 | MariaDB 11 con `bdfacturas_mariadb_local` | servicio `mariadb` (puerto 3306) |
 | SQL Server 2022 con `bdfacturas_sqlserver_local` | servicio `sqlserver` (puerto 1433) |
 
-La API arranca sola en una terminal de VS Code (tarea *Iniciar API*). Si la cierras, puedes volver a lanzarla con `F1` → *Tasks: Run Task* → *Iniciar API (FastAPI)*, o manualmente:
-
-```bash
-uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
-```
+La API arranca sola con los contenedores y **se recarga automáticamente** al editar el código en `api/` o `front/`.
 
 ---
 
-## Administrar las bases de datos desde VS Code
+## Administrar las bases de datos desde VS Code (opcional, recomendado)
 
-En la barra lateral izquierda aparece el icono de **SQLTools** (cilindro de base de datos). Las tres conexiones ya están configuradas:
+Con el proyecto abierto en VS Code: `F1` → **Dev Containers: Reopen in Container** (requiere la extensión *Dev Containers*). Al entrar, en la barra lateral izquierda aparece el icono de **SQLTools** (cilindro de base de datos) con las tres conexiones ya configuradas:
 
 - **PostgreSQL — bdfacturas**
 - **MariaDB — bdfacturas**
