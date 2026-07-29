@@ -14,11 +14,15 @@ Pasos para dejar el entorno funcionando en su máquina. Cada paso tiene una expl
 
 ## Paso 1 — Verificar que Docker está corriendo
 
-```bash
+Abra una terminal: presione la **tecla Windows**, escriba `powershell` y presione **Enter**. Ahí ejecute:
+
+```powershell
 docker --version
 ```
 
 **Qué hace:** muestra la versión de Docker. Si da error, Docker Desktop no está instalado o no está abierto.
+
+> Los comandos de los pasos 2, 3 y 4 se ejecutan en esta misma ventana de PowerShell.
 
 ## Paso 2 — Instalar la extensión Dev Containers
 
