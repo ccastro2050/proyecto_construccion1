@@ -1,0 +1,96 @@
+# ==============================================================
+# Proyecto Paradigmas — Entorno de desarrollo completo en Docker
+# Servicios: app (Python) + PostgreSQL + MariaDB + SQL Server
+# Uso normal: abrir en VS Code -> "Reopen in Container"
+# Uso manual: docker compose up -d --build
+# ==============================================================
+services:
+
+  # --- Contenedor de desarrollo (Python + API + Front) ---
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - .:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity
+    ports:
+      - "8000:8000"      # API FastAPI
+    environment:
+      POSTGRES_URL: postgresql+psycopg2://paradigmas:paradigmas123@postgres:5432/bdfacturas_postgres_local
+      MARIADB_URL: mysql+pymysql://paradigmas:paradigmas123@mariadb:3306/bdfacturas_mariadb_local
+      SQLSERVER_URL: mssql+pymssql://sa:Paradigmas123!@sqlserver:1433/bdfacturas_sqlserver_local
+
+  # --- PostgreSQL 16 ---
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: bdfacturas_postgres_local
+      POSTGRES_USER: paradigmas
+      POSTGRES_PASSWORD: paradigmas123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "15432:5432"     # puerto en el host (para DBeaver/pgAdmin opcional)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paradigmas -d bdfacturas_postgres_local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # --- MariaDB 11 ---
+  mariadb:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: paradigmas123
+      MARIADB_DATABASE: bdfacturas_mariadb_local
+      MARIADB_USER: paradigmas
+      MARIADB_PASSWORD: paradigmas123
+    volumes:
+      - mariadbdata:/var/lib/mysql
+      - ./db/mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "13306:3306"     # puerto en el host (para HeidiSQL/DBeaver opcional)
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # --- SQL Server 2022 (requiere ~2 GB de RAM) ---
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Paradigmas123!"
+      MSSQL_PID: Developer
+    volumes:
+      - mssqldata:/var/opt/mssql
+    ports:
+      - "11433:1433"     # puerto en el host (para SSMS/Azure Data Studio opcional)
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 30s
+
+  # --- Inicializador de SQL Server (crea la BD la primera vez y termina) ---
+  sqlserver-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      MSSQL_SA_PASSWORD: "Paradigmas123!"
+    volumes:
+      - ./db/sqlserver:/scripts:ro
+    entrypoint: ["/bin/bash", "/scripts/init.sh"]
+    restart: "no"
+
+volumes:
+  pgdata:
+  mariadbdata:
+  mssqldata:

@@ -1,0 +1,60 @@
+{
+    "name": "Proyecto Paradigmas",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspace",
+    "forwardPorts": [8000],
+    "portsAttributes": {
+        "8000": { "label": "API FastAPI", "onAutoForward": "notify" }
+    },
+    "postCreateCommand": "pip install -r requirements.txt",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "mtxr.sqltools",
+                "mtxr.sqltools-driver-pg",
+                "mtxr.sqltools-driver-mysql",
+                "mtxr.sqltools-driver-mssql"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "task.allowAutomaticTasks": "on",
+                "sqltools.connections": [
+                    {
+                        "name": "PostgreSQL — bdfacturas",
+                        "driver": "PostgreSQL",
+                        "server": "postgres",
+                        "port": 5432,
+                        "database": "bdfacturas_postgres_local",
+                        "username": "paradigmas",
+                        "password": "paradigmas123"
+                    },
+                    {
+                        "name": "MariaDB — bdfacturas",
+                        "driver": "MariaDB",
+                        "server": "mariadb",
+                        "port": 3306,
+                        "database": "bdfacturas_mariadb_local",
+                        "username": "paradigmas",
+                        "password": "paradigmas123"
+                    },
+                    {
+                        "name": "SQL Server — bdfacturas",
+                        "driver": "MSSQL",
+                        "server": "sqlserver",
+                        "port": 1433,
+                        "database": "bdfacturas_sqlserver_local",
+                        "username": "sa",
+                        "password": "Paradigmas123!",
+                        "mssqlOptions": {
+                            "encrypt": true,
+                            "trustServerCertificate": true
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

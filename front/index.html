@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyecto Paradigmas — bdfacturas</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f4f6f9; color: #1f2937; padding: 1.5rem; }
+    h1 { font-size: 1.4rem; margin-bottom: .25rem; }
+    .sub { color: #6b7280; margin-bottom: 1rem; font-size: .9rem; }
+    .panel { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
+    .fila { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+    select, button, textarea { font: inherit; border-radius: 8px; border: 1px solid #d1d5db; padding: .45rem .7rem; }
+    select { background: #fff; }
+    button { background: #2563eb; color: #fff; border: none; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    button.sec { background: #e5e7eb; color: #1f2937; }
+    button.sec:hover { background: #d1d5db; }
+    textarea { width: 100%; min-height: 90px; margin-top: .5rem; font-family: Consolas, monospace; font-size: .9rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: .75rem; font-size: .88rem; }
+    th, td { border: 1px solid #e5e7eb; padding: .35rem .6rem; text-align: left; }
+    th { background: #f3f4f6; }
+    .salud span { display: inline-block; padding: .2rem .6rem; border-radius: 999px; font-size: .8rem; margin-right: .4rem; }
+    .ok { background: #dcfce7; color: #166534; }
+    .err { background: #fee2e2; color: #991b1b; }
+    .error-msg { color: #b91c1c; margin-top: .5rem; white-space: pre-wrap; font-size: .85rem; }
+    #resultado { overflow-x: auto; }
+    .pie { color: #9ca3af; font-size: .8rem; margin-top: 1rem; }
+</style>
+</head>
+<body>
+    <h1>Proyecto Paradigmas — Base de datos <code>bdfacturas</code></h1>
+    <p class="sub">La misma API de Python (FastAPI) consultando tres motores distintos. Documentación de la API: <a href="/docs" target="_blank">/docs</a></p>
+
+    <div class="panel salud">
+        <strong>Estado de los motores:</strong>
+        <span id="salud-postgres" class="err">postgres: …</span>
+        <span id="salud-mariadb" class="err">mariadb: …</span>
+        <span id="salud-sqlserver" class="err">sqlserver: …</span>
+    </div>
+
+    <div class="panel">
+        <div class="fila">
+            <label for="motor"><strong>Motor:</strong></label>
+            <select id="motor">
+                <option value="postgres">PostgreSQL</option>
+                <option value="mariadb">MariaDB</option>
+                <option value="sqlserver">SQL Server</option>
+            </select>
+            <button onclick="cargar('tablas')" class="sec">Ver tablas</button>
+            <button onclick="cargar('productos')" class="sec">Productos</button>
+            <button onclick="cargar('facturas')" class="sec">Facturas (JOIN)</button>
+        </div>
+        <textarea id="sql" placeholder="Escribe una consulta SQL, por ejemplo: SELECT * FROM persona">SELECT * FROM persona</textarea>
+        <div class="fila" style="margin-top:.5rem">
+            <button onclick="ejecutarSQL()">Ejecutar SQL</button>
+        </div>
+    </div>
+
+    <div class="panel" id="resultado">Los resultados aparecerán aquí…</div>
+
+    <p class="pie">Proyecto Paradigmas · PostgreSQL + MariaDB + SQL Server en Docker · FastAPI + SQLAlchemy</p>
+
+<script>
+const $ = id => document.getElementById(id);
+
+async function verificarSalud() {
+    try {
+        const r = await fetch('/api/salud');
+        const datos = await r.json();
+        for (const motor of ['postgres', 'mariadb', 'sqlserver']) {
+            const el = $('salud-' + motor);
+            const ok = datos[motor] === 'ok';
+            el.className = ok ? 'ok' : 'err';
+            el.textContent = motor + ': ' + (ok ? 'conectado' : 'sin conexión');
+            el.title = datos[motor];
+        }
+    } catch (e) { /* la API aún no arranca */ }
+}
+
+function pintarTabla(filas) {
+    if (!filas || filas.length === 0) return '<p>Sin resultados.</p>';
+    const cols = Object.keys(filas[0]);
+    let html = '<table><thead><tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+    for (const fila of filas) {
+        html += '<tr>' + cols.map(c => `<td>${fila[c] ?? ''}</td>`).join('') + '</tr>';
+    }
+    return html + '</tbody></table>';
+}
+
+async function cargar(recurso) {
+    const motor = $('motor').value;
+    $('resultado').innerHTML = 'Consultando…';
+    try {
+        const r = await fetch(`/api/${motor}/${recurso}`);
+        const datos = await r.json();
+        if (!r.ok) throw new Error(datos.detail || r.statusText);
+        if (recurso === 'tablas') {
+            $('resultado').innerHTML = `<strong>Tablas en ${motor}:</strong> ` + datos.tablas.join(', ');
+        } else {
+            $('resultado').innerHTML = `<strong>${recurso} en ${motor} (${datos.length} filas):</strong>` + pintarTabla(datos);
+        }
+    } catch (e) {
+        $('resultado').innerHTML = `<div class="error-msg">Error: ${e.message}</div>`;
+    }
+}
+
+async function ejecutarSQL() {
+    const motor = $('motor').value;
+    const sql = $('sql').value.trim();
+    if (!sql) return;
+    $('resultado').innerHTML = 'Ejecutando…';
+    try {
+        const r = await fetch(`/api/${motor}/sql`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sql })
+        });
+        const datos = await r.json();
+        if (!r.ok) throw new Error(datos.detail || r.statusText);
+        if (datos.filas !== undefined) {
+            $('resultado').innerHTML = `<strong>Resultado en ${motor} (${datos.filas.length} filas):</strong>` + pintarTabla(datos.filas);
+        } else {
+            $('resultado').innerHTML = `<strong>Sentencia ejecutada en ${motor}.</strong> Filas afectadas: ${datos.filas_afectadas}`;
+        }
+    } catch (e) {
+        $('resultado').innerHTML = `<div class="error-msg">Error: ${e.message}</div>`;
+    }
+}
+
+verificarSalud();
+setInterval(verificarSalud, 10000);
+</script>
+</body>
+</html>
