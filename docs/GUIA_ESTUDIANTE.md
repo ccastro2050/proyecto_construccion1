@@ -115,7 +115,19 @@ Cuando necesite explorar tablas y ejecutar SQL con clics:
 2. Con la carpeta del proyecto abierta: `F1` → **Dev Containers: Reopen in Container**.
 3. Aparece el icono de **SQLTools** (cilindro) con las 3 conexiones ya configuradas. `Ctrl+E Ctrl+E` ejecuta la consulta seleccionada.
 
-También puede usar cualquier herramienta externa (DBeaver, HeidiSQL, SSMS) con las credenciales de abajo.
+También puede usar cualquier herramienta externa con las credenciales de abajo. Por ejemplo:
+
+**pgAdmin (PostgreSQL):**
+1. Clic derecho en **Servers → Register → Server…**
+2. General → Name: `Paradigmas Docker`
+3. Connection → Host: `localhost` · Port: **`15432`** · Maintenance database: `bdfacturas_postgres_local` · Username: `paradigmas` · Password: `paradigmas123` (marque *Save password*)
+4. **Save** → navegue: Databases → bdfacturas_postgres_local → Schemas → public → Tables
+
+**HeidiSQL / MySQL Workbench (MariaDB):** host `localhost`, puerto **`13306`**, usuario `paradigmas`, clave `paradigmas123`.
+
+**SSMS / Azure Data Studio (SQL Server):** servidor `localhost,11433`, usuario `sa`, clave `Paradigmas123!` (marque *Trust server certificate*).
+
+> Se usan los puertos 15432/13306/11433 porque así están mapeados los contenedores hacia su PC, para no chocar con motores que ya tenga instalados.
 
 ## Comandos útiles del día a día
 
