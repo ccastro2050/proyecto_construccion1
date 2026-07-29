@@ -109,11 +109,19 @@ docker compose up -d
 
 ## Administrar las bases de datos (más adelante)
 
+### Lo más fácil: phpMyAdmin (ya incluido, para MariaDB)
+
+Abra **http://localhost:8081** — entra directo, sin usuario ni clave. Ahí puede ver las tablas de `bdfacturas_mariadb_local`, editar datos y ejecutar SQL. Viene como un contenedor más del proyecto: no hay que instalar nada (ni XAMPP).
+
+### Desde VS Code con SQLTools (los 3 motores)
+
 Cuando necesite explorar tablas y ejecutar SQL con clics:
 
 1. Instale la extensión **Dev Containers** (`Ctrl+Shift+X` → buscar "Dev Containers" → Install).
 2. Con la carpeta del proyecto abierta: `F1` → **Dev Containers: Reopen in Container**.
 3. Aparece el icono de **SQLTools** (cilindro) con las 3 conexiones ya configuradas. `Ctrl+E Ctrl+E` ejecuta la consulta seleccionada.
+
+### Con herramientas instaladas en su PC
 
 También puede usar cualquier herramienta externa con las credenciales de abajo. Por ejemplo:
 

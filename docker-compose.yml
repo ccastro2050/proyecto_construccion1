@@ -60,6 +60,18 @@ services:
       timeout: 5s
       retries: 10
 
+  # --- phpMyAdmin (administrador web de MariaDB) ---
+  phpmyadmin:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: paradigmas
+      PMA_PASSWORD: paradigmas123
+    ports:
+      - "8081:80"        # http://localhost:8081
+    depends_on:
+      - mariadb
+
   # --- SQL Server 2022 (requiere ~2 GB de RAM) ---
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
