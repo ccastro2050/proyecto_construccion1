@@ -10,6 +10,15 @@ uvicorn main:app --reload
 
 ## Tabla de contenido
 
+- [Análisis](#análisis)
+  - [Casos de uso más representativos](#casos-de-uso-más-representativos)
+  - [Historias de usuario](#historias-de-usuario)
+- [Diseño](#diseño)
+  - [Diagrama entidad-relación](#diagrama-entidad-relación)
+  - [Diseño de clases: el corte vertical](#diseño-de-clases-el-corte-vertical)
+  - [Diseño de interfaz (contrato REST)](#diseño-de-interfaz-contrato-rest)
+  - [Diagramas de secuencia más representativos](#diagramas-de-secuencia-más-representativos)
+  - [Principios SOLID aplicados](#principios-solid-aplicados)
 - [Arquitectura general](#arquitectura-general)
 - [Flujo de una petición](#flujo-de-una-petición)
 - [Estructura del proyecto](#estructura-del-proyecto)
@@ -22,11 +31,291 @@ uvicorn main:app --reload
   - [5. Configuración y conexión](#5-configuración-y-conexión)
 - [Endpoints disponibles](#endpoints-disponibles)
 - [Patrones de diseño utilizados](#patrones-de-diseño-utilizados)
+- [Despliegue](#despliegue)
 - [Requisitos previos](#requisitos-previos)
 - [Instalación y ejecución](#instalación-y-ejecución)
 - [Configuración del archivo .env](#configuración-del-archivo-env)
 - [Encriptación de contraseñas (BCrypt)](#encriptación-de-contraseñas-bcrypt)
 - [Documentación del tutorial](#documentación-del-tutorial)
+
+---
+
+## Análisis
+
+### Casos de uso más representativos
+
+```mermaid
+flowchart LR
+    DEV(["👤 Consumidor de API<br/>(front / Swagger / Postman)"])
+    SEG(["🔐 Sistema de<br/>autenticación"])
+    OPS(["🛠️ Operador"])
+
+    subgraph API["API Facturas CRUD"]
+        CU1(["CU-01 Gestionar catálogos<br/>persona · empresa · producto"])
+        CU2(["CU-02 Gestionar actores comerciales<br/>cliente · vendedor"])
+        CU3(["CU-03 Consultar facturación<br/>factura + detalle por factura"])
+        CU4(["CU-04 Registrar renglones de factura<br/>(el trigger de la BD calcula)"])
+        CU5(["CU-05 Gestionar usuarios<br/>(contraseña SIEMPRE con BCrypt)"])
+        CU6(["CU-06 Verificar credenciales<br/>200 / 401 / 404"])
+        CU7(["CU-07 Administrar RBAC<br/>rol · rol_usuario · ruta · rutarol"])
+        CU8(["CU-08 Elegir motor de BD<br/>DB_PROVIDER"])
+    end
+
+    DEV --> CU1 & CU2 & CU3 & CU4
+    SEG --> CU5 & CU6 & CU7
+    OPS --> CU8
+    CU5 -. include: encriptar<br/>con BCrypt .-> CU6
+```
+
+A diferencia de una API genérica, aquí **cada entidad es un caso de uso con contrato propio**: el body de `POST /api/persona/` se valida contra el modelo `Persona` (Pydantic) y un campo faltante se rechaza con 422 **antes** de tocar la base de datos.
+
+### Historias de usuario
+
+| # | Historia | Criterios de aceptación |
+|---|---|---|
+| HU-01 | **Como** desarrollador de frontend **quiero** endpoints tipados por entidad (`/api/persona/`, `/api/producto/`) **para** recibir errores claros en el borde | Body sin `nombre` → **422** con el detalle de Pydantic; nunca llega SQL inválido a la BD |
+| HU-02 | **Como** desarrollador **quiero** consultar una factura y sus renglones **para** armar una vista maestro-detalle | `GET /api/factura/1` y `GET /api/productosporfactura/factura/1` devuelven el sobre `{tabla, total, datos}` |
+| HU-03 | **Como** cajero (a través del front) **quiero** registrar un renglón de factura **para** que el sistema descuente stock y recalcule el total solo | El POST envía `subtotal: 0` y la BD lo corrige vía trigger; stock insuficiente → 500 con el mensaje del trigger |
+| HU-04 | **Como** administrador de seguridad **quiero** que las contraseñas jamás se guarden en texto plano **para** cumplir el mínimo de seguridad | Crear/actualizar usuario produce hash `$2b$12$…` de 60 chars (`CAMPOS_ENCRIPTAR`) |
+| HU-05 | **Como** sistema de login **quiero** `POST /api/usuario/verificar-contrasena` **para** validar credenciales sin exponer el hash | 200 válida · 401 incorrecta · 404 usuario no existe |
+| HU-06 | **Como** administrador **quiero** asignar roles a usuarios y rutas a roles **para** montar RBAC | Tablas puente con búsquedas secundarias (`/usuario/{email}`, `/rol/{id}`) |
+| HU-07 | **Como** operador **quiero** cambiar `DB_PROVIDER` en el `.env` **para** migrar de motor sin código | Todas las HU anteriores pasan idénticas en PostgreSQL, MariaDB y SQL Server |
+
+---
+
+## Diseño
+
+### Diagrama entidad-relación
+
+Las 12 tablas de `bdfacturas` (DDL de referencia en [database/bdfacturas_postgres.sql](database/bdfacturas_postgres.sql)):
+
+```mermaid
+erDiagram
+    persona ||--o{ cliente : "es"
+    persona ||--o{ vendedor : "es"
+    empresa ||--o{ cliente : "respalda"
+    cliente ||--o{ factura : "compra"
+    vendedor ||--o{ factura : "vende"
+    factura ||--|{ productosporfactura : "detalla"
+    producto ||--o{ productosporfactura : "aparece en"
+    usuario ||--o{ rol_usuario : "tiene"
+    rol ||--o{ rol_usuario : "asignado a"
+    ruta ||--o{ rutarol : "protegida por"
+    rol ||--o{ rutarol : "accede a"
+
+    persona { varchar codigo PK
+              varchar nombre
+              varchar email
+              varchar telefono }
+    empresa { varchar codigo PK
+              varchar nombre }
+    producto { varchar codigo PK
+               varchar nombre
+               int stock
+               numeric valorunitario }
+    cliente { int id PK "SERIAL"
+              numeric credito
+              varchar fkcodpersona FK
+              varchar fkcodempresa FK }
+    vendedor { int id PK "SERIAL"
+               int carnet
+               varchar direccion
+               varchar fkcodpersona FK }
+    factura { int numero PK "SERIAL"
+              timestamp fecha
+              numeric total "lo calcula el trigger"
+              varchar estado "activa | anulada"
+              int fkidcliente FK
+              int fkidvendedor FK }
+    productosporfactura { int fknumfactura PK,FK "ON DELETE CASCADE"
+                          varchar fkcodproducto PK,FK
+                          int cantidad
+                          numeric subtotal "lo calcula el trigger" }
+    usuario { varchar email PK
+              varchar contrasena "hash BCrypt 60 chars" }
+    rol { int id PK "SERIAL"
+          varchar nombre }
+    rol_usuario { varchar fkemail PK,FK
+                  int fkidrol PK,FK }
+    ruta { int id PK "SERIAL"
+           varchar ruta UK "contiene barras: /home"
+           varchar descripcion }
+    rutarol { int fkidruta PK,FK "CASCADE"
+              int fkidrol PK,FK "CASCADE" }
+```
+
+Decisiones: PK **compuestas** en las 3 tablas puente · `SERIAL` en cliente/vendedor/factura/rol (por eso sus modelos Pydantic llevan `id: int | None`) · la lógica de negocio pesada (subtotal, total, stock, anulación) vive en la BD como **trigger + stored procedures**, no en Python.
+
+### Diseño de clases: el corte vertical
+
+Cada entidad replica este diseño (aquí `persona`; las otras 11 son isomorfas):
+
+```mermaid
+classDiagram
+    class persona_controller {
+        <<APIRouter /api/persona>>
+        +listar() +obtener(codigo)
+        +crear(Persona) +actualizar(codigo, Persona)
+        +eliminar(codigo)
+    }
+    class Persona {
+        <<BaseModel Pydantic>>
+        +codigo: str
+        +nombre: str
+        +email: str|None
+        +telefono: str|None
+    }
+    class ServicioPersona {
+        -_repo
+        +listar() +obtener_por_codigo()
+        +crear() +actualizar() +eliminar()
+    }
+    class IRepositorioPersona {
+        <<Protocol>>
+        +obtener_todos() +obtener_por_codigo()
+        +crear() +actualizar() +eliminar()
+    }
+    class BaseRepositorioPostgreSQL {
+        <<todo el SQL del dialecto>>
+        #_obtener_filas(tabla, ...)
+        #_obtener_por_clave(tabla, ...)
+        #_crear(tabla, datos, campos_encriptar)
+        #_actualizar() #_eliminar()
+    }
+    class RepositorioPersonaPostgreSQL {
+        +TABLA = "persona"
+        +CLAVE_PRIMARIA = "codigo"
+    }
+    class fabrica_repositorios {
+        <<Factory>>
+        -_REPOS_PERSONA: dict[proveedor→clase]
+        +crear_servicio_persona()
+    }
+
+    persona_controller ..> Persona : valida el body (422)
+    persona_controller --> fabrica_repositorios : crear_servicio_persona()
+    fabrica_repositorios --> ServicioPersona : inyecta el repo del motor activo
+    ServicioPersona --> IRepositorioPersona : depende del contrato (D)
+    IRepositorioPersona <|.. RepositorioPersonaPostgreSQL
+    BaseRepositorioPostgreSQL <|-- RepositorioPersonaPostgreSQL : hereda (Template Method)
+    note for RepositorioPersonaPostgreSQL "~35 líneas: constantes + delegación.\nExisten gemelos SqlServer y MysqlMariaDB\nque heredan de SU clase base."
+```
+
+### Diseño de interfaz (contrato REST)
+
+La "interfaz de usuario" de una API es su contrato — documentación viva en **`/docs`** (Swagger UI) y `/redoc`:
+
+| Diseño | Decisión |
+|---|---|
+| Recursos | Un prefix por entidad: `/api/persona`, `/api/factura`, `/api/rol-usuario`… |
+| Sobre de lectura | `{tabla, total, datos[]}`; lista vacía → **204** |
+| Sobre de escritura | `{estado, mensaje, datos?}` · PUT/DELETE agregan `filtro` y `filasAfectadas`/`filasEliminadas` |
+| Validación en el borde | Body → modelo Pydantic → **422** automático con el campo culpable |
+| Errores | `detail = {estado, mensaje, detalle}`; 400 argumentos · 404 no existe · 500 error del motor |
+| Casos especiales | `ruta` usa `{valor_ruta:path}` (su PK contiene `/`); tablas puente sin PUT |
+
+### Diagramas de secuencia más representativos
+
+**1. `POST /api/persona/` con body inválido — la validación detiene el error en el borde:**
+
+```mermaid
+sequenceDiagram
+    participant CL as Cliente
+    participant FA as FastAPI
+    participant CTL as persona_controller
+
+    CL->>FA: POST /api/persona/ {"codigo": "P999"}
+    FA->>FA: valida contra el modelo Persona
+    Note over FA: falta "nombre" (requerido)
+    FA-->>CL: 422 Unprocessable Entity<br/>{"detail":[{"loc":["body","nombre"],...}]}
+    Note over CTL: el controller NUNCA se ejecutó.<br/>Ni el servicio, ni SQL, ni la BD.
+```
+
+**2. `GET /api/persona/P001` — el camino feliz por las 4 piezas:**
+
+```mermaid
+sequenceDiagram
+    participant CL as Cliente
+    participant CTL as persona_controller
+    participant FAB as fabrica_repositorios
+    participant SRV as ServicioPersona
+    participant REP as RepositorioPersona(Motor)
+    participant BD as BD (DB_PROVIDER)
+
+    CL->>CTL: GET /api/persona/P001
+    CTL->>FAB: crear_servicio_persona()
+    FAB->>FAB: DB_PROVIDER="postgres" → RepositorioPersonaPostgreSQL
+    FAB-->>CTL: ServicioPersona(repo inyectado)
+    CTL->>SRV: obtener_por_codigo("P001")
+    SRV->>SRV: valida código no vacío
+    SRV->>REP: obtener_por_codigo("P001")
+    REP->>BD: SELECT * FROM "public"."persona" WHERE "codigo" = :valor
+    BD-->>REP: fila
+    REP-->>SRV: [dict JSON-safe]
+    SRV-->>CTL: filas
+    CTL-->>CL: 200 {tabla:"persona", total:1, datos:[...]}  (0 filas → 404)
+```
+
+**3. `POST /api/usuario/` + verificación — BCrypt de extremo a extremo:**
+
+```mermaid
+sequenceDiagram
+    participant CL as Cliente
+    participant CTL as usuario_controller
+    participant SRV as ServicioUsuario
+    participant REP as RepositorioUsuario
+    participant BC as encriptacion_bcrypt
+    participant BD as BD
+
+    CL->>CTL: POST /api/usuario/ {email, contrasena:"123456"}
+    CTL->>SRV: crear(datos)
+    SRV->>REP: crear(datos)  — CAMPOS_ENCRIPTAR="contrasena"
+    REP->>BC: encriptar("123456", costo=12)
+    BC-->>REP: "$2b$12$…"
+    REP->>BD: INSERT usuario (email, hash)
+    BD-->>CL: 200 creado
+
+    CL->>CTL: POST /verificar-contrasena?valor_usuario=…&valor_contrasena=123456
+    CTL->>SRV: verificar_contrasena(email, "123456")
+    SRV->>REP: obtener_hash_contrasena(email)
+    REP-->>SRV: "$2b$12$…"  (None → 404)
+    SRV->>BC: verificar("123456", hash)
+    BC-->>SRV: True / False
+    SRV-->>CL: 200 "Contraseña válida." / 401 "Contraseña incorrecta."
+```
+
+**4. `POST /api/productosporfactura/` — la API inserta, la BD calcula:**
+
+```mermaid
+sequenceDiagram
+    participant CL as Cliente
+    participant API as API Facturas
+    participant BD as BD bdfacturas
+    participant TG as trigger actualizar_totales_y_stock
+
+    CL->>API: POST {fknumfactura:1, fkcodproducto:"PR003", cantidad:2, subtotal:0}
+    API->>BD: INSERT parametrizado
+    BD->>TG: BEFORE INSERT
+    alt stock suficiente
+        TG->>BD: subtotal := 2 × valorunitario<br/>stock -= 2 · total factura = Σ subtotales
+        BD-->>API: OK
+        API-->>CL: 200
+    else stock insuficiente
+        TG-->>BD: RAISE EXCEPTION "Stock insuficiente…"
+        BD-->>API: error
+        API-->>CL: 500 con el mensaje del trigger en detalle
+    end
+```
+
+### Principios SOLID aplicados
+
+| Principio | Dónde exactamente en este proyecto |
+|---|---|
+| **S** — Responsabilidad única | `persona_controller` solo HTTP · `ServicioPersona` solo reglas · `RepositorioPersonaPostgreSQL` solo SQL de personas en PostgreSQL |
+| **O** — Abierto/cerrado | Motor nuevo = 3 clases base nuevas… no: **1 clase por entidad + 1 línea** en cada diccionario `_REPOS_*` de la fábrica; nada existente se modifica |
+| **L** — Sustitución de Liskov | `RepositorioPersonaPostgreSQL`, `…SqlServer` y `…MysqlMariaDB` son intercambiables bajo `IRepositorioPersona`: cambiar `DB_PROVIDER` no rompe a nadie |
+| **I** — Segregación de interfaces | 12 interfaces de repositorio pequeñas (5 métodos) en vez de una gigante; `IProveedorConexion` tiene 2 miembros; las tablas puente ni siquiera declaran `actualizar` |
+| **D** — Inversión de dependencias | `ServicioPersona.__init__(repositorio)` recibe la **abstracción**; solo `fabrica_repositorios.py` importa clases concretas |
 
 ---
 
@@ -551,6 +840,35 @@ Cada entidad expone estos endpoints (ejemplo con `persona`):
 | **Dependency Injection** | Servicios | El servicio recibe el repositorio por constructor, no lo crea internamente |
 | **Singleton** | `config.py` (`@lru_cache`) | La configuración se lee una sola vez y se reutiliza en toda la aplicación |
 | **Strategy** | Repositorios por motor | Cada motor de BD es una estrategia diferente con la misma interfaz |
+
+---
+
+## Despliegue
+
+```mermaid
+flowchart LR
+    subgraph DEV["Modo desarrollo local"]
+        VENV["venv + uvicorn main:app --reload"] --> ENVF[".env<br/>DB_PROVIDER + cadenas DB_*"]
+        ENVF --> LOCALBD[("Motor local o<br/>contenedor suelto")]
+    end
+
+    subgraph DOCKER["Modo Docker (proyecto padre proyecto_paradigmas)"]
+        IMG["Imagen python:3.12-slim<br/>+ msodbcsql18 (apt) + pip install"]
+        CONT["contenedor api-facturas :8002<br/>./api_facturas montado + --reload"]
+        IMG --> CONT
+        CONT -->|"hosts internos<br/>postgres · mariadb · sqlserver"| BDS[("3 motores<br/>en contenedores")]
+    end
+```
+
+| Aspecto | Decisión de despliegue |
+|---|---|
+| Imagen | `python:3.12-slim`; `msodbcsql18` + `unixodbc` vía apt (el driver de SQL Server es del SO, no de pip) |
+| Caché de build | `requirements.txt` se copia e instala ANTES que el código → rebuilds rápidos |
+| Configuración | Solo variables de entorno: `DB_PROVIDER` decide el motor; `DB_POSTGRES/DB_MARIADB/DB_MYSQL/DB_SQLSERVER` las cadenas |
+| Puerto | **8002** dentro del proyecto padre (compose lo publica como `8002:8002`) |
+| Desarrollo | Volumen de código + `uvicorn --reload`: guardar recarga sin rebuild |
+| Salud | `GET /` sirve de healthcheck (el front lo usa para el badge "en línea") |
+| Producción | No aplica (docente). Checklist si se llevara: quitar `--reload`, CORS restringido, secretos fuera del repo, engine con pool compartido |
 
 ---
 

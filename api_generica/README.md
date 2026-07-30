@@ -28,6 +28,178 @@ API REST generica para operaciones CRUD sobre cualquier tabla de base de datos. 
 
 ---
 
+## Análisis
+
+### Casos de uso más representativos
+
+El actor principal es un **consumidor de API** (el front Flask del proyecto padre, Swagger UI, Postman o cualquier programa):
+
+```mermaid
+flowchart LR
+    DEV(["👤 Consumidor de API<br/>(front / Swagger / Postman)"])
+    OPS(["🛠️ Operador<br/>(configura el despliegue)"])
+
+    subgraph API["API Genérica CRUD"]
+        CU1(["CU-01 Listar registros<br/>de CUALQUIER tabla"])
+        CU2(["CU-02 Filtrar por clave<br/>con conversión de tipos"])
+        CU3(["CU-03 Crear registro<br/>(body JSON libre)"])
+        CU4(["CU-04 Actualizar / Eliminar<br/>por clave-valor"])
+        CU5(["CU-05 Encriptar campos<br/>al vuelo (BCrypt)"])
+        CU6(["CU-06 Verificar credenciales<br/>200 / 401 / 404"])
+        CU7(["CU-07 Elegir motor de BD<br/>sin tocar código"])
+    end
+
+    DEV --> CU1 & CU2 & CU3 & CU4 & CU6
+    CU3 -. extend .-> CU5
+    CU4 -. extend .-> CU5
+    OPS --> CU7
+```
+
+Lo distintivo del análisis: **la tabla es un parámetro**. No existe un caso de uso "gestionar productos" y otro "gestionar personas"; existe UNO ("gestionar registros de {tabla}") que sirve para las 12 tablas de la BD de prueba y para cualquier otra.
+
+### Historias de usuario
+
+| # | Historia | Criterios de aceptación |
+|---|---|---|
+| HU-01 | **Como** desarrollador de frontend **quiero** un único endpoint `GET /api/{tabla}` **para** listar cualquier tabla sin esperar a que el backend programe cada una | `GET /api/producto` y `GET /api/persona` responden con el mismo sobre `{tabla, total, datos}`; tabla vacía → 204 |
+| HU-02 | **Como** desarrollador **quiero** filtrar `GET /api/factura/numero/1` pasando el valor como texto **para** no preocuparme por tipos | La API detecta que `numero` es INTEGER (via `information_schema`) y convierte antes de comparar |
+| HU-03 | **Como** desarrollador **quiero** crear registros con un JSON plano **para** prototipar rápido | PK duplicada o FK violada → 500 con el error del motor en `detalle` (la BD es la validación) |
+| HU-04 | **Como** desarrollador **quiero** que `?campos_encriptar=contrasena` guarde hash y no texto plano **para** cumplir seguridad mínima | En la BD queda un hash BCrypt `$2b$12$…` de 60 caracteres |
+| HU-05 | **Como** sistema de login **quiero** `verificar-contrasena` **para** validar credenciales sin leer el hash | 200 válida · 401 incorrecta · 404 usuario no existe |
+| HU-06 | **Como** operador **quiero** cambiar `DB_PROVIDER=mariadb` **para** migrar de motor sin código nuevo | Los criterios HU-01…05 pasan idénticos en los 3 motores |
+
+---
+
+## Diseño
+
+### Diseño de clases (SOLID en acción)
+
+```mermaid
+classDiagram
+    class entidades_controller {
+        <<APIRouter /api>>
+        +listar(tabla, esquema, limite)
+        +obtener_por_clave(tabla, clave, valor)
+        +crear(tabla, datos, campos_encriptar)
+        +actualizar(...) +eliminar(...)
+        +verificar_contrasena(...)
+    }
+    class ServicioCrud {
+        -_repositorio: IRepositorioLecturaTabla
+        +listar() +obtener_por_clave() +crear()
+        +actualizar() +eliminar() +verificar_contrasena()
+    }
+    class IRepositorioLecturaTabla {
+        <<Protocol>>
+        +obtener_filas() +obtener_por_clave()
+        +crear() +actualizar() +eliminar()
+        +obtener_hash_contrasena()
+    }
+    class IProveedorConexion {
+        <<Protocol>>
+        +proveedor_actual: str
+        +obtener_cadena_conexion() str
+    }
+    class fabrica_repositorios {
+        <<Factory>>
+        -_REPOSITORIOS_LECTURA: dict
+        +crear_servicio_crud() ServicioCrud
+    }
+    class RepositorioLecturaPostgreSQL { +SQL con "comillas", LIMIT, public }
+    class RepositorioLecturaMysqlMariaDB { +SQL con backticks, LIMIT }
+    class RepositorioLecturaSqlServer { +SQL con [corchetes], TOP, dbo }
+    class ProveedorConexion { +lee DB_PROVIDER del .env }
+
+    entidades_controller --> fabrica_repositorios : pide el servicio
+    fabrica_repositorios --> ServicioCrud : crea e inyecta
+    ServicioCrud --> IRepositorioLecturaTabla : depende del CONTRATO (D de SOLID)
+    IRepositorioLecturaTabla <|.. RepositorioLecturaPostgreSQL
+    IRepositorioLecturaTabla <|.. RepositorioLecturaMysqlMariaDB
+    IRepositorioLecturaTabla <|.. RepositorioLecturaSqlServer
+    RepositorioLecturaPostgreSQL --> IProveedorConexion
+    IProveedorConexion <|.. ProveedorConexion
+```
+
+Lectura del diagrama: el servicio **nunca** menciona un motor; depende de la interfaz. La fábrica es el único lugar que mapea `DB_PROVIDER → clase concreta` (diccionario: agregar un motor = 1 línea, principio abierto/cerrado).
+
+### Diseño de base de datos
+
+Esta API es **agnóstica del esquema**: no define tablas propias. Se desarrolla y valida contra `bdfacturas` (12 tablas de facturación + RBAC, con trigger de totales/stock y stored procedures — el diagrama ER completo está en el [README raíz](../README.md#diseño-de-base-de-datos-bdfacturas--idéntica-en-los-3-motores) del proyecto padre). Lo que sí es diseño propio de esta API es **cómo descubre** cualquier esquema en runtime:
+
+```mermaid
+flowchart LR
+    URL["valor como texto<br/>en la URL: '1'"] --> DET["_detectar_tipo_columna<br/>(information_schema.columns)"]
+    DET --> CONV["_convertir_valor<br/>int·Decimal·bool·UUID·date·datetime"]
+    CONV --> SQL["WHERE numero = :valor<br/>(parametrizado, tipo correcto)"]
+    FILA["fila de la BD<br/>Decimal·datetime·UUID"] --> SER["_serializar_valor"] --> JSON["JSON: float · ISO-8601 · str"]
+```
+
+### Diseño de interfaz (la interfaz de una API es su contrato REST)
+
+Recursos con envoltura uniforme y semántica HTTP explícita — documentación viva en **`/swagger`**:
+
+| Diseño | Decisión |
+|---|---|
+| Sobre de lectura | `{tabla, esquema, limite, total, datos[]}` — metadatos siempre visibles |
+| Sobre de escritura | `{estado, mensaje, filtro?, filasAfectadas/filasEliminadas}` |
+| Errores | `detail = {estado, mensaje, detalle}`; ValueError→400 · PermissionError→403 · LookupError→404 · resto→500 |
+| Colección vacía | **204 No Content** (éxito sin cuerpo, no un `[]` con 200) |
+| Verbos | GET lectura · POST creación · PUT actualización por clave · DELETE eliminación |
+
+### Diagramas de secuencia más representativos
+
+**1. `GET /api/factura/numero/1` — filtrado con detección de tipos:**
+
+```mermaid
+sequenceDiagram
+    participant CL as Cliente
+    participant CTL as entidades_controller
+    participant FAB as fabrica_repositorios
+    participant SRV as ServicioCrud
+    participant REP as RepositorioLectura(Motor)
+    participant BD as BD activa
+
+    CL->>CTL: GET /api/factura/numero/1
+    CTL->>FAB: crear_servicio_crud()
+    FAB->>FAB: DB_PROVIDER → clase del diccionario
+    FAB-->>CTL: ServicioCrud(repositorio inyectado)
+    CTL->>SRV: obtener_por_clave("factura","numero","1")
+    SRV->>SRV: valida no-vacíos, normaliza esquema
+    SRV->>REP: obtener_por_clave(...)
+    REP->>BD: SELECT data_type FROM information_schema.columns
+    BD-->>REP: "integer"
+    REP->>REP: "1" → int(1)
+    REP->>BD: SELECT * FROM factura WHERE numero = :valor
+    BD-->>REP: fila (Decimal, datetime…)
+    REP-->>SRV: [dict serializado a JSON-safe]
+    SRV-->>CTL: filas
+    CTL-->>CL: 200 {tabla, filtro, total, datos}  (o 404 si vacío)
+```
+
+**2. `POST /api/usuario?campos_encriptar=contrasena` — BCrypt en el borde de la persistencia:**
+
+```mermaid
+sequenceDiagram
+    participant CL as Cliente
+    participant CTL as Controller
+    participant SRV as ServicioCrud
+    participant REP as Repositorio
+    participant BC as encriptacion_bcrypt
+    participant BD as BD
+
+    CL->>CTL: POST body {email, contrasena:"123456"}
+    CTL->>SRV: crear("usuario", datos, campos_encriptar="contrasena")
+    SRV->>REP: crear(...)
+    REP->>BC: encriptar("123456", costo=12)
+    BC-->>REP: "$2b$12$…" (60 chars)
+    REP->>BD: INSERT (email, contrasena) VALUES (:email, :hash)
+    BD-->>REP: rowcount 1
+    REP-->>CL: 200 "Registro creado exitosamente."
+    Note over CL,BD: verificar-contrasena hace el camino inverso:<br/>obtiene el hash y compara con checkpw → 200/401/404
+```
+
+---
+
 ## Arquitectura
 
 ```
@@ -427,6 +599,35 @@ ApiGenericaFastApi_Crud/
 | asyncpg | 0.28+ | Driver PostgreSQL |
 | aiomysql | 0.2+ | Driver MySQL/MariaDB |
 | aioodbc | 0.5+ | Driver SQL Server |
+
+---
+
+## Despliegue
+
+Dos modos, misma aplicación:
+
+```mermaid
+flowchart LR
+    subgraph DEV["Modo desarrollo local"]
+        VENV["venv + uvicorn --reload<br/>:8000/:8001"] --> ENVF[".env<br/>DB_PROVIDER + cadenas"]
+    end
+
+    subgraph DOCKER["Modo Docker (proyecto padre)"]
+        IMG["Imagen python:3.12-slim<br/>+ msodbcsql18 (apt) + pip install"]
+        CONT["contenedor api-generica :8001<br/>código montado como volumen + --reload"]
+        IMG --> CONT
+        CONT -->|"postgres:5432 · mariadb:3306 · sqlserver:1433<br/>(hosts internos de compose)"| BDS[("3 motores en contenedores")]
+    end
+```
+
+| Aspecto | Decisión de despliegue |
+|---|---|
+| Imagen | `python:3.12-slim`; el driver ODBC de SQL Server (`msodbcsql18`) se instala con `apt-get` porque es del SO, no de pip |
+| Caché de build | `COPY requirements.txt` + `pip install` ANTES de copiar el código (las dependencias se cachean) |
+| Configuración | 100% por variables de entorno (`DB_PROVIDER`, `DB_*`); en compose llegan por `environment:`, en local por `.env` |
+| Desarrollo | Volumen `./api_generica:/app` + `uvicorn --reload` → guardar un archivo recarga la API |
+| Puerto | 8001 dentro del proyecto padre (8000 si se corre sola, como en los ejemplos de arriba) |
+| Producción | No aplica: proyecto docente. Si se llevara: quitar `--reload`, restringir CORS y poner las credenciales en un gestor de secretos |
 
 ---
 
