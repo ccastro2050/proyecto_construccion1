@@ -9,7 +9,7 @@ Navegador → FRONT Flask (8000)
                         └── PostgreSQL · MariaDB · SQL Server  (bdfacturas)
 ```
 
-> 📖 **Documentación:** [Guía del estudiante](docs/GUIA_ESTUDIANTE.md) · [Arquitectura de 3 capas](docs/ARQUITECTURA_3_CAPAS.md) · [Conceptos clave](docs/CONCEPTOS.md) · [Cómo se construyó el entorno](docs/TUTORIAL_CONSTRUCCION.md)
+> 📖 **Documentación:** [Guía del estudiante](docs/GUIA_ESTUDIANTE.md) · [Arquitectura de 3 capas](docs/ARQUITECTURA_3_CAPAS.md) · [Principios SOLID y ACID aplicados](docs/PRINCIPIOS_SOLID_ACID.md) · [Conceptos clave](docs/CONCEPTOS.md) · [Cómo se construyó el entorno](docs/TUTORIAL_CONSTRUCCION.md)
 
 ---
 

@@ -67,7 +67,8 @@ Abra la carpeta en VS Code: menú **File → Open Folder** → `proyecto_paradig
 | La API genérica (un CRUD para toda tabla) | carpeta `api_generica/` |
 | La API de facturas (un CRUD por entidad) | carpeta `api_facturas/` |
 
-> Para entender cómo se conecta todo, lea [ARQUITECTURA_3_CAPAS.md](ARQUITECTURA_3_CAPAS.md).
+> Para entender cómo se conecta todo, lea [ARQUITECTURA_3_CAPAS.md](ARQUITECTURA_3_CAPAS.md) y
+> [PRINCIPIOS_SOLID_ACID.md](PRINCIPIOS_SOLID_ACID.md) (dónde está aplicado cada principio, con ejercicios).
 
 ## Paso 7 — Cambiar el motor de base de datos
 
