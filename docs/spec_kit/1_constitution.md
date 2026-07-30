@@ -1,4 +1,4 @@
-# Constitución del Proyecto Paradigmas
+# Constitución del Proyecto Construcción 1
 
 > **Documento 1 de 8** del spec kit raíz. Orden de lectura de cada kit:
 > `1_constitution → 2_spec → 3_plan → 4_research → 5_data_model → 6_contracts → 7_quickstart → 8_tasks`.
@@ -12,9 +12,10 @@
 
 ## Artículo 1 — Propósito didáctico ante todo
 
-Este proyecto existe para **enseñar paradigmas de programación y arquitectura de
-software** a estudiantes universitarios. Ante cualquier disyuntiva entre "lo más
-profesional" y "lo más claro para aprender", gana la claridad:
+Este proyecto existe para **enseñar construcción de software** (especificación,
+implementación por capas, calidad y despliegue) a estudiantes universitarios que
+ya cursaron paradigmas de programación y diseño de software. Ante cualquier
+disyuntiva entre "lo más profesional" y "lo más claro para aprender", gana la claridad:
 
 - Todo el código, comentarios, docstrings, mensajes y documentación se escriben en **español**.
 - Cada archivo abre con un docstring/comentario que explica su papel en la arquitectura.

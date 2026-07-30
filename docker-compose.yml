@@ -1,5 +1,5 @@
 # ==============================================================
-# Proyecto Paradigmas — Arquitectura de 3 capas en Docker
+# Proyecto Construcción 1 — Arquitectura de 3 capas en Docker
 #
 #   FRONT (Flask, :8000)
 #      │ elige a cuál API llamar

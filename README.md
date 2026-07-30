@@ -1,6 +1,8 @@
-# Proyecto Paradigmas
+# Proyecto Construcción 1
 
-Entorno de aprendizaje **todo-en-uno con Docker**: una arquitectura real de **3 capas** — frontend Flask, dos APIs FastAPI y tres motores de base de datos — que se levanta completa con **un solo comando**. Solo se necesita Docker Desktop.
+Proyecto del curso **Construcción de Software 1** (USB Medellín). Entorno de aprendizaje **todo-en-uno con Docker**: una arquitectura real de **3 capas** — frontend Flask, dos APIs FastAPI y tres motores de base de datos — que se levanta completa con **un solo comando**. Solo se necesita Docker Desktop.
+
+> **Para quién es esto:** estudiantes que ya cursaron *Paradigmas de Programación* y *Diseño de Software*. Aquí el foco es la **construcción**: partir de especificaciones (los **spec kits** de abajo, al estilo SDD/GitHub Spec Kit), implementar por capas con SOLID, verificar contra criterios de aceptación y desplegar con Docker. El análisis y el diseño ya vienen documentados en cada README — su trabajo es construir sobre ellos.
 
 ```
 Navegador → FRONT Flask (8000)
@@ -24,8 +26,8 @@ Navegador → FRONT Flask (8000)
 En la terminal de VS Code:
 
 ```bash
-git clone https://github.com/ccastro2050/proyecto_paradigmas.git
-cd proyecto_paradigmas
+git clone https://github.com/ccastro2050/proyecto_construccion1.git
+cd proyecto_construccion1
 docker compose up -d --build
 ```
 
@@ -46,7 +48,7 @@ Todo el código está **comentado en español** para quien está comenzando a pr
 ## Estructura del proyecto
 
 ```
-proyecto_paradigmas/
+proyecto_construccion1/
 ├── docker-compose.yml      # Toda la infraestructura declarada aquí
 ├── db/                     # Scripts de bdfacturas para los 3 motores
 │
@@ -84,7 +86,7 @@ flowchart LR
     U(["👤 Usuario web<br/>(estudiante)"])
     A(["🛠️ Administrador<br/>de datos"])
 
-    subgraph SISTEMA["Sistema Proyecto Paradigmas"]
+    subgraph SISTEMA["Sistema Proyecto Construcción 1"]
         CU1(["CU-01 Gestionar productos<br/>(CRUD completo)"])
         CU2(["CU-02 Gestionar personas<br/>(CRUD completo)"])
         CU3(["CU-03 Consultar facturas<br/>y su detalle"])
@@ -396,4 +398,4 @@ docker compose logs front    # errores del front (o api-generica / api-facturas)
 
 ---
 
-*Proyecto Paradigmas · USB Med · Base de datos bdfacturas (facturación + RBAC con triggers y stored procedures)*
+*Proyecto Construcción 1 · USB Med · Base de datos bdfacturas (facturación + RBAC con triggers y stored procedures)*

@@ -852,7 +852,7 @@ flowchart LR
         ENVF --> LOCALBD[("Motor local o<br/>contenedor suelto")]
     end
 
-    subgraph DOCKER["Modo Docker (proyecto padre proyecto_paradigmas)"]
+    subgraph DOCKER["Modo Docker (proyecto padre proyecto_construccion1)"]
         IMG["Imagen python:3.12-slim<br/>+ msodbcsql18 (apt) + pip install"]
         CONT["contenedor api-facturas :8002<br/>./api_facturas montado + --reload"]
         IMG --> CONT

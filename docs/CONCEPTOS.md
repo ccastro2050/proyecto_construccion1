@@ -1,4 +1,4 @@
-# Conceptos clave — Proyecto Paradigmas
+# Conceptos clave — Proyecto Construcción 1
 
 Resumen de los conceptos que usa este proyecto. Cada uno en pocas líneas.
 

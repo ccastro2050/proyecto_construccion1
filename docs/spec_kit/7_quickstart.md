@@ -9,8 +9,8 @@
 ## 1. Levantar
 
 ```powershell
-git clone https://github.com/ccastro2050/proyecto_paradigmas.git
-cd proyecto_paradigmas
+git clone https://github.com/ccastro2050/proyecto_construccion1.git
+cd proyecto_construccion1
 docker compose up -d --build     # primera vez: varios minutos
 ```
 

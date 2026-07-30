@@ -1,4 +1,4 @@
-# Arquitectura de 3 capas — Proyecto Paradigmas
+# Arquitectura de 3 capas — Proyecto Construcción 1
 
 Este documento sigue **el viaje completo de una petición**: desde el clic en el navegador hasta la base de datos y de vuelta. Léalo con el código abierto al lado.
 

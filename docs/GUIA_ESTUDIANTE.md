@@ -1,4 +1,4 @@
-# Guía del estudiante — Proyecto Paradigmas
+# Guía del estudiante — Proyecto Construcción 1
 
 Pasos para dejar el entorno funcionando en su máquina.
 
@@ -29,13 +29,13 @@ Si da error, Docker Desktop no está abierto.
 En la misma terminal:
 
 ```powershell
-git clone https://github.com/ccastro2050/proyecto_paradigmas.git
+git clone https://github.com/ccastro2050/proyecto_construccion1.git
 ```
 
 ## Paso 3 — Levantar todo (el único comando)
 
 ```powershell
-cd proyecto_paradigmas
+cd proyecto_construccion1
 docker compose up -d --build
 ```
 
@@ -59,7 +59,7 @@ En http://localhost:8000:
 
 ## Paso 6 — Programar
 
-Abra la carpeta en VS Code: menú **File → Open Folder** → `proyecto_paradigmas`. Todo el código está comentado en español. Al guardar un archivo, la aplicación se recarga sola.
+Abra la carpeta en VS Code: menú **File → Open Folder** → `proyecto_construccion1`. Todo el código está comentado en español. Al guardar un archivo, la aplicación se recarga sola.
 
 | Qué quiere tocar | Dónde |
 |---|---|
@@ -139,7 +139,7 @@ También puede usar cualquier herramienta externa con las credenciales de abajo.
 
 **pgAdmin (PostgreSQL):**
 1. Clic derecho en **Servers → Register → Server…**
-2. General → Name: `Paradigmas Docker`
+2. General → Name: `Construccion1 Docker`
 3. Connection → Host: `localhost` · Port: **`15432`** · Maintenance database: `bdfacturas_postgres_local` · Username: `paradigmas` · Password: `paradigmas123` (marque *Save password*)
 4. **Save** → navegue: Databases → bdfacturas_postgres_local → Schemas → public → Tables
 

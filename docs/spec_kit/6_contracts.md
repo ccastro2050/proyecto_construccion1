@@ -1,4 +1,4 @@
-# Contratos de integración — Proyecto Paradigmas
+# Contratos de integración — Proyecto Construcción 1
 
 > **Documento 6 de 8** del spec kit raíz: cómo se hablan las piezas entre sí
 > (puertos, hosts, variables, healthchecks). Los contratos HTTP detallados de

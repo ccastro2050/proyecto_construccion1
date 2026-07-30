@@ -10,7 +10,7 @@
 ## 1. Estructura de archivos en la raíz del repositorio
 
 ```
-proyecto_paradigmas/
+proyecto_construccion1/
 ├── docker-compose.yml          # los 8 servicios + 3 volúmenes
 ├── README.md
 ├── .gitignore / .gitattributes

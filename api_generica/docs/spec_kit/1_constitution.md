@@ -4,7 +4,7 @@
 > `1_constitution → 2_spec → 3_plan → 4_research → 5_data_model → 6_contracts → 7_quickstart → 8_tasks`.
 >
 > Principios innegociables de ESTE proyecto tratado como independiente. Si se
-> construye dentro del proyecto padre (proyecto_paradigmas), aplica además la
+> construye dentro del proyecto padre (proyecto_construccion1), aplica además la
 > constitución global en `docs/spec_kit/1_constitution.md` de la raíz.
 
 ---

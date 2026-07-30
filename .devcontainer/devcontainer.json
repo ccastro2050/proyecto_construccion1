@@ -1,5 +1,5 @@
 {
-    "name": "Proyecto Paradigmas",
+    "name": "Proyecto Construcción 1",
     "dockerComposeFile": "../docker-compose.yml",
     "service": "front",
     "workspaceFolder": "/workspace",

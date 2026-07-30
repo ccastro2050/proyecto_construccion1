@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==============================================================
-# Inicializador de SQL Server para Proyecto Paradigmas.
+# Inicializador de SQL Server para Proyecto Construcción 1.
 # Crea la base de datos bdfacturas_sqlserver_local y ejecuta el
 # script SOLO la primera vez (si la BD no existe todavia).
 # ==============================================================

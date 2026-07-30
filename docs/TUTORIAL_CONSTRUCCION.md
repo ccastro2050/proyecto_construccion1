@@ -7,8 +7,8 @@ Pasos con los que se armó el entorno, con la explicación y el concepto detrás
 ## Paso 1 — Clonar el repositorio y verificar Docker
 
 ```bash
-git clone https://github.com/ccastro2050/proyecto_paradigmas.git
-cd proyecto_paradigmas
+git clone https://github.com/ccastro2050/proyecto_construccion1.git
+cd proyecto_construccion1
 docker --version
 ```
 
