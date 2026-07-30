@@ -69,6 +69,12 @@ Abra la carpeta en VS Code: menú **File → Open Folder** → `proyecto_paradig
 
 > Para entender cómo se conecta todo, lea [ARQUITECTURA_3_CAPAS.md](ARQUITECTURA_3_CAPAS.md) y
 > [PRINCIPIOS_SOLID_ACID.md](PRINCIPIOS_SOLID_ACID.md) (dónde está aplicado cada principio, con ejercicios).
+>
+> ¿Quiere reconstruir una pieza desde cero (o pedírselo a una IA)? Cada componente tiene su
+> **spec kit** (especificación → plan → tareas): [proyecto e infraestructura](spec_kit/2_spec.md),
+> [API Genérica](../api_generica/docs/spec_kit/2_spec.md),
+> [API Facturas](../api_facturas/docs/spec_kit/2_spec.md) y
+> [Front Flask](../front_flask/docs/spec_kit/2_spec.md).
 
 ## Paso 7 — Cambiar el motor de base de datos
 
