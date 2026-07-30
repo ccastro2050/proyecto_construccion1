@@ -1,27 +1,65 @@
 # ==============================================================
-# Proyecto Paradigmas — Entorno de desarrollo completo en Docker
-# Servicios: app (Python) + PostgreSQL + MariaDB + SQL Server
-# Uso normal: abrir en VS Code -> "Reopen in Container"
-# Uso manual: docker compose up -d --build
+# Proyecto Paradigmas — Arquitectura de 3 capas en Docker
+#
+#   FRONT (Flask, :8000)
+#      │ elige a cuál API llamar
+#      ├── API GENÉRICA  (FastAPI, :8001) — CRUD sobre cualquier tabla
+#      └── API FACTURAS  (FastAPI, :8002) — CRUD por entidad (12 tablas)
+#              │ ambas eligen motor con DB_PROVIDER
+#              └── PostgreSQL | MariaDB | SQL Server (bdfacturas)
+#
+# Uso: docker compose up -d --build
+# Cambiar de motor:  DB_PROVIDER=mariadb docker compose up -d
+#                    (opciones: postgres | mariadb | sqlserver)
 # ==============================================================
 services:
 
-  # --- Contenedor de desarrollo (Python + API + Front) ---
-  app:
-    build:
-      context: .
-      dockerfile: .devcontainer/Dockerfile
+  # --- CAPA 1: FRONT — Flask (interfaz web para el usuario) ---
+  front:
+    build: ./front_flask
     volumes:
-      - .:/workspace:cached
-    working_dir: /workspace
-    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+      - ./front_flask:/app         # el código se monta para que los cambios se vean al instante
+      - .:/workspace:cached        # todo el repo (lo usa el devcontainer opcional de VS Code)
+    command: flask --app app run --host 0.0.0.0 --port 8000 --debug
     restart: unless-stopped
     ports:
-      - "8000:8000"      # API FastAPI
+      - "8000:8000"                # http://localhost:8000
     environment:
-      POSTGRES_URL: postgresql+psycopg2://paradigmas:paradigmas123@postgres:5432/bdfacturas_postgres_local
-      MARIADB_URL: mysql+pymysql://paradigmas:paradigmas123@mariadb:3306/bdfacturas_mariadb_local
-      SQLSERVER_URL: mssql+pymssql://sa:Paradigmas123!@sqlserver:1433/bdfacturas_sqlserver_local
+      # URLs internas de las APIs (entre contenedores se usa el nombre del servicio)
+      API_GENERICA_URL: http://api-generica:8001
+      API_FACTURAS_URL: http://api-facturas:8002
+
+  # --- CAPA 2a: API GENÉRICA — CRUD sobre cualquier tabla ---
+  api-generica:
+    build: ./api_generica
+    volumes:
+      - ./api_generica:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+    restart: unless-stopped
+    ports:
+      - "8001:8001"                # http://localhost:8001/swagger
+    environment:
+      DB_PROVIDER: ${DB_PROVIDER:-postgres}
+      DB_POSTGRES: postgresql+asyncpg://paradigmas:paradigmas123@postgres:5432/bdfacturas_postgres_local
+      DB_MARIADB: mysql+aiomysql://paradigmas:paradigmas123@mariadb:3306/bdfacturas_mariadb_local
+      DB_MYSQL: mysql+aiomysql://paradigmas:paradigmas123@mariadb:3306/bdfacturas_mariadb_local
+      DB_SQLSERVER: mssql+aioodbc://sa:Paradigmas123!@sqlserver:1433/bdfacturas_sqlserver_local?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes
+
+  # --- CAPA 2b: API FACTURAS — CRUD por entidad con validación Pydantic ---
+  api-facturas:
+    build: ./api_facturas
+    volumes:
+      - ./api_facturas:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+    restart: unless-stopped
+    ports:
+      - "8002:8002"                # http://localhost:8002/swagger
+    environment:
+      DB_PROVIDER: ${DB_PROVIDER:-postgres}
+      DB_POSTGRES: postgresql+asyncpg://paradigmas:paradigmas123@postgres:5432/bdfacturas_postgres_local
+      DB_MARIADB: mysql+aiomysql://paradigmas:paradigmas123@mariadb:3306/bdfacturas_mariadb_local
+      DB_MYSQL: mysql+aiomysql://paradigmas:paradigmas123@mariadb:3306/bdfacturas_mariadb_local
+      DB_SQLSERVER: mssql+aioodbc://sa:Paradigmas123!@sqlserver:1433/bdfacturas_sqlserver_local?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes
 
   # --- PostgreSQL 16 ---
   postgres:

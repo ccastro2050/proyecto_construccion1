@@ -1,13 +1,14 @@
 {
     "name": "Proyecto Paradigmas",
     "dockerComposeFile": "../docker-compose.yml",
-    "service": "app",
+    "service": "front",
     "workspaceFolder": "/workspace",
-    "forwardPorts": [8000],
+    "forwardPorts": [8000, 8001, 8002],
     "portsAttributes": {
-        "8000": { "label": "API FastAPI", "onAutoForward": "notify" }
+        "8000": { "label": "Front Flask", "onAutoForward": "notify" },
+        "8001": { "label": "API Generica", "onAutoForward": "silent" },
+        "8002": { "label": "API Facturas", "onAutoForward": "silent" }
     },
-    "postCreateCommand": "pip install -r requirements.txt",
     "customizations": {
         "vscode": {
             "extensions": [

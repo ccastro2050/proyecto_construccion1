@@ -1,20 +1,15 @@
 # Proyecto Paradigmas
 
-Entorno de desarrollo **todo-en-uno con Docker**: programa en Python (API + front) contra **PostgreSQL, MariaDB y SQL Server** al mismo tiempo, y administra las tres bases de datos **desde VS Code**, sin instalar nada más en tu computador.
+Entorno de aprendizaje **todo-en-uno con Docker**: una arquitectura real de **3 capas** — frontend Flask, dos APIs FastAPI y tres motores de base de datos — que se levanta completa con **un solo comando**. Solo se necesita Docker Desktop.
 
-Base de datos de trabajo: **`bdfacturas`** (facturación con clientes, vendedores, productos, facturas y control de acceso por roles).
+```
+Navegador → FRONT Flask (8000)
+                ├── API GENÉRICA  (8001)  CRUD sobre cualquier tabla
+                └── API FACTURAS  (8002)  CRUD por entidad + validación Pydantic
+                        └── PostgreSQL · MariaDB · SQL Server  (bdfacturas)
+```
 
-> 📖 **Documentación:** [Guía del estudiante paso a paso](docs/GUIA_ESTUDIANTE.md) · [Conceptos clave del proyecto](docs/CONCEPTOS.md) · [Cómo se construyó este entorno](docs/TUTORIAL_CONSTRUCCION.md)
-
----
-
-## Requisitos (solo 3 cosas)
-
-1. [Docker Desktop](https://www.docker.com/products/docker-desktop/) — debe estar **abierto** antes de empezar.
-2. [Visual Studio Code](https://code.visualstudio.com/).
-3. En VS Code, la extensión **Dev Containers** (`ms-vscode-remote.remote-containers`).
-
-> También necesitas [Git](https://git-scm.com/) para clonar el repositorio.
+> 📖 **Documentación:** [Guía del estudiante](docs/GUIA_ESTUDIANTE.md) · [Arquitectura de 3 capas](docs/ARQUITECTURA_3_CAPAS.md) · [Conceptos clave](docs/CONCEPTOS.md) · [Cómo se construyó el entorno](docs/TUTORIAL_CONSTRUCCION.md)
 
 ---
 
@@ -28,39 +23,17 @@ cd proyecto_paradigmas
 docker compose up -d --build
 ```
 
-**Eso es todo.** La primera vez tarda unos minutos (descarga las imágenes). Al terminar tendrás:
+**Eso es todo.** La primera vez tarda unos minutos (descarga las imágenes). Al terminar:
 
 | Qué | Dónde |
 |---|---|
-| Frontend de ejemplo | http://localhost:8000 |
-| Documentación de la API (Swagger) | http://localhost:8000/docs |
-| PostgreSQL 16 con `bdfacturas_postgres_local` | servicio `postgres` (puerto 5432) |
-| MariaDB 11 con `bdfacturas_mariadb_local` | servicio `mariadb` (puerto 3306) |
-| SQL Server 2022 con `bdfacturas_sqlserver_local` | servicio `sqlserver` (puerto 1433) |
+| **Frontend** (Flask + Bootstrap) | http://localhost:8000 |
+| **API Genérica** — Swagger | http://localhost:8001/swagger |
+| **API Facturas** — Swagger | http://localhost:8002/docs |
+| **phpMyAdmin** (admin web de MariaDB) | http://localhost:8081 |
+| PostgreSQL 16 · MariaDB 11 · SQL Server 2022 | con la BD `bdfacturas` cargada |
 
-La API arranca sola con los contenedores y **se recarga automáticamente** al editar el código en `api/` o `front/`.
-
----
-
-## Administrar las bases de datos desde VS Code (opcional, recomendado)
-
-Con el proyecto abierto en VS Code: `F1` → **Dev Containers: Reopen in Container** (requiere la extensión *Dev Containers*). Al entrar, en la barra lateral izquierda aparece el icono de **SQLTools** (cilindro de base de datos) con las tres conexiones ya configuradas:
-
-- **PostgreSQL — bdfacturas**
-- **MariaDB — bdfacturas**
-- **SQL Server — bdfacturas**
-
-Haz clic en una conexión para explorar tablas, ver datos y ejecutar consultas SQL (`Ctrl+E Ctrl+E` ejecuta la consulta seleccionada).
-
-### Credenciales
-
-| Motor | Host (dentro del contenedor) | Puerto en tu PC | Base de datos | Usuario | Contraseña |
-|---|---|---|---|---|---|
-| PostgreSQL | `postgres` | `15432` | `bdfacturas_postgres_local` | `paradigmas` | `paradigmas123` |
-| MariaDB | `mariadb` | `13306` | `bdfacturas_mariadb_local` | `paradigmas` | `paradigmas123` |
-| SQL Server | `sqlserver` | `11433` | `bdfacturas_sqlserver_local` | `sa` | `Paradigmas123!` |
-
-> Los puertos de tu PC (`15432`, `13306`, `11433`) son opcionales: sirven si quieres conectarte con herramientas externas (DBeaver, HeidiSQL, SSMS). Desde el código y SQLTools se usa el host interno con el puerto estándar.
+Todo el código está **comentado en español** para quien está comenzando a programar. El código se recarga solo al guardar cambios (front y APIs).
 
 ---
 
@@ -68,56 +41,72 @@ Haz clic en una conexión para explorar tablas, ver datos y ejecutar consultas S
 
 ```
 proyecto_paradigmas/
-├── .devcontainer/        # Configuración del entorno de VS Code (no tocar)
-├── .vscode/tasks.json    # Tarea que arranca la API automáticamente
-├── docker-compose.yml    # Los 4 contenedores: app + 3 bases de datos
-├── db/
-│   ├── postgres/init.sql     # Script de la BD para PostgreSQL
-│   ├── mariadb/init.sql      # Script de la BD para MariaDB
-│   └── sqlserver/            # Script de la BD para SQL Server + inicializador
-├── api/                  # ← AQUÍ programas tu API (FastAPI + SQLAlchemy)
-│   ├── db.py             # Conexión a los 3 motores
-│   └── main.py           # Endpoints de ejemplo (CRUD, JOIN, SQL libre)
-├── front/                # ← AQUÍ programas tu frontend (HTML + JS)
-│   └── index.html
-└── requirements.txt      # Dependencias de Python
+├── docker-compose.yml      # Toda la infraestructura declarada aquí
+├── db/                     # Scripts de bdfacturas para los 3 motores
+│
+├── front_flask/            # CAPA 1 — Frontend (puerto 8000)
+│   ├── rutas/              #   Blueprints: productos, personas, facturas, explorador
+│   ├── servicios/          #   cliente_api.py: consume cualquiera de las 2 APIs
+│   └── templates/          #   HTML con Bootstrap 5 (herencia Jinja2)
+│
+├── api_generica/           # CAPA 2a — API CRUD genérica (puerto 8001)
+│   ├── controllers/        #   /api/{tabla} sirve para CUALQUIER tabla
+│   ├── servicios/          #   ServicioCrud + Fábrica + BCrypt
+│   └── repositorios/       #   PostgreSQL | MariaDB | SQL Server
+│
+├── api_facturas/           # CAPA 2b — API por entidad (puerto 8002)
+│   ├── controllers/        #   Un controller por tabla (12 entidades)
+│   ├── models/             #   Modelos Pydantic (validación estricta)
+│   ├── servicios/          #   Lógica de negocio por entidad
+│   └── repositorios/       #   Un repositorio por entidad y por motor
+│
+└── docs/                   # Guías y tutoriales
 ```
 
-## La API de ejemplo
+Las dos APIs siguen la misma arquitectura interna de sus repos originales:
+[ApiGenericaFastApi_Crud](https://github.com/ccastro2050/ApiGenericaFastApi_Crud) y
+[ApiFacturasFastApi_Crud](https://github.com/ccastro2050/ApiFacturasFastApi_Crud).
 
-El mismo código funciona contra los tres motores — el motor se elige en la URL:
+---
 
+## Cambiar el motor de base de datos
+
+Las dos APIs usan el motor que diga `DB_PROVIDER` (por defecto `postgres`):
+
+```powershell
+$env:DB_PROVIDER = "mariadb";   docker compose up -d    # MariaDB
+$env:DB_PROVIDER = "sqlserver"; docker compose up -d    # SQL Server
+$env:DB_PROVIDER = "postgres";  docker compose up -d    # PostgreSQL (defecto)
 ```
-GET    /api/salud                        → estado de las 3 conexiones
-GET    /api/{motor}/tablas               → lista las tablas
-GET    /api/{motor}/productos            → SELECT
-POST   /api/{motor}/productos            → INSERT (JSON con codigo, nombre, stock, valorunitario)
-PUT    /api/{motor}/productos/{codigo}   → UPDATE
-DELETE /api/{motor}/productos/{codigo}   → DELETE
-GET    /api/{motor}/facturas             → JOIN de 5 tablas
-POST   /api/{motor}/sql                  → ejecuta SQL libre (para prácticas)
-```
 
-donde `{motor}` es `postgres`, `mariadb` o `sqlserver`. Ejemplo:
+El front y el resto del sistema no cambian en nada — ese es el punto del curso.
+
+---
+
+## Administrar las bases de datos
+
+- **phpMyAdmin** (MariaDB, sin instalar nada): http://localhost:8081
+- **SQLTools en VS Code** (los 3 motores): `F1` → *Dev Containers: Reopen in Container* → icono del cilindro
+- **Herramientas locales**: pgAdmin (`localhost:15432`), HeidiSQL (`localhost:13306`), SSMS (`localhost,11433`)
+
+| Motor | Base de datos | Usuario | Contraseña | Puerto en su PC |
+|---|---|---|---|---|
+| PostgreSQL | `bdfacturas_postgres_local` | `paradigmas` | `paradigmas123` | `15432` |
+| MariaDB | `bdfacturas_mariadb_local` | `paradigmas` | `paradigmas123` | `13306` |
+| SQL Server | `bdfacturas_sqlserver_local` | `sa` | `Paradigmas123!` | `11433` |
+
+---
+
+## Comandos útiles
 
 ```bash
-curl http://localhost:8000/api/postgres/productos
+docker compose down          # apagar todo (los datos se conservan)
+docker compose up -d         # volver a encender (segundos)
+docker compose down -v       # resetear las BD a su estado original
+docker compose ps            # estado de los contenedores
+docker compose logs front    # errores del front (o api-generica / api-facturas)
 ```
 
 ---
 
-## Preguntas frecuentes
-
-**¿Cómo apago todo?** Cierra VS Code y ejecuta `docker compose down` en la carpeta del proyecto (o detén los contenedores desde Docker Desktop). Los datos de las bases de datos **se conservan**.
-
-**¿Cómo reinicio las bases de datos a su estado original?** Borra los volúmenes y vuelve a levantar:
-```bash
-docker compose down -v
-docker compose up -d
-```
-
-**SQL Server aparece "sin conexión".** Es el contenedor más pesado (~2 GB de RAM) y el más lento en arrancar: espera 1-2 minutos. Si tu equipo tiene poca memoria, puedes trabajar solo con PostgreSQL y MariaDB.
-
-**No aparece "Reopen in Container".** Verifica que Docker Desktop esté abierto y que la extensión *Dev Containers* esté instalada. Luego `F1` → *Dev Containers: Reopen in Container*.
-
-**¿Puedo trabajar sin VS Code?** Sí: `docker compose up -d --build` levanta todo, y la API queda en http://localhost:8000 después de ejecutar dentro del contenedor: `docker compose exec app uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload`.
+*Proyecto Paradigmas · USB Med · Base de datos bdfacturas (facturación + RBAC con triggers y stored procedures)*

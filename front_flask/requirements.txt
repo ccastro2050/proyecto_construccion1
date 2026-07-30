@@ -1,0 +1,5 @@
+# Framework web para el frontend
+flask>=3.0
+
+# Cliente HTTP: con esta libreria el front llama a las APIs
+requests>=2.31

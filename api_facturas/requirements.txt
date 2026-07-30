@@ -1,0 +1,22 @@
+# Framework web
+fastapi>=0.100.0
+uvicorn[standard]>=0.22.0
+ 
+# Configuración desde archivos .env
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
+ 
+# Encriptación de contraseñas con BCrypt
+passlib[bcrypt]>=1.7.4
+bcrypt>=4.0.0
+ 
+# Drivers async para bases de datos
+asyncpg>=0.28.0          # PostgreSQL
+aiomysql>=0.2.0          # MySQL / MariaDB
+cryptography>=42.0.0     # Requerido por MySQL 8 (autenticación sha256)
+aioodbc>=0.5.0           # SQL Server (via ODBC)
+ 
+# ORM async para construir queries (NO usamos ORM, solo query builder)
+sqlalchemy[asyncio]>=2.0.0
+greenlet>=3.0.0

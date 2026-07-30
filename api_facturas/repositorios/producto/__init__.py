@@ -1,0 +1,5 @@
+"""Repositorios especificos de producto."""
+
+from .repositorio_producto_postgresql import RepositorioProductoPostgreSQL
+from .repositorio_producto_sqlserver import RepositorioProductoSqlServer
+from .repositorio_producto_mysql_mariadb import RepositorioProductoMysqlMariaDB

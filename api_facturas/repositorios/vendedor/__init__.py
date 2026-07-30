@@ -1,0 +1,5 @@
+"""Repositorios especificos de vendedor."""
+
+from .repositorio_vendedor_postgresql import RepositorioVendedorPostgreSQL
+from .repositorio_vendedor_sqlserver import RepositorioVendedorSqlServer
+from .repositorio_vendedor_mysql_mariadb import RepositorioVendedorMysqlMariaDB

@@ -1,0 +1,5 @@
+"""Repositorios especificos de rol_usuario."""
+
+from .repositorio_rol_usuario_postgresql import RepositorioRolUsuarioPostgreSQL
+from .repositorio_rol_usuario_sqlserver import RepositorioRolUsuarioSqlServer
+from .repositorio_rol_usuario_mysql_mariadb import RepositorioRolUsuarioMysqlMariaDB

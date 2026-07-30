@@ -1,0 +1,77 @@
+{# facturas_detalle.html — Maestro-detalle: una factura y sus productos. #}
+{% extends "base.html" %}
+{% block titulo %}Factura {{ factura.numero }} · Proyecto Paradigmas{% endblock %}
+
+{% block contenido %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('facturas.listar') }}">Facturas</a></li>
+        <li class="breadcrumb-item active">Factura {{ factura.numero }}</li>
+    </ol>
+</nav>
+
+{# ==== El MAESTRO: datos generales de la factura ==== #}
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <i class="bi bi-receipt"></i> Factura #{{ factura.numero }}
+    </div>
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col">
+                <div class="text-muted small">Fecha</div>
+                <strong>{{ factura.fecha[:19] | replace("T", " ") if factura.fecha else "" }}</strong>
+            </div>
+            <div class="col">
+                <div class="text-muted small">Estado</div>
+                <strong>{{ factura.estado or "activa" }}</strong>
+            </div>
+            <div class="col">
+                <div class="text-muted small">Cliente (id)</div>
+                <strong>{{ factura.fkidcliente }}</strong>
+            </div>
+            <div class="col">
+                <div class="text-muted small">Vendedor (id)</div>
+                <strong>{{ factura.fkidvendedor }}</strong>
+            </div>
+            <div class="col">
+                <div class="text-muted small">Total</div>
+                <strong class="text-success">$ {{ "{:,.0f}".format(factura.total | float) }}</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ==== El DETALLE: productos de esta factura ==== #}
+<h5><i class="bi bi-list-ul"></i> Productos de la factura</h5>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-striped align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Código producto</th>
+                    <th class="text-end">Cantidad</th>
+                    <th class="text-end">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in detalle %}
+                <tr>
+                    <td><code>{{ d.fkcodproducto }}</code></td>
+                    <td class="text-end">{{ d.cantidad }}</td>
+                    <td class="text-end">$ {{ "{:,.0f}".format(d.subtotal | float) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="text-center text-muted py-4">Esta factura no tiene detalle.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="alert alert-info mt-3">
+    <i class="bi bi-lightbulb"></i>
+    El <strong>subtotal</strong> de cada renglón y el <strong>total</strong> de la factura
+    no los calculó Python: los calculan los <strong>triggers</strong> de la base de datos
+    cuando se insertan los productos. Revise el script en <code>db/</code>.
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{# personas_formulario.html — CREATE y UPDATE de personas.
+   Mismo patrón que productos_formulario.html.                    #}
+{% extends "base.html" %}
+{% block titulo %}{{ "Editar" if persona else "Nueva" }} persona · Proyecto Paradigmas{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <i class="bi bi-person"></i>
+                {{ "Editar persona " + persona.codigo if persona else "Nueva persona" }}
+            </div>
+            <div class="card-body">
+                <form method="post">
+
+                    <div class="mb-3">
+                        <label class="form-label">Código</label>
+                        <input type="text" name="codigo" class="form-control" maxlength="10"
+                               value="{{ persona.codigo if persona else '' }}"
+                               {{ "disabled" if persona else "required" }}>
+                        <div class="form-text">Máximo 10 caracteres. Ej: P007</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" name="nombre" class="form-control" maxlength="100" required
+                               value="{{ persona.nombre if persona else '' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        {# type="email": el navegador valida el formato antes de enviar #}
+                        <input type="email" name="email" class="form-control" maxlength="100" required
+                               value="{{ persona.email if persona else '' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" name="telefono" class="form-control" maxlength="20" required
+                               value="{{ persona.telefono if persona else '' }}">
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('personas.listar') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-lg"></i> Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

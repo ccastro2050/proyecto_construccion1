@@ -1,0 +1,20 @@
+/* ==============================================================
+   estilos.css — Ajustes propios encima de Bootstrap.
+   Bootstrap hace el 95% del trabajo; aquí solo van detalles.
+   ============================================================== */
+
+/* Las tarjetas de la página de inicio se levantan al pasar el mouse */
+.tarjeta-api {
+    transition: transform .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.tarjeta-api:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .10);
+}
+
+/* Encabezados de tabla un poco más discretos */
+table thead th {
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}

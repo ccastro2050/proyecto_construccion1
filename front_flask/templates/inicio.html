@@ -1,0 +1,87 @@
+{# inicio.html — Página principal: arquitectura y estado de las APIs #}
+{% extends "base.html" %}
+{% block titulo %}Inicio · Proyecto Paradigmas{% endblock %}
+
+{% block contenido %}
+<div class="text-center mb-4">
+    <h1 class="fw-bold">Arquitectura de 3 capas</h1>
+    <p class="text-muted">
+        Un frontend Flask que consume dos APIs FastAPI distintas,
+        y cada API habla con PostgreSQL, MariaDB o SQL Server.
+    </p>
+</div>
+
+{# ==== Diagrama simple de la arquitectura ==== #}
+<div class="card mb-4">
+    <div class="card-body text-center">
+<pre class="mb-0 text-start d-inline-block">
+Navegador → <strong>FRONT Flask (5000)</strong>  ← usted está aquí
+                │
+                ├── <strong>API Genérica  (8001)</strong>  /api/{tabla}          → CRUD sobre cualquier tabla
+                └── <strong>API Facturas  (8002)</strong>  /api/persona, …       → CRUD por entidad (validación Pydantic)
+                        │
+                        └── PostgreSQL · MariaDB · SQL Server  (bdfacturas)
+</pre>
+    </div>
+</div>
+
+{# ==== Estado de las dos APIs ==== #}
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card tarjeta-api h-100 border-{{ 'success' if estado_generica else 'danger' }}">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-hdd-network"></i> API Genérica
+                    {% if estado_generica %}
+                        <span class="badge bg-success">en línea</span>
+                    {% else %}
+                        <span class="badge bg-danger">sin conexión</span>
+                    {% endif %}
+                </h5>
+                <p class="card-text text-muted">
+                    Una sola implementación CRUD que sirve para <em>cualquier</em> tabla.
+                    Menos código, pero sin validación específica por entidad.
+                </p>
+                <a href="http://localhost:8001/swagger" target="_blank" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-filetype-json"></i> Swagger (8001)
+                </a>
+                <a href="{{ url_for('cambiar_api', nombre='generica') }}" class="btn btn-sm btn-primary">
+                    Usar esta API
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card tarjeta-api h-100 border-{{ 'success' if estado_facturas else 'danger' }}">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-receipt-cutoff"></i> API Facturas
+                    {% if estado_facturas %}
+                        <span class="badge bg-success">en línea</span>
+                    {% else %}
+                        <span class="badge bg-danger">sin conexión</span>
+                    {% endif %}
+                </h5>
+                <p class="card-text text-muted">
+                    Un controller, un servicio y un repositorio <em>por cada entidad</em>
+                    (12 tablas), con modelos Pydantic que validan los datos.
+                </p>
+                <a href="http://localhost:8002/swagger" target="_blank" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-filetype-json"></i> Swagger (8002)
+                </a>
+                <a href="{{ url_for('cambiar_api', nombre='facturas') }}" class="btn btn-sm btn-primary">
+                    Usar esta API
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info mt-4">
+    <i class="bi bi-lightbulb"></i>
+    <strong>Pruebe esto:</strong> abra <a href="{{ url_for('productos.listar') }}">Productos</a>,
+    luego cambie de API en el menú superior y vuelva a mirar: la pantalla funciona igual
+    con las dos APIs. Ese es el punto — el frontend no depende de cómo está construido el backend.
+</div>
+{% endblock %}

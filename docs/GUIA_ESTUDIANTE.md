@@ -43,36 +43,41 @@ docker compose up -d --build
 
 ## Paso 4 — Verificar
 
-Abra en el navegador: **http://localhost:8000** — debe ver los 3 motores en verde (SQL Server tarda 1–2 minutos).
+Abra en el navegador: **http://localhost:8000** — es el **frontend Flask**. Debe ver las dos APIs con la insignia verde "en línea" (la primera vez pueden tardar 1–2 minutos mientras arranca todo).
 
-## Paso 5 — Su primera consulta contra una base de datos
+## Paso 5 — Su primer recorrido por las 3 capas
 
-En esa misma página (http://localhost:8000):
+En http://localhost:8000:
 
-1. En **Motor** deje `PostgreSQL` y haga clic en el botón **Productos** → la tabla que aparece viene de la base de datos PostgreSQL, consultada en vivo por la API de Python.
-2. Clic en **Facturas (JOIN)** → una consulta que une 5 tablas.
-3. En la caja de texto escriba una consulta y clic en **Ejecutar SQL**:
-
-```sql
-SELECT * FROM persona
-```
-
-4. Ahora cambie **Motor** a `MariaDB` o `SQL Server` y repita: **es la misma base de datos y el mismo código Python, pero otro motor**. De eso se trata el curso.
-
-También puede verlo desde la terminal:
-
-```powershell
-curl http://localhost:8000/api/postgres/productos
-```
+1. Clic en **Productos** → la tabla que ve la pidió el front a una **API** y la API la leyó de la **base de datos**. Tres capas trabajando.
+2. Cree un producto con el botón **Nuevo producto**, edítelo y elimínelo — es un CRUD completo.
+3. En el menú superior derecho cambie la **API activa** (Genérica ↔ Facturas) y repita: la pantalla funciona igual con las dos. El front no depende de cómo está construido el backend.
+4. Abra el **Explorador** y mire cualquiera de las 12 tablas de la base de datos.
+5. Mire las APIs por dentro (documentación interactiva):
+   - API Genérica: http://localhost:8001/swagger
+   - API Facturas: http://localhost:8002/docs
 
 ## Paso 6 — Programar
 
-Abra la carpeta en VS Code: menú **File → Open Folder** → `proyecto_paradigmas`.
+Abra la carpeta en VS Code: menú **File → Open Folder** → `proyecto_paradigmas`. Todo el código está comentado en español. Al guardar un archivo, la aplicación se recarga sola.
 
-| Qué quiere hacer | Dónde |
+| Qué quiere tocar | Dónde |
 |---|---|
-| Escribir la API en Python | carpeta `api/` — al guardar, la API se recarga sola |
-| Escribir el frontend (HTML/JS) | carpeta `front/` — recargue el navegador para ver los cambios |
+| El frontend (pantallas, rutas Flask) | carpeta `front_flask/` |
+| La API genérica (un CRUD para toda tabla) | carpeta `api_generica/` |
+| La API de facturas (un CRUD por entidad) | carpeta `api_facturas/` |
+
+> Para entender cómo se conecta todo, lea [ARQUITECTURA_3_CAPAS.md](ARQUITECTURA_3_CAPAS.md).
+
+## Paso 7 — Cambiar el motor de base de datos
+
+Las APIs arrancan usando PostgreSQL. Para que usen otro motor:
+
+```powershell
+$env:DB_PROVIDER = "mariadb";  docker compose up -d
+```
+
+(opciones: `postgres`, `mariadb`, `sqlserver`). Recargue el front: los datos ahora salen del otro motor y **nada más cambió**.
 
 **Hasta aquí llega la puesta en marcha.** Lo que sigue es material de consulta para más adelante.
 
@@ -144,7 +149,7 @@ docker compose down          # apagar todo (los datos se conservan)
 docker compose up -d         # volver a encender
 docker compose down -v       # resetear las BD a su estado original (¡borra sus cambios!)
 docker compose ps            # ver el estado de los contenedores
-docker compose logs app      # ver los errores de la API si algo falla
+docker compose logs front    # errores del front (o api-generica / api-facturas)
 ```
 
 ## Credenciales de las bases de datos
@@ -162,6 +167,6 @@ docker compose logs app      # ver los errores de la API si algo falla
 | Problema | Solución |
 |---|---|
 | SQL Server "sin conexión" | Espere 1–2 minutos; necesita ~2 GB de RAM. En equipos limitados trabaje solo con PostgreSQL y MariaDB |
-| http://localhost:8000 no abre | `docker compose ps` para ver si los contenedores corren; `docker compose logs app` para ver el error |
+| http://localhost:8000 no abre | `docker compose ps` para ver si los contenedores corren; `docker compose logs front` para ver el error |
 | El puerto 8000 está ocupado | Cierre el otro programa que lo usa, o cambie el puerto en `docker-compose.yml` |
 | Todo se dañó y quiero empezar de cero | `docker compose down -v` y luego `docker compose up -d --build` |

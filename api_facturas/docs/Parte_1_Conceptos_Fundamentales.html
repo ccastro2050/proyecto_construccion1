@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Parte 1: Conceptos Fundamentales — ApiFacturasFastApi_Crud</title>
+</head>
+<body style="font-family:Calibri,'Segoe UI',Arial,sans-serif; font-size:11pt; line-height:1.6; color:#1a1a1a; margin:30px 40px; padding:0;">
+
+<!-- ============================================================ -->
+<!-- ENCABEZADO                                                    -->
+<!-- ============================================================ -->
+
+<h1 style="font-size:20pt; color:#1a5276; border-bottom:3px solid #2980b9; padding-bottom:8px; text-align:center;">Tutorial: API CRUD de Facturas con Python y FastAPI</h1>
+
+<p style="text-align:center; color:#5d6d7e; font-size:12pt; margin-top:0;">
+    Proyecto: <strong>ApiFacturasFastApi_Crud</strong><br>
+    Base de datos de ejemplo: <strong>bdfacturas_postgres_local</strong> (PostgreSQL)<br>
+    Soporta: SQL Server &middot; SQL Server Express &middot; LocalDB &middot; PostgreSQL &middot; MySQL &middot; MariaDB
+</p>
+
+<h1 style="font-size:20pt; color:#1a5276; border-bottom:3px solid #2980b9; padding-bottom:8px; margin-top:40px;">Parte 1: Conceptos Fundamentales</h1>
+
+<p>
+    Esta parte cubre los fundamentos necesarios para entender la arquitectura <em>antes</em> de escribir
+    c&oacute;digo. No se escribe ni una sola l&iacute;nea aqu&iacute;; el objetivo es que entiendas <strong>por qu&eacute;</strong>
+    el proyecto est&aacute; organizado as&iacute;. Los ejemplos concretos usan PostgreSQL y la base de datos
+    <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 5px; color:#2c3e50;">bdfacturas_postgres_local</span>, pero la arquitectura es id&eacute;ntica para los 6 motores soportados.
+</p>
+
+<!-- ============================================================ -->
+<!-- 1.1 SDLC                                                      -->
+<!-- ============================================================ -->
+
+<h2 style="font-size:16pt; color:#1a5276; border-bottom:2px solid #aed6f1; padding-bottom:6px; margin-top:35px;">1.1 SDLC (Ciclo de Vida del Desarrollo de Software)</h2>
+
+<p>Son las fases que sigue cualquier proyecto de software:</p>
+
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Fase</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Descripci&oacute;n</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">1. An&aacute;lisis</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">&iquest;Qu&eacute; necesitamos?</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">2. Dise&ntilde;o</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">&iquest;C&oacute;mo lo construimos? (arquitectura, patrones)</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">3. Desarrollo</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Escribir el c&oacute;digo</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">4. Pruebas</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Verificar que funciona</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">5. Despliegue</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Poner en producci&oacute;n</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">6. Mantenimiento</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Correcciones y mejoras</td>
+    </tr>
+</table>
+
+<p><strong>En este proyecto:</strong></p>
+
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Fase</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Qu&eacute; hacemos</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><strong>An&aacute;lisis</strong></td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">
+            API REST que haga CRUD sobre las tablas de
+            <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">bdfacturas_postgres_local</span>
+            (y cualquier otra <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">bdfacturas_*_local</span> cambiando solo la configuraci&oacute;n).
+            Soporta 6 motores de base de datos.
+        </td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><strong>Dise&ntilde;o</strong></td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Arquitectura en 3 capas + patrones Repository, Service y Factory</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><strong>Desarrollo</strong></td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Lo haremos paso a paso en este tutorial</td>
+    </tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- 1.2 SOLID                                                     -->
+<!-- ============================================================ -->
+
+<h2 style="font-size:16pt; color:#1a5276; border-bottom:2px solid #aed6f1; padding-bottom:6px; margin-top:35px;">1.2 SOLID (5 Principios de Dise&ntilde;o)</h2>
+
+<p>
+    Son 5 reglas que ayudan a que el c&oacute;digo sea m&aacute;s f&aacute;cil de mantener, extender y entender.
+    Cada letra corresponde a un principio.
+</p>
+
+<!-- S -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">S &mdash; Single Responsibility (Responsabilidad &Uacute;nica)</h3>
+
+<p>Cada clase tiene <strong>UNA sola raz&oacute;n para cambiar</strong>.</p>
+
+<p>En nuestra API:</p>
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Carpeta</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Responsabilidad</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">controllers/</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Solo recibe peticiones HTTP</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">servicios/</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Solo l&oacute;gica de negocio (validar, normalizar)</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">repositorios/</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Solo acceso a datos (SQL)</td>
+    </tr>
+</table>
+
+<p>
+    Si ma&ntilde;ana cambian las reglas de validaci&oacute;n, solo tocas <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">servicios/</span>.
+    Si cambia la sintaxis SQL de PostgreSQL, solo tocas <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">repositorios/</span>.
+    El controller no se entera de nada.
+</p>
+
+<!-- O -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">O &mdash; Open/Closed (Abierto/Cerrado)</h3>
+
+<p><strong>Abierto para extensi&oacute;n, cerrado para modificaci&oacute;n.</strong></p>
+
+<p>
+    Si el d&iacute;a de ma&ntilde;ana necesitas agregar soporte para Oracle, solo creas una clase nueva
+    y la registras en la f&aacute;brica. No tocas nada de lo que ya funciona:
+</p>
+
+<div style="background-color:#f7f9f9; border:1px solid #d5dbdb; border-left:4px solid #2980b9; padding:14px 18px; margin:12px 0; font-family:Consolas,'Courier New',monospace; font-size:10pt; line-height:1.5;">
+Agregar Oracle = crear RepositorioLecturaOracle<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 1 l&iacute;nea en fabrica_repositorios.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 0 cambios en controllers/ o servicios/
+</div>
+
+<!-- L -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">L &mdash; Liskov Substitution (Sustituci&oacute;n de Liskov)</h3>
+
+<p>
+    Cualquier repositorio (PostgreSQL, SQL Server, MySQL) puede reemplazar a otro
+    sin que el servicio se entere.
+</p>
+
+<div style="background-color:#f7f9f9; border:1px solid #d5dbdb; border-left:4px solid #2980b9; padding:14px 18px; margin:12px 0; font-family:Consolas,'Courier New',monospace; font-size:10pt; line-height:1.5;">
+Prueba: Cambiar DB_PROVIDER=postgres por sqlserver en .env<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&iquest;Funciona sin tocar c&oacute;digo? &rarr; S&iacute; &rarr; Cumple Liskov
+</div>
+
+<p>
+    Ejemplo concreto: hoy trabajamos con <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">bdfacturas_postgres_local</span>.
+    Si cambiamos el <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">.env</span> para apuntar a <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">bdfacturas_sqlserver_local</span>,
+    la API sigue funcionando igual porque todos los repositorios cumplen el mismo contrato.
+</p>
+
+<!-- I -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">I &mdash; Interface Segregation (Segregaci&oacute;n de Interfaces)</h3>
+
+<p><strong>Interfaces peque&ntilde;as y espec&iacute;ficas</strong>, no una interfaz gigante que haga todo.</p>
+
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Interfaz (Protocol)</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Responsabilidad</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">IRepositorioLecturaTabla</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">CRUD (obtener, crear, actualizar, eliminar)</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">IProveedorConexion</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Solo cadena de conexi&oacute;n</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">IServicioCrud</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Solo l&oacute;gica de negocio CRUD</td>
+    </tr>
+</table>
+
+<p>
+    Cada interfaz (en Python se llaman <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">Protocol</span>) define solo lo que necesita.
+    Nadie implementa m&eacute;todos que no usa.
+</p>
+
+<!-- D -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">D &mdash; Dependency Inversion (Inversi&oacute;n de Dependencias)</h3>
+
+<p>Las clases dependen de <strong>abstracciones</strong> (Protocols), no de implementaciones concretas.</p>
+
+<div style="background-color:#f7f9f9; border:1px solid #d5dbdb; border-left:4px solid #2980b9; padding:14px 18px; margin:12px 0; font-family:Consolas,'Courier New',monospace; font-size:10pt; line-height:1.5;">
+ServicioCrud recibe: IRepositorioLecturaTabla&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Protocol / abstracci&oacute;n)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RepositorioLecturaPostgreSQL&nbsp;&nbsp;&nbsp;&nbsp;(clase concreta)
+</div>
+
+<p>
+    As&iacute;, el servicio funciona con cualquier repositorio que cumpla el contrato,
+    sin importar si es PostgreSQL, SQL Server o MySQL.
+</p>
+
+<!-- Tabla resumen SOLID -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">Resumen SOLID en nuestra API</h3>
+
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Principio</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">C&oacute;mo se aplica</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><strong>S</strong> &mdash; Responsabilidad &Uacute;nica</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Controller, Servicio y Repositorio separados</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><strong>O</strong> &mdash; Abierto/Cerrado</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Nueva BD = nueva clase, sin tocar las existentes</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><strong>L</strong> &mdash; Sustituci&oacute;n Liskov</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Cambiar proveedor en <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">.env</span>, todo sigue funcionando</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><strong>I</strong> &mdash; Segregaci&oacute;n Interfaces</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Protocols peque&ntilde;os y espec&iacute;ficos</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><strong>D</strong> &mdash; Inversi&oacute;n Dependencias</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Servicios reciben abstracciones, no clases concretas</td>
+    </tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- 1.3 Arquitectura en 3 Capas                                   -->
+<!-- ============================================================ -->
+
+<h2 style="font-size:16pt; color:#1a5276; border-bottom:2px solid #aed6f1; padding-bottom:6px; margin-top:35px;">1.3 Arquitectura en 3 Capas</h2>
+
+<p>
+    La API se divide en tres capas. Cada una tiene una responsabilidad clara
+    y solo conoce a la capa que est&aacute; inmediatamente debajo.
+</p>
+
+<!-- Diagrama de capas como tabla visual -->
+<table style="border-collapse:collapse; width:80%; margin:16px auto; font-size:10.5pt;">
+    <tr>
+        <td style="background-color:#aed6f1; border:2px solid #2980b9; padding:12px 16px; text-align:center; font-weight:bold;">
+            CLIENTE (Frontend / Swagger)
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align:center; padding:4px; font-size:14pt; color:#2980b9;">&darr; HTTP</td>
+    </tr>
+    <tr>
+        <td style="background-color:#d4efdf; border:2px solid #27ae60; padding:12px 16px;">
+            <strong>CAPA 1: PRESENTACI&Oacute;N (Controllers)</strong><br>
+            &bull; Recibe peticiones HTTP<br>
+            &bull; Retorna respuestas JSON<br>
+            &bull; NO contiene l&oacute;gica de negocio<br>
+            <span style="font-family:Consolas,'Courier New',monospace; font-size:9.5pt; color:#555;">Archivos: controllers/*.py</span>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align:center; padding:4px; font-size:14pt; color:#27ae60;">&darr; Llama a</td>
+    </tr>
+    <tr>
+        <td style="background-color:#fdebd0; border:2px solid #e67e22; padding:12px 16px;">
+            <strong>CAPA 2: NEGOCIO (Servicios)</strong><br>
+            &bull; Validaciones de negocio<br>
+            &bull; Normalizaci&oacute;n de datos<br>
+            &bull; Orquesta llamadas al repositorio<br>
+            <span style="font-family:Consolas,'Courier New',monospace; font-size:9.5pt; color:#555;">Archivos: servicios/*.py</span>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align:center; padding:4px; font-size:14pt; color:#e67e22;">&darr; Llama a</td>
+    </tr>
+    <tr>
+        <td style="background-color:#fadbd8; border:2px solid #e74c3c; padding:12px 16px;">
+            <strong>CAPA 3: DATOS (Repositorios)</strong><br>
+            &bull; Consultas SQL<br>
+            &bull; Conexi&oacute;n a base de datos<br>
+            &bull; NO contiene l&oacute;gica de negocio<br>
+            <span style="font-family:Consolas,'Courier New',monospace; font-size:9.5pt; color:#555;">Archivos: repositorios/*.py</span>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align:center; padding:4px; font-size:14pt; color:#e74c3c;">&darr; Consulta</td>
+    </tr>
+    <tr>
+        <td style="background-color:#e8daef; border:2px solid #8e44ad; padding:12px 16px; text-align:center;">
+            <strong>BASE DE DATOS</strong><br>
+            SQL Server | PostgreSQL | MySQL<br>
+            <span style="font-family:Consolas,'Courier New',monospace; font-size:9.5pt;">(Ejemplo: bdfacturas_postgres_local)</span>
+        </td>
+    </tr>
+</table>
+
+<p><strong>Regla clave:</strong> Cada capa solo conoce a la capa inmediatamente inferior.</p>
+
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Capa</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Conoce a</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">NO conoce a</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Controller</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Servicio</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Repositorio, BD</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Servicio</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Repositorio (v&iacute;a abstracci&oacute;n)</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Controller, BD directa</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Repositorio</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">BD (PostgreSQL, SQL Server, etc.)</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Controller, Servicio</td>
+    </tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- 1.4 Estructura de Carpetas                                    -->
+<!-- ============================================================ -->
+
+<h2 style="font-size:16pt; color:#1a5276; border-bottom:2px solid #aed6f1; padding-bottom:6px; margin-top:35px;">1.4 Estructura de Carpetas</h2>
+
+<div style="background-color:#f7f9f9; border:1px solid #d5dbdb; border-left:4px solid #2980b9; padding:14px 18px; margin:12px 0; font-family:Consolas,'Courier New',monospace; font-size:10pt; line-height:1.6;">
+ApiFacturasFastApi_Crud/<br>
+&#9500;&#9472;&#9472; main.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr; Punto de entrada<br>
+&#9500;&#9472;&#9472; config.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr; Configuraci&oacute;n desde .env<br>
+&#9500;&#9472;&#9472; requirements.txt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr; Dependencias<br>
+&#9500;&#9472;&#9472; .env &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr; Variables de entorno<br>
+&#9474;<br>
+&#9500;&#9472;&#9472; controllers/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr; CAPA 1: Presentaci&oacute;n<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; __init__.py<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; entidades_controller.py<br>
+&#9474;<br>
+&#9500;&#9472;&#9472; servicios/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr; CAPA 2: Negocio<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; __init__.py<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; servicio_crud.py<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; fabrica_repositorios.py<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; abstracciones/<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; __init__.py<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; i_servicio_crud.py<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; i_proveedor_conexion.py<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; conexion/<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; __init__.py<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; proveedor_conexion.py<br>
+&#9474;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; utilidades/<br>
+&#9474;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; __init__.py<br>
+&#9474;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; encriptacion_bcrypt.py<br>
+&#9474;<br>
+&#9492;&#9472;&#9472; repositorios/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr; CAPA 3: Datos<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; __init__.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; abstracciones/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; __init__.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; i_repositorio_lectura_tabla.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; repositorio_lectura_postgresql.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; repositorio_lectura_sqlserver.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; repositorio_lectura_mysql_mariadb.py
+</div>
+
+<div style="background-color:#eaf2f8; border-left:4px solid #2980b9; padding:12px 16px; margin:14px 0;">
+    <strong style="color:#1a5276;">Nota:</strong> En nuestro <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#d4e6f1; padding:2px 4px;">.env</span> usamos <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#d4e6f1; padding:2px 4px;">DB_PROVIDER=postgres</span> apuntando a
+    <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#d4e6f1; padding:2px 4px;">bdfacturas_postgres_local</span>. Si alg&uacute;n estudiante quiere probar con SQL Server o MySQL,
+    solo cambia esa l&iacute;nea.
+</div>
+
+<!-- ============================================================ -->
+<!-- 1.5 Patrones de Diseño                                        -->
+<!-- ============================================================ -->
+
+<h2 style="font-size:16pt; color:#1a5276; border-bottom:2px solid #aed6f1; padding-bottom:6px; margin-top:35px;">1.5 Patrones de Dise&ntilde;o Usados</h2>
+
+<!-- Repository -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">1. Repository Pattern (Patr&oacute;n Repositorio)</h3>
+
+<p>
+    Encapsula el acceso a datos. El servicio pide datos sin saber qu&eacute; SQL se ejecuta
+    ni qu&eacute; motor de BD hay debajo.
+</p>
+
+<p>Ejemplo: el servicio dice <em>&ldquo;dame los productos&rdquo;</em>. Dependiendo del motor, el repositorio ejecuta:</p>
+
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Motor</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">SQL que ejecuta</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><strong>PostgreSQL</strong></td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">SELECT * FROM "public"."producto" LIMIT 1000</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">SQL Server</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">SELECT TOP (1000) * FROM [dbo].[producto]</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">MySQL / MariaDB</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">SELECT * FROM `producto` LIMIT 1000</td>
+    </tr>
+</table>
+
+<p>El servicio no se entera de la diferencia. Solo pide datos y los recibe.</p>
+
+<!-- Service Layer -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">2. Service Layer (Capa de Servicio)</h3>
+
+<p>
+    Capa intermedia con la l&oacute;gica de negocio. El controller delega al servicio;
+    el servicio delega al repositorio.
+</p>
+<p>Ejemplo: antes de crear un registro, el servicio valida que los datos no est&eacute;n vac&iacute;os y puede encriptar contrase&ntilde;as con BCrypt.</p>
+
+<!-- Factory -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">3. Factory Pattern (Patr&oacute;n F&aacute;brica)</h3>
+
+<p>
+    <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">fabrica_repositorios.py</span> decide qu&eacute; repositorio crear seg&uacute;n
+    <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">DB_PROVIDER</span> en el <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">.env</span>. Un solo lugar centralizado.
+</p>
+
+<h4 style="font-size:11pt; color:#2e86c1; margin-top:18px;">Flujo completo (ejemplo con PostgreSQL y bdfacturas_postgres_local):</h4>
+
+<table style="border-collapse:collapse; width:85%; margin:16px auto; font-size:10.5pt;">
+    <tr>
+        <td style="background-color:#aed6f1; border:2px solid #2980b9; padding:10px 14px; text-align:center; font-family:Consolas,'Courier New',monospace; font-size:10pt;">
+            GET /api/producto
+        </td>
+    </tr>
+    <tr><td style="text-align:center; padding:3px; font-size:14pt; color:#2980b9;">&darr;</td></tr>
+    <tr>
+        <td style="background-color:#d4efdf; border:2px solid #27ae60; padding:10px 14px;">
+            <strong>Controller:</strong> &ldquo;Necesito listar productos&rdquo;
+        </td>
+    </tr>
+    <tr><td style="text-align:center; padding:3px; font-size:14pt; color:#27ae60;">&darr;</td></tr>
+    <tr>
+        <td style="background-color:#fdebd0; border:2px solid #e67e22; padding:10px 14px;">
+            <strong>Servicio:</strong> &ldquo;Valido par&aacute;metros, delego al repositorio&rdquo;
+        </td>
+    </tr>
+    <tr><td style="text-align:center; padding:3px; font-size:14pt; color:#e67e22;">&darr;</td></tr>
+    <tr>
+        <td style="background-color:#fdebd0; border:2px solid #e67e22; padding:10px 14px;">
+            <strong>F&aacute;brica:</strong> &ldquo;DB_PROVIDER=postgres &rarr; creo RepositorioLecturaPostgreSQL&rdquo;
+        </td>
+    </tr>
+    <tr><td style="text-align:center; padding:3px; font-size:14pt; color:#e74c3c;">&darr;</td></tr>
+    <tr>
+        <td style="background-color:#fadbd8; border:2px solid #e74c3c; padding:10px 14px;">
+            <strong>Repositorio:</strong>
+            <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">SELECT * FROM "public"."producto" LIMIT 1000</span><br>
+            <span style="font-size:9.5pt; color:#777;">(contra bdfacturas_postgres_local)</span>
+        </td>
+    </tr>
+    <tr><td style="text-align:center; padding:3px; font-size:14pt; color:#8e44ad;">&darr;</td></tr>
+    <tr>
+        <td style="background-color:#e8daef; border:2px solid #8e44ad; padding:10px 14px; text-align:center;">
+            <strong>JSON &rarr; Cliente</strong>
+        </td>
+    </tr>
+</table>
+
+<p><strong>Resultado:</strong> Cambiar de base de datos = cambiar 1 l&iacute;nea en <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">.env</span>.</p>
+
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Cambio en .env</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Base de datos que usa</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">DB_PROVIDER=postgres</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">bdfacturas_postgres_local</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">DB_PROVIDER=sqlserver</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">bdfacturas_sqlserver_local</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">DB_PROVIDER=mysql</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">bdfacturas_mysql_local</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">DB_PROVIDER=mariadb</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">bdfacturas_mariadb_local</td>
+    </tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- 1.6 Equivalencias .NET → Python/FastAPI                       -->
+<!-- ============================================================ -->
+
+<h2 style="font-size:16pt; color:#1a5276; border-bottom:2px solid #aed6f1; padding-bottom:6px; margin-top:35px;">1.6 Equivalencias .NET &rarr; Python/FastAPI</h2>
+
+<p>
+    Si vienes del mundo .NET, esta tabla te ayuda a ubicar los conceptos equivalentes
+    en Python y FastAPI:
+</p>
+
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">.NET</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Python / FastAPI</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">interface IServicio</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">Protocol</span> (m&oacute;dulo <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">typing</span>)</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">builder.Services.AddScoped&lt;&gt;()</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Funci&oacute;n factory + <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">crear_servicio_crud()</span></td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">appsettings.json</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">.env</span> + <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">pydantic-settings</span></td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">Program.cs</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">main.py</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">[ApiController]</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">APIRouter</span> de FastAPI</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">[HttpGet], [HttpPost]</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">@router.get(), @router.post()</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">IConfiguration</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">Settings</span> (Pydantic <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">BaseSettings</span>)</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">BCrypt.Net</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">bcrypt</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Swagger (Swashbuckle)</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Integrado en FastAPI (<span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">/swagger</span>)</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">async Task&lt;&gt;</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">async def</span> nativo de Python</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word; font-family:Consolas,'Courier New',monospace; font-size:10pt;">Npgsql</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">asyncpg</span> (driver async PostgreSQL)</td>
+    </tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- 1.7 Prerequisitos                                             -->
+<!-- ============================================================ -->
+
+<h2 style="font-size:16pt; color:#1a5276; border-bottom:2px solid #aed6f1; padding-bottom:6px; margin-top:35px;">1.7 Prerequisitos</h2>
+
+<!-- Python -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">Python 3.11+</h3>
+
+<p>Descargar de: <a href="https://www.python.org/downloads/">https://www.python.org/downloads/</a></p>
+<p>Al instalar en Windows, <strong>marcar la casilla &ldquo;Add Python to PATH&rdquo;</strong>.</p>
+
+<div style="background-color:#f7f9f9; border:1px solid #d5dbdb; border-left:4px solid #2980b9; padding:14px 18px; margin:12px 0; font-family:Consolas,'Courier New',monospace; font-size:10pt; line-height:1.5;">
+# Verificar instalaci&oacute;n<br>
+python --version<br>
+pip --version
+</div>
+
+<!-- VS Code -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">Visual Studio Code</h3>
+
+<p>Descargar de: <a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
+<p>Extensiones recomendadas: <strong>Python</strong> (Microsoft) y <strong>Pylance</strong>.</p>
+<p>En Linux se puede instalar desde la tienda de Snap (<span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">snap install code --classic</span>) o descargando el <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">.deb</span>/<span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">.rpm</span> desde la misma p&aacute;gina.</p>
+
+<!-- Git -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">Git</h3>
+
+<p>Descargar de: <a href="https://git-scm.com/downloads">https://git-scm.com/downloads</a></p>
+<p>En Windows instala tambi&eacute;n <strong>Git Bash</strong>, una terminal Unix que usaremos en el tutorial.</p>
+<p>En Linux ya suele venir instalado. Si no:</p>
+
+<div style="background-color:#f7f9f9; border:1px solid #d5dbdb; border-left:4px solid #2980b9; padding:14px 18px; margin:12px 0; font-family:Consolas,'Courier New',monospace; font-size:10pt; line-height:1.5;">
+# Debian/Ubuntu<br>
+sudo apt install git<br>
+<br>
+# Fedora<br>
+sudo dnf install git
+</div>
+
+<p>Verificar:</p>
+
+<div style="background-color:#f7f9f9; border:1px solid #d5dbdb; border-left:4px solid #2980b9; padding:14px 18px; margin:12px 0; font-family:Consolas,'Courier New',monospace; font-size:10pt; line-height:1.5;">
+git --version
+</div>
+
+<!-- GitHub -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">GitHub</h3>
+
+<p>Crear una cuenta gratuita en: <a href="https://github.com/">https://github.com/</a></p>
+<p>Usaremos GitHub para alojar el repositorio del proyecto.</p>
+
+<!-- Bases de datos -->
+<h3 style="font-size:13pt; color:#2471a3; margin-top:25px;">Base de datos (al menos una)</h3>
+
+<p>
+    En este tutorial trabajamos con <strong>PostgreSQL</strong> y la base de datos
+    <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#f0f3f4; padding:2px 4px;">bdfacturas_postgres_local</span>, pero el proyecto soporta los 6 motores.
+    Instala al menos uno:
+</p>
+
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Motor</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Descarga</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><strong>PostgreSQL (usado en este tutorial)</strong></td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><a href="https://www.postgresql.org/download/">https://www.postgresql.org/download/</a></td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">SQL Server Express</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><a href="https://www.microsoft.com/sql-server/sql-server-downloads">https://www.microsoft.com/sql-server/sql-server-downloads</a></td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">MySQL</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><a href="https://dev.mysql.com/downloads/installer/">https://dev.mysql.com/downloads/installer/</a></td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">MariaDB</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;"><a href="https://mariadb.org/download/">https://mariadb.org/download/</a></td>
+    </tr>
+</table>
+
+<p>En Linux, PostgreSQL y MariaDB se instalan f&aacute;cilmente desde el gestor de paquetes:</p>
+
+<div style="background-color:#f7f9f9; border:1px solid #d5dbdb; border-left:4px solid #2980b9; padding:14px 18px; margin:12px 0; font-family:Consolas,'Courier New',monospace; font-size:10pt; line-height:1.5;">
+# Ejemplo Ubuntu<br>
+sudo apt install postgresql<br>
+sudo apt install mariadb-server
+</div>
+
+<div style="background-color:#fef9e7; border-left:4px solid #f39c12; padding:12px 16px; margin:14px 0;">
+    <strong>Importante:</strong> Antes de empezar la Parte 2, debes tener la base de datos
+    <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#fdebd0; padding:2px 4px;">bdfacturas_postgres_local</span> creada en tu PostgreSQL. La estructura de tablas
+    es la misma que en las dem&aacute;s <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt; background-color:#fdebd0; padding:2px 4px;">bdfacturas_*_local</span> del curso.
+</div>
+
+<!-- ============================================================ -->
+<!-- RESUMEN DE LA PARTE 1                                         -->
+<!-- ============================================================ -->
+
+<h2 style="font-size:16pt; color:#1a5276; border-bottom:2px solid #aed6f1; padding-bottom:6px; margin-top:35px;">Resumen de la Parte 1</h2>
+
+<table style="border-collapse:collapse; table-layout:fixed; width:100%; margin:12px 0; font-size:10.5pt;">
+    <tr>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Secci&oacute;n</th>
+        <th style="background-color:#2980b9; color:white; padding:8px 12px; text-align:left; border:1px solid #2980b9; word-wrap:break-word; overflow-wrap:break-word;">Qu&eacute; aprendimos</th>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">1.1 SDLC</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Las 6 fases del desarrollo de software y c&oacute;mo se aplican a este proyecto</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">1.2 SOLID</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Los 5 principios de dise&ntilde;o que gu&iacute;an la arquitectura de la API</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">1.3 Arquitectura 3 Capas</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Presentaci&oacute;n &rarr; Negocio &rarr; Datos, cada capa con su responsabilidad</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">1.4 Estructura de Carpetas</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">C&oacute;mo se organiza el proyecto en disco (controllers, servicios, repositorios)</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">1.5 Patrones de Dise&ntilde;o</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Repository, Service Layer y Factory &mdash; y c&oacute;mo fluye una petici&oacute;n completa</td>
+    </tr>
+    <tr style="background-color:#f2f7fb;">
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">1.6 Equivalencias .NET</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Tabla de referencia r&aacute;pida para quienes vienen de .NET/C#</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">1.7 Prerequisitos</td>
+        <td style="padding:8px 12px; border:1px solid #d5dbdb; word-wrap:break-word; overflow-wrap:break-word;">Python 3.11+, VS Code, Git, GitHub, PostgreSQL (y opcionalmente otros motores)</td>
+    </tr>
+</table>
+
+<div style="margin-top:30px; padding:14px; background-color:#eaf2f8; text-align:center;">
+    <strong>Siguiente:</strong> Parte 2 &mdash; Crear el Proyecto y Configuraci&oacute;n<br>
+    (Crear carpeta, entorno virtual, <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">.env</span>, <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">config.py</span>, <span style="font-family:Consolas,'Courier New',monospace; font-size:10pt;">requirements.txt</span>)
+</div>
+
+</body>
+</html>
