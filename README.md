@@ -20,7 +20,8 @@ Navegador → FRONT Blazor (8004)  login JWT + CRUDs + facturación       (C#/Bl
 > [API Genérica](api_generica/docs/spec_kit/2_spec.md) ·
 > [API Facturas](api_facturas/docs/spec_kit/2_spec.md) ·
 > [API Genérica C#](api_generica_csharp/docs/spec_kit/2_spec.md) ·
-> [Front Flask](front_flask/docs/spec_kit/2_spec.md)
+> [Front Flask](front_flask/docs/spec_kit/2_spec.md) ·
+> [Front Blazor](front_blazor/docs/spec_kit/2_spec.md)
 
 ---
 
