@@ -1,14 +1,15 @@
 # Proyecto Construcción 1
 
-Proyecto del curso **Construcción de Software 1** (USB Medellín). Entorno de aprendizaje **todo-en-uno con Docker**: una arquitectura real de **3 capas** — frontend Flask, dos APIs FastAPI, una API en **C# (ASP.NET Core)** y tres motores de base de datos — que se levanta completa con **un solo comando**. Solo se necesita Docker Desktop.
+Proyecto del curso **Construcción de Software 1** (USB Medellín). Entorno de aprendizaje **todo-en-uno con Docker**: una arquitectura real de **3 capas** — dos frontends (Flask y **Blazor**), dos APIs FastAPI, una API en **C# (ASP.NET Core)** y tres motores de base de datos — que se levanta completa con **un solo comando**. Solo se necesita Docker Desktop.
 
 > **Para quién es esto:** estudiantes que ya cursaron *Paradigmas de Programación* y *Diseño de Software*. Aquí el foco es la **construcción**: partir de especificaciones (los **spec kits** de abajo, al estilo SDD/GitHub Spec Kit), implementar por capas con SOLID, verificar contra criterios de aceptación y desplegar con Docker. El análisis y el diseño ya vienen documentados en cada README — su trabajo es construir sobre ellos.
 
 ```
-Navegador → FRONT Flask (8000)
+Navegador → FRONT Flask (8000)                                         (Python/Flask)
                 ├── API GENÉRICA  (8001)  CRUD sobre cualquier tabla        (Python/FastAPI)
                 └── API FACTURAS  (8002)  CRUD por entidad + Pydantic       (Python/FastAPI)
-Navegador → API GENÉRICA C# (8003)  mismo CRUD genérico + JWT + SPs    (C#/ASP.NET Core)
+Navegador → FRONT Blazor (8004)  login JWT + CRUDs + facturación       (C#/Blazor Server)
+                └── API GENÉRICA C# (8003)  mismo CRUD genérico + JWT + SPs (C#/ASP.NET Core)
                         └── PostgreSQL · MariaDB · SQL Server  (bdfacturas)
 ```
 
@@ -41,6 +42,7 @@ docker compose up -d --build
 | **API Genérica** — Swagger | http://localhost:8001/swagger |
 | **API Facturas** — Swagger | http://localhost:8002/docs |
 | **API Genérica C#** — Swagger (y ReDoc en `/redoc`) | http://localhost:8003/swagger |
+| **Front Blazor** (Blazor Server, consume la API C#) | http://localhost:8004 |
 | **phpMyAdmin** (admin web de MariaDB) | http://localhost:8081 |
 | PostgreSQL 16 · MariaDB 11 · SQL Server 2022 | con la BD `bdfacturas` cargada |
 
@@ -55,8 +57,8 @@ El código de las apps está **montado como volumen** dentro de los contenedores
 | Qué cambiaste | Qué hay que hacer |
 |---|---|
 | Código Python o HTML (`front_flask/`, `api_generica/`, `api_facturas/`) | **Nada.** Guarda el archivo y recarga el navegador (F5) — el contenedor detecta el cambio solo. |
-| Código C# (`api_generica_csharp/*.cs`) | **Nada.** `dotnet watch` recompila y reinicia solo (tarda unos segundos; míralo con `docker compose logs -f api-generica-csharp`). |
-| `requirements.txt`, `ApiGenericaCsharp.csproj` o un `Dockerfile` (p. ej. una librería nueva) | `docker compose up -d --build` (reconstruye la imagen; puedes limitarlo: `docker compose up -d --build api-facturas`) |
+| Código C# (`api_generica_csharp/*.cs`, `front_blazor/*.razor|*.cs`) | **Nada.** `dotnet watch` recompila y reinicia solo (tarda unos segundos; míralo con `docker compose logs -f api-generica-csharp` o `front-blazor`). |
+| `requirements.txt`, un `.csproj` o un `Dockerfile` (p. ej. una librería nueva) | `docker compose up -d --build` (reconstruye la imagen; puedes limitarlo: `docker compose up -d --build api-facturas`) |
 | `docker-compose.yml` (puertos, variables, servicios) | `docker compose up -d` (recrea solo lo que cambió) |
 | Scripts SQL de `db/` (tablas, triggers, datos iniciales) | `docker compose down -v` y luego `docker compose up -d` — ⚠️ **borra los datos** y recarga la BD desde cero |
 
@@ -92,6 +94,11 @@ proyecto_construccion1/
 │   │                       #   Procedimientos almacenados, Estructuras, Diagnóstico
 │   ├── Servicios/          #   ServicioCrud + ProveedorConexion + BCrypt + políticas
 │   └── Repositorios/       #   PostgreSQL | MariaDB | SQL Server (Dapper)
+│
+├── front_blazor/           # CAPA 1b — Front Blazor Server (puerto 8004), consume la API C#
+│   ├── Components/Pages/   #   Login, CRUDs (12 entidades), Facturación completa
+│   ├── Services/           #   ApiService + AuthService (JWT) + SpService (SPs)
+│   └── Paso1..12*.md       #   Tutorial paso a paso con el que se construyó
 │
 └── docs/                   # Guías y tutoriales
 ```
@@ -165,6 +172,7 @@ flowchart TB
 
     subgraph CAPA1["CAPA 1 — Presentación"]
         FRONT["front (Flask + Jinja2 + Bootstrap)<br/>:8000 · sin drivers de BD"]
+        FBLZ["front-blazor (Blazor Server)<br/>:8004 · login JWT + CRUDs + facturación"]
     end
 
     subgraph CAPA2["CAPA 2 — Lógica / APIs"]
@@ -180,9 +188,11 @@ flowchart TB
     end
 
     NAV -->|HTTP| FRONT
+    NAV -->|HTTP| FBLZ
     NAV -->|"HTTP directo (Swagger)"| AGC
     FRONT -->|"HTTP (según API activa en sesión)"| AG
     FRONT -->|HTTP| AF
+    FBLZ -->|"HTTP + Bearer JWT"| AGC
     AG -->|SQL parametrizado| PG & MA & MS
     AF -->|SQL parametrizado| PG & MA & MS
     AGC -->|"SQL parametrizado (Dapper)"| PG & MA & MS
@@ -348,7 +358,7 @@ sequenceDiagram
 
 ## Despliegue
 
-Todo el sistema se despliega como **9 contenedores + 3 volúmenes** en un solo host con Docker Compose:
+Todo el sistema se despliega como **10 contenedores + 3 volúmenes** en un solo host con Docker Compose:
 
 ```
 ┌─ PC del estudiante (Docker Desktop) ──────────────────────────────┐
@@ -360,6 +370,7 @@ Todo el sistema se despliega como **9 contenedores + 3 volúmenes** en un solo h
 │  │   api-generica         → FastAPI     :8001                  │  │
 │  │   api-facturas         → FastAPI     :8002                  │  │
 │  │   api-generica-csharp  → ASP.NET 10  :8003                  │  │
+│  │   front-blazor         → Blazor 10   :8004                  │  │
 │  │                                                             │  │
 │  │  MOTORES DE BD (imágenes oficiales)                         │  │
 │  │   postgres:16-alpine   → :15432      ─ volumen pgdata       │  │
@@ -388,6 +399,7 @@ flowchart TB
             G["api-generica<br/>python:3.12-slim + msodbcsql18"]
             FA["api-facturas<br/>python:3.12-slim + msodbcsql18"]
             CS["api-generica-csharp<br/>dotnet/sdk:10.0 (dotnet watch)"]
+            FB["front-blazor<br/>dotnet/sdk:10.0 (dotnet watch)"]
             P[("postgres:16-alpine")]
             M[("mariadb:11")]
             S[("mssql/server:2022")]
@@ -403,10 +415,12 @@ flowchart TB
     B -->|8001 /swagger| G
     B -->|8002 /docs| FA
     B -->|8003 /swagger| CS
+    B -->|8004| FB
     B -->|8081| PMA
     HERR["🛠️ pgAdmin · HeidiSQL · SSMS"] -->|15432 / 13306 / 11433| P & M & S
 
     F --> G & FA
+    FB --> CS
     G & FA --> P & M & S
     CS --> P & M & S
     INIT -.->|"espera healthcheck<br/>y ejecuta bdfacturas.sql"| S
