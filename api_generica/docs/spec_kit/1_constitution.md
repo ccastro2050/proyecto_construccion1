@@ -3,9 +3,9 @@
 > **Documento 1 de 8** del spec kit. Orden de lectura:
 > `1_constitution → 2_spec → 3_plan → 4_research → 5_data_model → 6_contracts → 7_quickstart → 8_tasks`.
 >
-> Principios innegociables de ESTE proyecto tratado como independiente. Si se
-> construye dentro del proyecto padre (proyecto_construccion1), aplica además la
-> constitución global en `docs/spec_kit/1_constitution.md` de la raíz.
+> Principios innegociables de este proyecto. El spec kit es **autocontenido**:
+> con esta carpeta se reconstruye la API completa desde cero, sin depender de
+> ningún otro proyecto o documento externo.
 
 ---
 
@@ -23,8 +23,8 @@ antemano. Claridad sobre sofisticación:
 
 - CERO conocimiento del esquema: ni nombres de tablas ni de columnas en el código.
 - Los tipos de columna se descubren en runtime consultando `information_schema`.
-- El precio asumido y documentado: sin validación por entidad (eso lo demuestra
-  la API de Facturas del proyecto padre), la BD es la única línea de defensa.
+- El precio asumido y documentado: sin validación por entidad, la BD es la
+  única línea de defensa sobre columnas y tipos.
 
 ## Artículo 3 — Arquitectura en capas estricta
 

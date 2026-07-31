@@ -8,10 +8,9 @@
 
 ## 1. Prerrequisito: la base de datos
 
-Opción A — dentro del proyecto padre: `docker compose up -d` en la raíz
-(levanta los 3 motores con `bdfacturas` cargada).
-
-Opción B — suelta, solo PostgreSQL:
+Montar `bdfacturas` con los scripts incluidos en `database/` — un `docker run`
+por motor, receta exacta en [5_data_model.md](5_data_model.md) §6. La mínima,
+solo PostgreSQL:
 
 ```powershell
 docker run -d --name bdfacturas -p 15432:5432 `

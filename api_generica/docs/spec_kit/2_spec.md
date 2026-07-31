@@ -38,7 +38,8 @@ La API descubre los tipos de las columnas consultando el catálogo del motor
 - Documentación interactiva Swagger.
 
 **No incluye:**
-- Validación de campos por entidad (eso lo hace la API de Facturas con Pydantic).
+- Validación de campos por entidad (decisión de diseño: la genericidad excluye
+  modelos por tabla; la BD valida columnas y tipos).
 - Autenticación/autorización de la API misma (es un proyecto didáctico).
 - Migraciones de esquema (las BD se crean con scripts `init.sql` externos).
 
@@ -105,8 +106,8 @@ Las cadenas de conexión llegan por variables `DB_POSTGRES`, `DB_MARIADB`,
   con OpenAPI en `/swagger/v1/swagger.json`.
 - **RNF5 — Serialización JSON segura:** `datetime`/`date` → ISO 8601,
   `Decimal` → float, `UUID` → string.
-- **RNF6 — Contenedor Docker:** la API corre en el puerto **8001** dentro de la
-  arquitectura de 3 capas del proyecto (ver spec kit raíz en `docs/spec_kit/`).
+- **RNF6 — Contenedor Docker:** la API corre en el puerto **8001** y es
+  empaquetable como contenedor Docker (Dockerfile propio).
 
 ## 5. Criterios de aceptación
 
@@ -114,7 +115,7 @@ Las cadenas de conexión llegan por variables `DB_POSTGRES`, `DB_MARIADB`,
 2. `GET /api/producto` devuelve los 8 productos de ejemplo con envoltura `{total, datos}`.
 3. `GET /api/factura/numero/1` devuelve la factura 1 (conversión texto→entero automática).
 4. `POST /api/persona` con `{"codigo":"P999","nombre":"Test","email":"t@t.co","telefono":"300"}`
-   crea la fila; se ve en el Explorador del front y con un cliente SQL.
+   crea la fila; se verifica con `GET /api/persona/codigo/P999` y con un cliente SQL.
 5. `PUT /api/persona/codigo/P999` cambia el nombre; `DELETE /api/persona/codigo/P999` la elimina.
 6. `POST /api/usuario?campos_encriptar=contrasena` guarda la contraseña como hash
    BCrypt de 60 caracteres (verificable en la tabla), y

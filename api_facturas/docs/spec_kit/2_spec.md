@@ -35,9 +35,8 @@ en español con comentarios que explican cada decisión.
 - La API es autónoma: corre sola con `uvicorn main:app --port 8002` o en Docker.
   Su única dependencia externa es una BD `bdfacturas`
   ([5_data_model.md](5_data_model.md) §6 explica cómo montarla suelta).
-- En el proyecto padre (arquitectura de 3 capas) convive con una "API Genérica"
-  (puerto 8001) y un frontend Flask (puerto 8000) que la consume; nada de eso es
-  requisito para construirla o probarla.
+- Cualquier cliente HTTP la consume (Swagger, un frontend, otro servicio);
+  ninguno es requisito para construirla o probarla.
 - La lógica de facturación (subtotales, totales, stock) **vive en la base de
   datos** (trigger + procedimientos): la API no la reimplementa.
 

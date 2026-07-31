@@ -24,9 +24,9 @@ proyecto_construccion1/
 │       ├── bdfacturas.sql      # ídem en dialecto T-SQL (~1480 líneas)
 │       └── init.sh             # crea la BD y ejecuta el .sql solo la primera vez
 ├── docs/                       # documentación general + este spec kit
-├── front_flask/                # capa 1 (su propio spec kit en front_flask/docs/spec_kit/)
-├── api_generica/               # capa 2a (spec kit en api_generica/docs/spec_kit/)
-└── api_facturas/               # capa 2b (spec kit en api_facturas/docs/spec_kit/)
+├── front_flask/                # capa 1 — frontend Flask (puerto 8000)
+├── api_generica/               # capa 2a — API CRUD genérica (puerto 8001)
+└── api_facturas/               # capa 2b — API por entidad (puerto 8002)
 ```
 
 ## 2. docker-compose.yml — decisiones por servicio

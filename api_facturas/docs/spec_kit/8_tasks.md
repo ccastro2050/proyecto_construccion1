@@ -101,8 +101,9 @@ crear una tabla de prueba a mano en la BD y consultarla por `/api/{tabla}` (200)
 ## Fase 8 — Docker y cierre
 - [ ] `Dockerfile` (plan §1) — build y run standalone.
 - [ ] `CORSMiddleware` si se adoptó la mejora RNF6.
-- [ ] Si se integra al proyecto padre: alta en su compose (servicio
-      `api-facturas`, puerto 8002, volumen de código + `--reload`, variables `DB_*`).
+- [ ] Opcional — orquestar con docker-compose: servicio en el puerto 8002 con
+      el código montado como volumen + `--reload`, y las variables `DB_*`
+      inyectadas por `environment:`.
 
 **Verificar:** [7_quickstart.md](7_quickstart.md) completo con los 3 motores —
 equivale a los 10 criterios de aceptación de [2_spec.md](2_spec.md) §6.

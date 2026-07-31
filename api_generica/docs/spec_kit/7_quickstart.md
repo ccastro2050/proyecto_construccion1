@@ -7,13 +7,14 @@
 
 ## 1. Prerrequisito: una base de datos
 
-Opción A — proyecto padre: `docker compose up -d` en la raíz (3 motores con
-`bdfacturas`). Opción B — PostgreSQL suelto: [5_data_model.md](5_data_model.md) §2.
+Montar `bdfacturas` con los scripts incluidos en `database/` — un `docker run`
+por motor, receta exacta en [5_data_model.md](5_data_model.md) §2
+(PostgreSQL en `localhost:15432`, usuario `paradigmas`/`paradigmas123`).
 
 ## 2. Arrancar la API
 
 ```powershell
-# local (desde api_generica, con el venv activo)
+# local (desde la raíz del proyecto, con el venv activo)
 $env:DB_PROVIDER = "postgres"
 $env:DB_POSTGRES = "postgresql+asyncpg://paradigmas:paradigmas123@localhost:15432/bdfacturas_postgres_local"
 uvicorn main:app --port 8001 --reload

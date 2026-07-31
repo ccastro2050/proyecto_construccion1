@@ -18,6 +18,7 @@ Navegador → API GENÉRICA C# (8003)  mismo CRUD genérico + JWT + SPs    (C#/A
 > [Proyecto e infraestructura](docs/spec_kit/2_spec.md) (con la [constitución](docs/spec_kit/1_constitution.md)) ·
 > [API Genérica](api_generica/docs/spec_kit/2_spec.md) ·
 > [API Facturas](api_facturas/docs/spec_kit/2_spec.md) ·
+> [API Genérica C#](api_generica_csharp/docs/spec_kit/2_spec.md) ·
 > [Front Flask](front_flask/docs/spec_kit/2_spec.md)
 
 ---
@@ -348,6 +349,36 @@ sequenceDiagram
 ## Despliegue
 
 Todo el sistema se despliega como **9 contenedores + 3 volúmenes** en un solo host con Docker Compose:
+
+```
+┌─ PC del estudiante (Docker Desktop) ──────────────────────────────┐
+│                                                                   │
+│   red interna de compose (los servicios se ven por su nombre)     │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │  APLICACIONES (imágenes construidas con build:)             │  │
+│  │   front                → Flask       :8000                  │  │
+│  │   api-generica         → FastAPI     :8001                  │  │
+│  │   api-facturas         → FastAPI     :8002                  │  │
+│  │   api-generica-csharp  → ASP.NET 10  :8003                  │  │
+│  │                                                             │  │
+│  │  MOTORES DE BD (imágenes oficiales)                         │  │
+│  │   postgres:16-alpine   → :15432      ─ volumen pgdata       │  │
+│  │   mariadb:11           → :13306      ─ volumen mariadbdata  │  │
+│  │   mssql/server:2022    → :11433      ─ volumen mssqldata    │  │
+│  │                                                             │  │
+│  │  AUXILIARES                                                 │  │
+│  │   phpmyadmin           → :8081  (admin web de MariaDB)      │  │
+│  │   sqlserver-init       → efímero: crea la BD y muere        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────────┘
+```
+
+La regla que ata las tres piezas de Docker: **la imagen es inmutable** (plantilla,
+se hornea con el Dockerfile), **el contenedor es desechable** (instancia viva,
+`down` lo destruye sin pena) y **el volumen es lo único que debe importarte
+perder** (ahí viven los datos de las 3 BD; solo `down -v` los borra).
+
+El detalle con dependencias y healthchecks:
 
 ```mermaid
 flowchart TB

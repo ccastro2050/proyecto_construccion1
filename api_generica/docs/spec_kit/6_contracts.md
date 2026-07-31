@@ -116,5 +116,5 @@ GET /
         "entorno": "production", "documentacion": { "swagger": "/swagger", "redoc": "/redoc" } }
 ```
 
-Usable como healthcheck (el frontend del proyecto padre lo usa para el badge
-"en línea").
+Usable como healthcheck por cualquier cliente (p. ej. para un badge de
+"API en línea").

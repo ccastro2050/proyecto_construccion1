@@ -14,10 +14,11 @@
 > | 7 | [7_quickstart.md](7_quickstart.md) | Verificación del sistema completo |
 > | 8 | [8_tasks.md](8_tasks.md) | Orden de construcción por fases |
 >
-> El detalle de cada aplicación está en su propio kit autocontenido:
-> [api_generica](../../api_generica/docs/spec_kit/2_spec.md) ·
-> [api_facturas](../../api_facturas/docs/spec_kit/2_spec.md) ·
-> [front_flask](../../front_flask/docs/spec_kit/2_spec.md).
+> Las aplicaciones (front_flask, api_generica, api_facturas) se tratan aquí
+> como **cajas negras**: todo lo que la infraestructura necesita saber de ellas
+> (puertos, variables de entorno, comandos, montajes) está en este kit. El
+> interior de cada aplicación es un proyecto aparte con su propia
+> especificación independiente.
 
 ---
 

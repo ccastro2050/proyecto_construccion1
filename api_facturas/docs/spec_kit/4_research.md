@@ -10,8 +10,8 @@
 ## D1 — FastAPI en vez de Flask/Django REST
 **Decisión:** FastAPI. **Por qué:** async nativo, Swagger automático (clave para
 que los estudiantes "vean" la API), y la validación Pydantic es exactamente el
-concepto que esta API enseña. Flask quedó para el frontend del proyecto padre;
-Django trae demasiada magia para un curso de arquitectura.
+concepto que esta API enseña. Flask exigiría armar a mano lo que FastAPI ya
+trae (validación, docs); Django trae demasiada magia para un curso de arquitectura.
 
 ## D2 — SQL a mano con `text()` en vez de ORM declarativo
 **Decisión:** SQLAlchemy async solo como ejecutor (`text()` + parámetros
@@ -41,8 +41,8 @@ persona se documentan aparte.
 pero la columna es INTEGER. **Decisión:** consultar
 `information_schema.columns` y convertir (`_detectar_tipo_columna` +
 `_convertir_valor`). **Alternativa rechazada:** exigir el tipo correcto al
-cliente (rompe la simetría con la API genérica del proyecto padre y complica el
-frontend). **Costo:** una consulta extra de catálogo por operación con clave.
+cliente (complica a todos los consumidores y rompe la uniformidad de las URLs).
+**Costo:** una consulta extra de catálogo por operación con clave.
 
 ## D6 — La lógica de facturación en la BD, no en Python
 **Decisión:** el trigger `actualizar_totales_y_stock` y los SP hacen los
@@ -84,8 +84,8 @@ no un estilo.
 2. **DELETE de PK compuesta filtra solo el primer segmento** en las 3 tablas
    puente → borra de más. *Recomendación:* corregir (WHERE por ambas columnas)
    y anotarlo; réplica fiel solo si se quiere estudiar el bug.
-3. **Sin CORS:** el front del proyecto padre llama del lado servidor, por eso
-   nunca dolió. *Recomendación:* añadir `CORSMiddleware` abierto.
+3. **Sin CORS:** los consumidores originales llamaban del lado servidor, por
+   eso nunca dolió. *Recomendación:* añadir `CORSMiddleware` abierto.
 4. **`SELECT TOP ({n})` interpolado** en SQL Server: validar que `limite` sea
    entero antes de interpolar.
 5. **`lru_cache` en `get_settings()`:** cambiar `DB_PROVIDER` exige reiniciar

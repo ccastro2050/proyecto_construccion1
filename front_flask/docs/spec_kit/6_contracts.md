@@ -82,7 +82,7 @@ muestran tal cual como flash.
 
 ## 4. Variables de entorno
 
-| Variable | Default (sin Docker) | En el compose del proyecto padre |
+| Variable | Default (sin Docker) | Ejemplo en docker-compose (hosts internos) |
 |---|---|---|
 | `API_GENERICA_URL` | `http://localhost:8001` | `http://api-generica:8001` |
 | `API_FACTURAS_URL` | `http://localhost:8002` | `http://api-facturas:8002` |

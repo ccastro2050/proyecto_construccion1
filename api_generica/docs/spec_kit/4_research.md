@@ -14,8 +14,8 @@ llega hasta la BD y falla allá) y superficie genérica difícil de asegurar —
 aceptable en contexto docente, inaceptable en producción sin allowlist de tablas.
 
 ## D2 — FastAPI + SQLAlchemy async con `text()`
-Mismas razones que en cualquier API del proyecto: Swagger automático, async
-nativo. `text()` + parámetros nombrados `:x` unifica el paramstyle de los 3
+FastAPI da Swagger automático y async nativo con validación de tipos en la
+firma. `text()` + parámetros nombrados `:x` unifica el paramstyle de los 3
 drivers (asyncpg usa `$1`, aioodbc usa `?`, aiomysql usa `%s` — SQLAlchemy los
 traduce). ORM declarativo descartado: exige modelos por tabla, lo contrario de
 la genericidad.
@@ -28,7 +28,8 @@ la genericidad.
 convierte a `int`/`Decimal`/`float`/`bool`/`UUID`/`date`/`datetime`/`time`.
 **Caso especial resuelto:** buscar `2025-12-03` en una columna TIMESTAMP compara
 solo la fecha (`CAST(col AS DATE)`). **Alternativa rechazada:** exigir tipos al
-cliente (rompería el frontend genérico del proyecto padre).
+cliente (rompería a cualquier cliente genérico que no conozca las columnas de
+antemano — justo el tipo de cliente para el que existe esta API).
 
 ## D4 — Un repositorio por dialecto, misma interfaz
 Las diferencias reales entre motores son pocas y localizadas: comillas de
@@ -72,6 +73,6 @@ reiniciar. A cambio, ninguna operación relee `.env`. En Docker esto es
 irrelevante (las variables llegan al arrancar el contenedor).
 
 ## D11 — Swagger en `/swagger` en vez de `/docs`
-Herencia deliberada del proyecto C# original (ASP.NET publica en `/swagger`).
-Mantiene familiaridad para quien viene de ese stack y diferencia esta API de la
-API de Facturas (que usa el `/docs` default) en el proyecto padre.
+Convención tomada del ecosistema ASP.NET (que publica su documentación en
+`/swagger`): mantiene familiaridad para quien viene de ese stack y hace
+explícita la ruta de documentación en vez de depender del default del framework.

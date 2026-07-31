@@ -159,7 +159,10 @@ MODELOS_POR_TABLA = {"persona": Persona, "empresa": Empresa, "cliente": Cliente,
     "rol_usuario": RolUsuario, "ruta": Ruta, "rutarol": RutaRol}
 ```
 
-## 6. Cómo montar la BD si se trabaja sin el proyecto padre
+## 6. Cómo montar la BD (un contenedor por motor, el que se vaya a usar)
+
+Los scripts de los 3 motores vienen incluidos en `database/`
+(`bdfacturas_postgres.sql`, `bdfacturas_mariadb.sql`, `bdfacturas_sqlserver.sql`):
 
 ```powershell
 docker run -d --name bdfacturas -p 15432:5432 `
@@ -168,6 +171,10 @@ docker run -d --name bdfacturas -p 15432:5432 `
   -v ${PWD}/database/bdfacturas_postgres.sql:/docker-entrypoint-initdb.d/init.sql:ro `
   postgres:16-alpine
 ```
+
+Para MariaDB (`mariadb:11`, puerto sugerido 13306) y SQL Server
+(`mssql/server:2022`, puerto sugerido 11433) el patrón es el mismo con su
+script correspondiente.
 
 Cadena de conexión resultante para la API:
 `DB_POSTGRES=postgresql+asyncpg://paradigmas:paradigmas123@localhost:15432/bdfacturas_postgres_local`
