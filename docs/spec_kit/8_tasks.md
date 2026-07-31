@@ -35,12 +35,16 @@ MariaDB con los mismos datos; `sqlserver-init` termina Exited (0); SSMS/Azure Da
 Studio conecta a localhost,11433 y ve la BD; segundo `up -d` no re-ejecuta nada.
 
 ## Fase 3 — Las aplicaciones
-- [ ] Construir **api_generica** → seguir su spec kit
-      ([api_generica/docs/spec_kit/](../../api_generica/docs/spec_kit/2_spec.md)).
-- [ ] Construir **api_facturas** → seguir su spec kit
-      ([api_facturas/docs/spec_kit/](../../api_facturas/docs/spec_kit/2_spec.md)).
-- [ ] Construir **front_flask** → seguir su spec kit
-      ([front_flask/docs/spec_kit/](../../front_flask/docs/spec_kit/2_spec.md)).
+- [ ] Colocar en `api_generica/` una API CRUD genérica que escuche en el
+      puerto 8001 y lea `DB_PROVIDER` + `DB_*` del entorno.
+- [ ] Colocar en `api_facturas/` una API CRUD por entidad que escuche en el
+      puerto 8002 con las mismas variables.
+- [ ] Colocar en `front_flask/` un frontend Flask que escuche en el puerto 8000
+      y consuma las APIs vía `API_GENERICA_URL` / `API_FACTURAS_URL`.
+
+> Cada aplicación es un proyecto independiente con su propia especificación;
+> para esta infraestructura son cajas negras que cumplen los contratos de
+> [6_contracts.md](6_contracts.md).
 
 ## Fase 4 — Integración en compose
 - [ ] Agregar los servicios `front` (8000), `api-generica` (8001) y `api-facturas`

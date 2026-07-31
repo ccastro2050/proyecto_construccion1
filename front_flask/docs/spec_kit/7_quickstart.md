@@ -7,9 +7,11 @@
 
 ## 1. Prerrequisito: al menos una API arriba
 
-Lo ideal: `docker compose up -d` en la raíz del proyecto padre (levanta las dos
-APIs con su BD). Alternativa mínima: la API Genérica sola contra un PostgreSQL
-suelto (ver su propio spec kit).
+Se necesitan las dos APIs corriendo en `http://localhost:8001` (Genérica) y
+`http://localhost:8002` (Facturas) — **cualquier implementación que cumpla los
+contratos descritos en [6_contracts.md](6_contracts.md) §2** sirve. El front
+también funciona con una sola: la otra aparece "sin conexión" (degradación
+elegante, es parte del diseño).
 
 ## 2. Arrancar el front
 
@@ -23,8 +25,7 @@ flask --app app run --port 8000 --debug
 ## 3. Recorrido de validación (5 minutos, en el navegador)
 
 1. **http://localhost:8000** → las dos tarjetas con badge **"en línea"** verde.
-   Apague una API (`docker compose stop api-generica`) y recargue → badge rojo
-   "sin conexión". Vuélvala a subir.
+   Apague una de las APIs y recargue → badge rojo "sin conexión". Vuélvala a subir.
 2. **Productos** → crear `PR009 / Webcam / 5 / 120000` → flash verde y aparece
    en la tabla con `$ 120,000` → editar el stock a 7 → eliminar con el
    `confirm()` → flash verde en cada paso.

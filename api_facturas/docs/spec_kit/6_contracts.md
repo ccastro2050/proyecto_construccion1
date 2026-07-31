@@ -144,8 +144,8 @@ guardan como hash BCrypt. Mapeo de excepciones: `ValueError`→400,
 GET /  →  { "mensaje": "API Facturas CRUD activa.", "docs": "/docs", "redoc": "/redoc" }
 ```
 
-Este endpoint es el que usa el frontend del proyecto padre para el badge
-"en línea" (cualquier consumidor puede usarlo como healthcheck).
+Cualquier consumidor puede usar este endpoint como healthcheck (p. ej. para un
+badge de "API en línea").
 
 ## 5. Tabla resumen de los 13 routers
 

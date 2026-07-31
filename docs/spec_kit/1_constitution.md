@@ -1,12 +1,13 @@
 # Constitución del Proyecto Construcción 1
 
-> **Documento 1 de 8** del spec kit raíz. Orden de lectura de cada kit:
+> **Documento 1 de 8** del spec kit raíz. Orden de lectura:
 > `1_constitution → 2_spec → 3_plan → 4_research → 5_data_model → 6_contracts → 7_quickstart → 8_tasks`.
 >
-> Principios **innegociables** que gobiernan todo el proyecto. Los spec kits de
-> cada componente ([raíz](2_spec.md), [api_generica](../../api_generica/docs/spec_kit/2_spec.md),
-> [api_facturas](../../api_facturas/docs/spec_kit/2_spec.md),
-> [front_flask](../../front_flask/docs/spec_kit/2_spec.md)) se subordinan a esta constitución.
+> Principios **innegociables** de la infraestructura y la integración del
+> proyecto. El kit es **autocontenido**: trata a las aplicaciones (front y APIs)
+> como cajas negras definidas por sus puertos, variables y contratos
+> (6_contracts.md) — cada aplicación se construye por separado con su propia
+> especificación independiente.
 
 ---
 

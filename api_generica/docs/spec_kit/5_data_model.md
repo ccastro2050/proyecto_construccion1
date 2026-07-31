@@ -31,10 +31,12 @@
 
 ## 2. Base de datos de prueba: `bdfacturas`
 
-Para construir y validar la API se usa la BD de facturación del proyecto padre
-(12 tablas, datos de ejemplo, trigger de totales/stock y SP). No es un requisito
-de la API — funciona contra cualquier BD — pero los criterios de aceptación de
-[2_spec.md](2_spec.md) §5 se expresan sobre ella.
+Para construir y validar la API se usa una BD de facturación (12 tablas, datos
+de ejemplo, trigger de totales/stock y SP) cuyos scripts para los 3 motores
+vienen **incluidos en este proyecto**, en `database/`
+(`bdfacturas_postgres.sql`, `bdfacturas_mariadb.sql`, `bdfacturas_sqlserver.sql`).
+No es un requisito de la API — funciona contra cualquier BD — pero los
+criterios de aceptación de [2_spec.md](2_spec.md) §5 se expresan sobre ella.
 
 ### Esquema resumido
 
@@ -63,18 +65,22 @@ mensaje del motor en `detalle`.
 5 roles · 15 rutas · 8 usuarios (admin@correo.com con hash BCrypt) · 4 clientes ·
 3 vendedores · 6 facturas · 12 renglones de detalle.
 
-### Cómo montarla suelta (sin el proyecto padre)
+### Cómo montarla (un contenedor por motor, el que se vaya a usar)
 
-El script PostgreSQL (`db/postgres/init.sql` en el repo padre, o el DDL
-equivalente) montado en un contenedor:
+El script incluido en `database/` montado en un contenedor (desde la raíz de
+este proyecto):
 
 ```powershell
 docker run -d --name bdfacturas -p 15432:5432 `
   -e POSTGRES_DB=bdfacturas_postgres_local `
   -e POSTGRES_USER=paradigmas -e POSTGRES_PASSWORD=paradigmas123 `
-  -v ${PWD}/ruta/al/init.sql:/docker-entrypoint-initdb.d/init.sql:ro `
+  -v ${PWD}/database/bdfacturas_postgres.sql:/docker-entrypoint-initdb.d/init.sql:ro `
   postgres:16-alpine
 ```
+
+Para MariaDB (`mariadb:11`, puerto sugerido 13306) y SQL Server
+(`mssql/server:2022`, puerto sugerido 11433) el patrón es el mismo con su
+script de `database/` correspondiente.
 
 Cadena para la API:
 `DB_POSTGRES=postgresql+asyncpg://paradigmas:paradigmas123@localhost:15432/bdfacturas_postgres_local`

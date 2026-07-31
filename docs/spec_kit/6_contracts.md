@@ -1,9 +1,9 @@
 # Contratos de integración — Proyecto Construcción 1
 
 > **Documento 6 de 8** del spec kit raíz: cómo se hablan las piezas entre sí
-> (puertos, hosts, variables, healthchecks). Los contratos HTTP detallados de
-> cada API viven en su propio kit
-> (`api_generica/docs/spec_kit/6_contracts.md` · `api_facturas/docs/spec_kit/6_contracts.md`).
+> (puertos, hosts, variables, healthchecks). Este kit cubre los contratos de
+> **integración**; los contratos HTTP internos de cada API pertenecen a cada
+> aplicación (cajas negras para la infraestructura).
 
 ---
 

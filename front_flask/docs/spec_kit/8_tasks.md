@@ -4,8 +4,9 @@
 > en algo **verificable**. Requisitos: [2_spec.md](2_spec.md) · técnica:
 > [3_plan.md](3_plan.md) · contratos: [6_contracts.md](6_contracts.md) ·
 > validación final: [7_quickstart.md](7_quickstart.md).
-> Prerrequisito: al menos una de las dos APIs corriendo (idealmente ambas con
-> `docker compose up -d` desde la raíz del proyecto padre).
+> Prerrequisito: al menos una de las dos APIs corriendo en
+> `localhost:8001`/`localhost:8002` (cualquier implementación que cumpla los
+> contratos de [6_contracts.md](6_contracts.md) §2).
 
 ---
 

@@ -42,7 +42,7 @@
       tipos (`_detectar_tipo_columna`, `_convertir_valor`, `_serializar_valor`)
       y los 6 métodos CRUD con identificadores `"entre comillas"` y esquema `public`.
 
-**Verificar:** con la BD del proyecto levantada, un script suelto que instancie el
+**Verificar:** con la BD de la Fase 0 levantada, un script suelto que instancie el
 repositorio lista `producto` y filtra `factura` por `numero=1`.
 
 ## Fase 4 — Servicio y fábrica
@@ -81,9 +81,10 @@ crear/actualizar/eliminar persona (200/200/200 y 404 con clave inexistente).
 ## Fase 8 — Docker y cierre
 - [ ] `Dockerfile` según el plan (§5), con msodbcsql18 — build y run standalone.
 - [ ] `.gitignore` (`__pycache__/`, `.env*`, `.venv/`).
-- [ ] Si se integra al proyecto padre: alta en su `docker-compose.yml` como
-      servicio `api-generica` (puerto 8001, volumen de código + `--reload`,
-      variables `DB_*` con los hosts internos `postgres`, `mariadb`, `sqlserver`).
+- [ ] Opcional — orquestar con docker-compose: servicio en el puerto 8001 con
+      el código montado como volumen + `--reload`, y las variables `DB_*`
+      inyectadas por `environment:` (hosts internos de la red de compose en
+      lugar de `localhost`).
 
 **Verificar:** [7_quickstart.md](7_quickstart.md) completo con los 3 motores —
 equivale a los criterios de aceptación de [2_spec.md](2_spec.md) §5, incluido el
