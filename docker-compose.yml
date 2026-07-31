@@ -5,7 +5,8 @@
 #      │ elige a cuál API llamar
 #      ├── API GENÉRICA  (FastAPI, :8001) — CRUD sobre cualquier tabla
 #      └── API FACTURAS  (FastAPI, :8002) — CRUD por entidad (12 tablas)
-#   API GENÉRICA C# (ASP.NET Core, :8003) — mismo CRUD genérico + JWT
+#   FRONT BLAZOR (Blazor Server, :8004)
+#      └── API GENÉRICA C# (ASP.NET Core, :8003) — mismo CRUD genérico + JWT
 #              │ todas eligen motor con DB_PROVIDER
 #              └── PostgreSQL | MariaDB | SQL Server (bdfacturas)
 #
@@ -80,6 +81,28 @@ services:
       ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=bdfacturas_postgres_local;Username=paradigmas;Password=paradigmas123;Pooling=true;Maximum Pool Size=100;"
       ConnectionStrings__MariaDB: "Server=mariadb;Port=3306;Database=bdfacturas_mariadb_local;Uid=paradigmas;Pwd=paradigmas123;Allow User Variables=true;CharSet=utf8mb4;"
       ConnectionStrings__SqlServer: "Server=sqlserver,1433;Database=bdfacturas_sqlserver_local;User Id=sa;Password=Paradigmas123!;TrustServerCertificate=True;"
+
+  # --- CAPA 1b: FRONT BLAZOR — segunda interfaz web, consume la API C# ---
+  front-blazor:
+    build: ./front_blazor
+    volumes:
+      - ./front_blazor:/app          # el código se monta: dotnet watch recompila al guardar
+      - /app/bin                     # bin y obj quedan DENTRO del contenedor (Linux),
+      - /app/obj                     #   sin mezclarse con los compilados de Windows
+    restart: unless-stopped
+    ports:
+      - "8004:8004"                  # http://localhost:8004
+    environment:
+      # URL interna de la API C# (entre contenedores se usa el nombre del servicio).
+      # Sobreescribe el ApiBaseUrl de appsettings.json.
+      ApiBaseUrl: http://api-generica-csharp:8003
+      # Para "recuperar contraseña" por correo (opcional): definir en el host
+      # $env:SMTP_USER / $env:SMTP_PASS antes de docker compose up.
+      Smtp__User: ${SMTP_USER:-}
+      Smtp__Pass: ${SMTP_PASS:-}
+      Smtp__From: ${SMTP_USER:-}
+    depends_on:
+      - api-generica-csharp
 
   # --- PostgreSQL 16 ---
   postgres:
