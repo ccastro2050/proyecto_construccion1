@@ -155,17 +155,52 @@ tasks.md          ¿En qué orden? pasos verificables
 Este repositorio aplica exactamente esa estructura, escrita a mano con fines
 didácticos (sin el CLI): cada componente tiene su kit numerado en orden de
 lectura en `docs/spec_kit/` (raíz), `api_generica/docs/spec_kit/`,
-`api_facturas/docs/spec_kit/` y `front_flask/docs/spec_kit/`:
+`api_facturas/docs/spec_kit/`, `api_generica_csharp/docs/spec_kit/`,
+`front_flask/docs/spec_kit/` y `front_blazor/docs/spec_kit/`:
 
 ```
 1_constitution.md → 2_spec.md → 3_plan.md → 4_research.md
 → 5_data_model.md → 6_contracts.md → 7_quickstart.md → 8_tasks.md
 ```
 
-Ejercicio propuesto: tome el kit de `api_generica/docs/spec_kit/`, entrégueselo
-a un agente de IA en una carpeta vacía con la instrucción "construye el proyecto
-siguiendo 8_tasks.md fase por fase" y compare el resultado contra los criterios
-de aceptación de `2_spec.md`. Eso ES spec-driven development.
+**Cada kit es independiente y autocontenido**: no referencia a los otros
+componentes ni a este repositorio — incluye hasta los scripts SQL de su BD de
+prueba. Esa independencia es deliberada y habilita el ejercicio central:
+
+Tome CUALQUIER kit, entrégueselo a un agente de IA en una carpeta vacía con la
+instrucción "construye el proyecto siguiendo 8_tasks.md fase por fase" y
+compare el resultado contra los criterios de aceptación de `2_spec.md`. Eso ES
+spec-driven development — y funciona igual en Claude Code, Copilot, Antigravity
+o la herramienta agéntica que use.
+
+### 3.5 Un SDD real al estilo Spec-Kit: `front_blazor/sdd/`
+
+El front Blazor trae, además de su kit numerado, su **documentación SDD
+original** — el proyecto se construyó de verdad con esta metodología, siguiendo
+las fases de GitHub Spec-Kit con sus nombres:
+
+```
+front_blazor/sdd/
+├── 00_indice.md            qué es SDD, fases, cómo se VERSIONA la spec (deuda de spec)
+├── 01_constitucion.md      ← /speckit.constitution
+├── 02_especificacion.md    ← /speckit.specify
+├── 03_clarificacion.md     ← /speckit.clarify   ★ la fase que los kits a mano no muestran
+├── 04_plan.md              ← /speckit.plan  (con diagramas de secuencia y clases)
+├── 05_tareas.md            ← /speckit.tasks (por estudiante, rama git y marcador [P])
+├── 06_herramientas_sdd.md  Spec-Kit vs OpenSpec: instalación y comparación
+└── data-model.md           ER + SQL + diccionario de datos
+```
+
+Dos piezas valen la clase completa:
+
+- **`03_clarificacion.md`** — la fase `/speckit.clarify` en acción: ~25
+  preguntas que "la IA le hace al autor" antes de planear (¿por qué Blazor
+  Server y no WASM? ¿por qué `ProtectedSessionStorage` y no localStorage?
+  ¿qué pasa si el JWT expira?) con la decisión y su porqué. Es el antídoto
+  contra los agujeros de especificación.
+- **`00_indice.md` §Versionamiento** — la disciplina de que la spec se
+  commitea ANTES que el código, y la tabla de **deuda de especificación**
+  ("spec dice X, código hace Y" es tan grave como deuda técnica).
 
 Un fragmento real de spec de este proyecto (note el estilo: verificable, sin
 tecnología en los requisitos, con criterios de aceptación medibles):
