@@ -1,13 +1,14 @@
 # Proyecto Construcción 1
 
-Proyecto del curso **Construcción de Software 1** (USB Medellín). Entorno de aprendizaje **todo-en-uno con Docker**: una arquitectura real de **3 capas** — frontend Flask, dos APIs FastAPI y tres motores de base de datos — que se levanta completa con **un solo comando**. Solo se necesita Docker Desktop.
+Proyecto del curso **Construcción de Software 1** (USB Medellín). Entorno de aprendizaje **todo-en-uno con Docker**: una arquitectura real de **3 capas** — frontend Flask, dos APIs FastAPI, una API en **C# (ASP.NET Core)** y tres motores de base de datos — que se levanta completa con **un solo comando**. Solo se necesita Docker Desktop.
 
 > **Para quién es esto:** estudiantes que ya cursaron *Paradigmas de Programación* y *Diseño de Software*. Aquí el foco es la **construcción**: partir de especificaciones (los **spec kits** de abajo, al estilo SDD/GitHub Spec Kit), implementar por capas con SOLID, verificar contra criterios de aceptación y desplegar con Docker. El análisis y el diseño ya vienen documentados en cada README — su trabajo es construir sobre ellos.
 
 ```
 Navegador → FRONT Flask (8000)
-                ├── API GENÉRICA  (8001)  CRUD sobre cualquier tabla
-                └── API FACTURAS  (8002)  CRUD por entidad + validación Pydantic
+                ├── API GENÉRICA  (8001)  CRUD sobre cualquier tabla        (Python/FastAPI)
+                └── API FACTURAS  (8002)  CRUD por entidad + Pydantic       (Python/FastAPI)
+Navegador → API GENÉRICA C# (8003)  mismo CRUD genérico + JWT + SPs    (C#/ASP.NET Core)
                         └── PostgreSQL · MariaDB · SQL Server  (bdfacturas)
 ```
 
@@ -38,10 +39,27 @@ docker compose up -d --build
 | **Frontend** (Flask + Bootstrap) | http://localhost:8000 |
 | **API Genérica** — Swagger | http://localhost:8001/swagger |
 | **API Facturas** — Swagger | http://localhost:8002/docs |
+| **API Genérica C#** — Swagger (y ReDoc en `/redoc`) | http://localhost:8003/swagger |
 | **phpMyAdmin** (admin web de MariaDB) | http://localhost:8081 |
 | PostgreSQL 16 · MariaDB 11 · SQL Server 2022 | con la BD `bdfacturas` cargada |
 
-Todo el código está **comentado en español** para quien está comenzando a programar. El código se recarga solo al guardar cambios (front y APIs).
+Todo el código está **comentado en español** para quien está comenzando a programar.
+
+---
+
+## ¿Cambiaste el código? Así se actualiza Docker
+
+El código de las apps está **montado como volumen** dentro de los contenedores (el front corre con `--debug` y las APIs con `--reload`), así que **la mayoría de los cambios no requieren ningún comando**:
+
+| Qué cambiaste | Qué hay que hacer |
+|---|---|
+| Código Python o HTML (`front_flask/`, `api_generica/`, `api_facturas/`) | **Nada.** Guarda el archivo y recarga el navegador (F5) — el contenedor detecta el cambio solo. |
+| Código C# (`api_generica_csharp/*.cs`) | **Nada.** `dotnet watch` recompila y reinicia solo (tarda unos segundos; míralo con `docker compose logs -f api-generica-csharp`). |
+| `requirements.txt`, `ApiGenericaCsharp.csproj` o un `Dockerfile` (p. ej. una librería nueva) | `docker compose up -d --build` (reconstruye la imagen; puedes limitarlo: `docker compose up -d --build api-facturas`) |
+| `docker-compose.yml` (puertos, variables, servicios) | `docker compose up -d` (recrea solo lo que cambió) |
+| Scripts SQL de `db/` (tablas, triggers, datos iniciales) | `docker compose down -v` y luego `docker compose up -d` — ⚠️ **borra los datos** y recarga la BD desde cero |
+
+Si un cambio no se refleja: `docker compose restart front` (o `api-generica` / `api-facturas`); en último caso, `docker compose up -d --build`.
 
 ---
 
@@ -68,12 +86,26 @@ proyecto_construccion1/
 │   ├── servicios/          #   Lógica de negocio por entidad
 │   └── repositorios/       #   Un repositorio por entidad y por motor
 │
+├── api_generica_csharp/    # CAPA 2c — API genérica en C#/ASP.NET Core (puerto 8003)
+│   ├── Controllers/        #   Entidades (/api/{tabla}), Autenticación JWT, Consultas,
+│   │                       #   Procedimientos almacenados, Estructuras, Diagnóstico
+│   ├── Servicios/          #   ServicioCrud + ProveedorConexion + BCrypt + políticas
+│   └── Repositorios/       #   PostgreSQL | MariaDB | SQL Server (Dapper)
+│
 └── docs/                   # Guías y tutoriales
 ```
 
-Las dos APIs siguen la misma arquitectura interna de sus repos originales:
+Las dos APIs Python siguen la misma arquitectura interna de sus repos originales:
 [ApiGenericaFastApi_Crud](https://github.com/ccastro2050/ApiGenericaFastApi_Crud) y
 [ApiFacturasFastApi_Crud](https://github.com/ccastro2050/ApiFacturasFastApi_Crud).
+
+La **API Genérica C#** es la misma lógica de la API Genérica pero en otro lenguaje y framework
+(ASP.NET Core / .NET 10 + Dapper): mismas rutas `/api/{tabla}`, misma fábrica de repositorios por
+`DB_PROVIDER` y los mismos principios SOLID — ideal para **comparar cómo se construye lo mismo
+en dos stacks distintos**. Además agrega autenticación **JWT**, ejecución de **consultas
+parametrizadas** y **procedimientos almacenados** (guías en
+[GUIA_USO_ENTIDADES.md](api_generica_csharp/GUIA_USO_ENTIDADES.md) y
+[GUIA_USO_PROCEDIMIENTOS.md](api_generica_csharp/GUIA_USO_PROCEDIMIENTOS.md)).
 
 ---
 
@@ -137,6 +169,7 @@ flowchart TB
     subgraph CAPA2["CAPA 2 — Lógica / APIs"]
         AG["api-generica (FastAPI)<br/>:8001 · /api/{tabla} para CUALQUIER tabla"]
         AF["api-facturas (FastAPI)<br/>:8002 · 1 CRUD por entidad + Pydantic"]
+        AGC["api-generica-csharp (ASP.NET Core)<br/>:8003 · /api/{tabla} + JWT + SPs"]
     end
 
     subgraph CAPA3["CAPA 3 — Datos (elegible con DB_PROVIDER)"]
@@ -146,10 +179,12 @@ flowchart TB
     end
 
     NAV -->|HTTP| FRONT
+    NAV -->|"HTTP directo (Swagger)"| AGC
     FRONT -->|"HTTP (según API activa en sesión)"| AG
     FRONT -->|HTTP| AF
     AG -->|SQL parametrizado| PG & MA & MS
     AF -->|SQL parametrizado| PG & MA & MS
+    AGC -->|"SQL parametrizado (Dapper)"| PG & MA & MS
     PG -.->|"trigger + SPs<br/>(totales, stock, RBAC)"| PG
 ```
 
@@ -312,7 +347,7 @@ sequenceDiagram
 
 ## Despliegue
 
-Todo el sistema se despliega como **8 contenedores + 3 volúmenes** en un solo host con Docker Compose:
+Todo el sistema se despliega como **9 contenedores + 3 volúmenes** en un solo host con Docker Compose:
 
 ```mermaid
 flowchart TB
@@ -321,6 +356,7 @@ flowchart TB
             F["front<br/>python:3.12-slim"]
             G["api-generica<br/>python:3.12-slim + msodbcsql18"]
             FA["api-facturas<br/>python:3.12-slim + msodbcsql18"]
+            CS["api-generica-csharp<br/>dotnet/sdk:10.0 (dotnet watch)"]
             P[("postgres:16-alpine")]
             M[("mariadb:11")]
             S[("mssql/server:2022")]
@@ -335,11 +371,13 @@ flowchart TB
     B["🌐 Navegador"] -->|8000| F
     B -->|8001 /swagger| G
     B -->|8002 /docs| FA
+    B -->|8003 /swagger| CS
     B -->|8081| PMA
     HERR["🛠️ pgAdmin · HeidiSQL · SSMS"] -->|15432 / 13306 / 11433| P & M & S
 
     F --> G & FA
     G & FA --> P & M & S
+    CS --> P & M & S
     INIT -.->|"espera healthcheck<br/>y ejecuta bdfacturas.sql"| S
     PMA --> M
     P --- V1
@@ -351,7 +389,7 @@ flowchart TB
 |---|---|
 | Orquestación | `docker-compose.yml` único; `restart: unless-stopped` en apps |
 | Inicialización de BD | Postgres/MariaDB: `init.sql` en `/docker-entrypoint-initdb.d` (solo con volumen vacío); SQL Server: contenedor auxiliar `sqlserver-init` |
-| Desarrollo | Código montado como volumen + `--debug`/`--reload` → guardar recarga sin rebuild |
+| Desarrollo | Código montado como volumen + `--debug`/`--reload` (Python) y `dotnet watch` (C#) → guardar recarga sin rebuild |
 | Persistencia | Volúmenes nombrados; `down -v` = reset a datos originales |
 | Salud | Healthchecks por motor (`pg_isready`, `healthcheck.sh`, `sqlcmd SELECT 1`) |
 | Entornos | El mismo compose sirve para clase y casa; no existe (a propósito) despliegue a producción |
@@ -360,7 +398,7 @@ flowchart TB
 
 ## Cambiar el motor de base de datos
 
-Las dos APIs usan el motor que diga `DB_PROVIDER` (por defecto `postgres`):
+Las tres APIs (las dos Python y la de C#) usan el motor que diga `DB_PROVIDER` (por defecto `postgres`):
 
 ```powershell
 $env:DB_PROVIDER = "mariadb";   docker compose up -d    # MariaDB
@@ -393,7 +431,7 @@ docker compose down          # apagar todo (los datos se conservan)
 docker compose up -d         # volver a encender (segundos)
 docker compose down -v       # resetear las BD a su estado original
 docker compose ps            # estado de los contenedores
-docker compose logs front    # errores del front (o api-generica / api-facturas)
+docker compose logs front    # errores del front (o api-generica / api-facturas / api-generica-csharp)
 ```
 
 ---

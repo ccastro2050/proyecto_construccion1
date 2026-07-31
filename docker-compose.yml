@@ -5,7 +5,8 @@
 #      │ elige a cuál API llamar
 #      ├── API GENÉRICA  (FastAPI, :8001) — CRUD sobre cualquier tabla
 #      └── API FACTURAS  (FastAPI, :8002) — CRUD por entidad (12 tablas)
-#              │ ambas eligen motor con DB_PROVIDER
+#   API GENÉRICA C# (ASP.NET Core, :8003) — mismo CRUD genérico + JWT
+#              │ todas eligen motor con DB_PROVIDER
 #              └── PostgreSQL | MariaDB | SQL Server (bdfacturas)
 #
 # Uso: docker compose up -d --build
@@ -60,6 +61,25 @@ services:
       DB_MARIADB: mysql+aiomysql://paradigmas:paradigmas123@mariadb:3306/bdfacturas_mariadb_local
       DB_MYSQL: mysql+aiomysql://paradigmas:paradigmas123@mariadb:3306/bdfacturas_mariadb_local
       DB_SQLSERVER: mssql+aioodbc://sa:Paradigmas123!@sqlserver:1433/bdfacturas_sqlserver_local?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes
+
+  # --- CAPA 2c: API GENÉRICA C# — mismo CRUD genérico en ASP.NET Core + JWT ---
+  api-generica-csharp:
+    build: ./api_generica_csharp
+    volumes:
+      - ./api_generica_csharp:/app   # el código se monta: dotnet watch recompila al guardar
+      - /app/bin                     # bin y obj quedan DENTRO del contenedor (Linux),
+      - /app/obj                     #   sin mezclarse con los compilados de Windows
+    restart: unless-stopped
+    ports:
+      - "8003:8003"                  # http://localhost:8003/swagger
+    environment:
+      # Misma variable DB_PROVIDER que las APIs Python (postgres | mariadb | sqlserver).
+      # ASP.NET Core lee "ConnectionStrings__X" como ConnectionStrings:X y
+      # estas variables SOBREESCRIBEN los valores de appsettings.json.
+      DatabaseProvider: ${DB_PROVIDER:-postgres}
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=bdfacturas_postgres_local;Username=paradigmas;Password=paradigmas123;Pooling=true;Maximum Pool Size=100;"
+      ConnectionStrings__MariaDB: "Server=mariadb;Port=3306;Database=bdfacturas_mariadb_local;Uid=paradigmas;Pwd=paradigmas123;Allow User Variables=true;CharSet=utf8mb4;"
+      ConnectionStrings__SqlServer: "Server=sqlserver,1433;Database=bdfacturas_sqlserver_local;User Id=sa;Password=Paradigmas123!;TrustServerCertificate=True;"
 
   # --- PostgreSQL 16 ---
   postgres:

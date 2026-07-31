@@ -1,0 +1,10 @@
+# No enviar al build de Docker artefactos de compilación ni documentos
+bin/
+obj/
+publicado/
+.git/
+.vs/
+.vscode/
+*.docx
+*.pdf
+script_bd/
