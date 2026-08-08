@@ -17,8 +17,8 @@
 <pre class="mb-0 text-start d-inline-block">
 Navegador → <strong>FRONT Flask (5000)</strong>  ← usted está aquí
                 │
-                ├── <strong>API Genérica  (8001)</strong>  /api/{tabla}          → CRUD sobre cualquier tabla
-                └── <strong>API Facturas  (8002)</strong>  /api/persona, …       → CRUD por entidad (validación Pydantic)
+                ├── <strong>API Genérica  (8011)</strong>  /api/{tabla}          → CRUD sobre cualquier tabla
+                └── <strong>API Facturas  (8012)</strong>  /api/persona, …       → CRUD por entidad (validación Pydantic)
                         │
                         └── PostgreSQL · MariaDB · SQL Server  (bdfacturas)
 </pre>
@@ -42,8 +42,8 @@ Navegador → <strong>FRONT Flask (5000)</strong>  ← usted está aquí
                     Una sola implementación CRUD que sirve para <em>cualquier</em> tabla.
                     Menos código, pero sin validación específica por entidad.
                 </p>
-                <a href="http://localhost:8001/swagger" target="_blank" class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-filetype-json"></i> Swagger (8001)
+                <a href="http://localhost:8011/swagger" target="_blank" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-filetype-json"></i> Swagger (8011)
                 </a>
                 <a href="{{ url_for('cambiar_api', nombre='generica') }}" class="btn btn-sm btn-primary">
                     Usar esta API
@@ -67,8 +67,8 @@ Navegador → <strong>FRONT Flask (5000)</strong>  ← usted está aquí
                     Un controller, un servicio y un repositorio <em>por cada entidad</em>
                     (12 tablas), con modelos Pydantic que validan los datos.
                 </p>
-                <a href="http://localhost:8002/swagger" target="_blank" class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-filetype-json"></i> Swagger (8002)
+                <a href="http://localhost:8012/swagger" target="_blank" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-filetype-json"></i> Swagger (8012)
                 </a>
                 <a href="{{ url_for('cambiar_api', nombre='facturas') }}" class="btn btn-sm btn-primary">
                     Usar esta API

@@ -7,8 +7,8 @@
 
 ## 1. Prerrequisito: al menos una API arriba
 
-Se necesitan las dos APIs corriendo en `http://localhost:8001` (Genérica) y
-`http://localhost:8002` (Facturas) — **cualquier implementación que cumpla los
+Se necesitan las dos APIs corriendo en `http://localhost:8011` (Genérica) y
+`http://localhost:8012` (Facturas) — **cualquier implementación que cumpla los
 contratos descritos en [6_contracts.md](6_contracts.md) §2** sirve. El front
 también funciona con una sola: la otra aparece "sin conexión" (degradación
 elegante, es parte del diseño).
@@ -17,19 +17,19 @@ elegante, es parte del diseño).
 
 ```powershell
 # local (desde front_flask, con el venv activo; las APIs en localhost)
-flask --app app run --port 8000 --debug
+flask --app app run --port 8010 --debug
 ```
 
-(En Docker: `docker build -t front-flask . ; docker run -p 8000:8000 -e API_GENERICA_URL=... -e API_FACTURAS_URL=... front-flask`.)
+(En Docker: `docker build -t front-flask . ; docker run -p 8010:8010 -e API_GENERICA_URL=... -e API_FACTURAS_URL=... front-flask`.)
 
 ## 3. Recorrido de validación (5 minutos, en el navegador)
 
-1. **http://localhost:8000** → las dos tarjetas con badge **"en línea"** verde.
+1. **http://localhost:8010** → las dos tarjetas con badge **"en línea"** verde.
    Apague una de las APIs y recargue → badge rojo "sin conexión". Vuélvala a subir.
 2. **Productos** → crear `PR009 / Webcam / 5 / 120000` → flash verde y aparece
    en la tabla con `$ 120,000` → editar el stock a 7 → eliminar con el
    `confirm()` → flash verde en cada paso.
-3. **Selector de API** (menú superior derecho) → "API Facturas (puerto 8002)" →
+3. **Selector de API** (menú superior derecho) → "API Facturas (puerto 8012)" →
    repetir el paso 2: **todo funciona igual** (esa es la tesis). Cree un
    producto sin nombre desde la API Facturas: la validación Pydantic del
    backend llega como alerta roja.

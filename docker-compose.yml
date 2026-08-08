@@ -1,12 +1,12 @@
 # ==============================================================
 # Proyecto Construcción 1 — Arquitectura de 3 capas en Docker
 #
-#   FRONT (Flask, :8000)
+#   FRONT (Flask, :8010)
 #      │ elige a cuál API llamar
-#      ├── API GENÉRICA  (FastAPI, :8001) — CRUD sobre cualquier tabla
-#      └── API FACTURAS  (FastAPI, :8002) — CRUD por entidad (12 tablas)
-#   FRONT BLAZOR (Blazor Server, :8004)
-#      └── API GENÉRICA C# (ASP.NET Core, :8003) — mismo CRUD genérico + JWT
+#      ├── API GENÉRICA  (FastAPI, :8011) — CRUD sobre cualquier tabla
+#      └── API FACTURAS  (FastAPI, :8012) — CRUD por entidad (12 tablas)
+#   FRONT BLAZOR (Blazor Server, :8014)
+#      └── API GENÉRICA C# (ASP.NET Core, :8013) — mismo CRUD genérico + JWT
 #              │ todas eligen motor con DB_PROVIDER
 #              └── PostgreSQL | MariaDB | SQL Server (bdfacturas)
 #
@@ -22,24 +22,24 @@ services:
     volumes:
       - ./front_flask:/app         # el código se monta para que los cambios se vean al instante
       - .:/workspace:cached        # todo el repo (lo usa el devcontainer opcional de VS Code)
-    command: flask --app app run --host 0.0.0.0 --port 8000 --debug
+    command: flask --app app run --host 0.0.0.0 --port 8010 --debug
     restart: unless-stopped
     ports:
-      - "8000:8000"                # http://localhost:8000
+      - "8010:8010"                # http://localhost:8010
     environment:
       # URLs internas de las APIs (entre contenedores se usa el nombre del servicio)
-      API_GENERICA_URL: http://api-generica:8001
-      API_FACTURAS_URL: http://api-facturas:8002
+      API_GENERICA_URL: http://api-generica:8011
+      API_FACTURAS_URL: http://api-facturas:8012
 
   # --- CAPA 2a: API GENÉRICA — CRUD sobre cualquier tabla ---
   api-generica:
     build: ./api_generica
     volumes:
       - ./api_generica:/app
-    command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8011 --reload
     restart: unless-stopped
     ports:
-      - "8001:8001"                # http://localhost:8001/swagger
+      - "8011:8011"                # http://localhost:8011/swagger
     environment:
       DB_PROVIDER: ${DB_PROVIDER:-postgres}
       DB_POSTGRES: postgresql+asyncpg://paradigmas:paradigmas123@postgres:5432/bdfacturas_postgres_local
@@ -52,10 +52,10 @@ services:
     build: ./api_facturas
     volumes:
       - ./api_facturas:/app
-    command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8012 --reload
     restart: unless-stopped
     ports:
-      - "8002:8002"                # http://localhost:8002/swagger
+      - "8012:8012"                # http://localhost:8012/swagger
     environment:
       DB_PROVIDER: ${DB_PROVIDER:-postgres}
       DB_POSTGRES: postgresql+asyncpg://paradigmas:paradigmas123@postgres:5432/bdfacturas_postgres_local
@@ -72,7 +72,7 @@ services:
       - /app/obj                     #   sin mezclarse con los compilados de Windows
     restart: unless-stopped
     ports:
-      - "8003:8003"                  # http://localhost:8003/swagger
+      - "8013:8013"                  # http://localhost:8013/swagger
     environment:
       # Misma variable DB_PROVIDER que las APIs Python (postgres | mariadb | sqlserver).
       # ASP.NET Core lee "ConnectionStrings__X" como ConnectionStrings:X y
@@ -91,11 +91,11 @@ services:
       - /app/obj                     #   sin mezclarse con los compilados de Windows
     restart: unless-stopped
     ports:
-      - "8004:8004"                  # http://localhost:8004
+      - "8014:8014"                  # http://localhost:8014
     environment:
       # URL interna de la API C# (entre contenedores se usa el nombre del servicio).
       # Sobreescribe el ApiBaseUrl de appsettings.json.
-      ApiBaseUrl: http://api-generica-csharp:8003
+      ApiBaseUrl: http://api-generica-csharp:8013
       # Para "recuperar contraseña" por correo (opcional): definir en el host
       # $env:SMTP_USER / $env:SMTP_PASS antes de docker compose up.
       Smtp__User: ${SMTP_USER:-}
@@ -115,7 +115,7 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./db/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "15432:5432"     # puerto en el host (para DBeaver/pgAdmin opcional)
+      - "15442:5432"     # puerto en el host (para DBeaver/pgAdmin opcional)
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U paradigmas -d bdfacturas_postgres_local"]
       interval: 5s
@@ -134,7 +134,7 @@ services:
       - mariadbdata:/var/lib/mysql
       - ./db/mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "13306:3306"     # puerto en el host (para HeidiSQL/DBeaver opcional)
+      - "13316:3306"     # puerto en el host (para HeidiSQL/DBeaver opcional)
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
@@ -149,7 +149,7 @@ services:
       PMA_USER: paradigmas
       PMA_PASSWORD: paradigmas123
     ports:
-      - "8081:80"        # http://localhost:8081
+      - "8091:80"        # http://localhost:8091
     depends_on:
       - mariadb
 
@@ -163,7 +163,7 @@ services:
     volumes:
       - mssqldata:/var/opt/mssql
     ports:
-      - "11433:1433"     # puerto en el host (para SSMS/Azure Data Studio opcional)
+      - "11443:1433"     # puerto en el host (para SSMS/Azure Data Studio opcional)
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b"]
       interval: 10s

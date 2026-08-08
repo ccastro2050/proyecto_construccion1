@@ -18,7 +18,7 @@ MariaDB y SQL Server simultáneos, con idénticas tablas/datos/triggers/SP en su
 dialecto, permite cambiar `DB_PROVIDER` y comparar en vivo. **Costo aceptado:**
 mantener 3 scripts SQL equivalentes a mano.
 
-## D3 — Puertos de BD desplazados (15432/13306/11433)
+## D3 — Puertos de BD desplazados (15442/13316/11443)
 Muchos estudiantes ya tienen PostgreSQL/MySQL/SQL Server locales en los puertos
 estándar. Publicar 5432/3306/1433 chocaría. Dentro de la red de compose se usan
 los estándar (los contenedores no chocan entre sí).
@@ -48,7 +48,7 @@ variable del shell del host lo sobreescribe sin editar archivos:
 `$env:DB_PROVIDER = "mariadb"; docker compose up -d`.
 
 ## D8 — phpMyAdmin con auto-login
-`PMA_USER`/`PMA_PASSWORD` fijos: los estudiantes entran a http://localhost:8081
+`PMA_USER`/`PMA_PASSWORD` fijos: los estudiantes entran a http://localhost:8091
 sin pantalla de credenciales. Riesgo nulo: entorno local docente. Solo cubre
 MariaDB; para los otros motores están SQLTools (devcontainer) y las herramientas
 del host.

@@ -1,5 +1,5 @@
 # ==============================================================
-# Front Blazor — Blazor Server / .NET 10 (puerto 8004)
+# Front Blazor — Blazor Server / .NET 10 (puerto 8014)
 #
 # Usa la imagen SDK (no la runtime) porque el contenedor corre
 # "dotnet watch": al guardar un .razor o .cs recompila y reinicia
@@ -22,9 +22,9 @@ COPY . .
 # por volúmenes montados desde Windows: se usa sondeo (polling).
 ENV DOTNET_USE_POLLING_FILE_WATCHER=true \
     ASPNETCORE_ENVIRONMENT=Development \
-    ASPNETCORE_URLS=http://0.0.0.0:8004
+    ASPNETCORE_URLS=http://0.0.0.0:8014
 
-EXPOSE 8004
+EXPOSE 8014
 
 # --no-launch-profile ignora launchSettings.json (puertos locales)
 # y respeta ASPNETCORE_URLS definido arriba.

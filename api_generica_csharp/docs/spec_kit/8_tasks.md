@@ -110,9 +110,9 @@ bdfacturas ejecuta; `/api/estructuras/producto/modelo` describe las 4 columnas;
 
 ## Fase 8 — Docker y cierre
 - [ ] `Dockerfile` según el plan (§5): sdk:10.0, restore cacheado, polling
-      watcher, `dotnet watch` en el puerto 8003.
+      watcher, `dotnet watch` en el puerto 8013.
 - [ ] `.dockerignore` (`bin/`, `obj/`, `.git/`) y `.gitignore` (`bin/`, `obj/`, `.vs/`).
-- [ ] Opcional — orquestar con docker-compose: servicio en el puerto 8003 con
+- [ ] Opcional — orquestar con docker-compose: servicio en el puerto 8013 con
       el código montado como volumen, volúmenes anónimos para `bin/`+`obj/`, y
       `DatabaseProvider` + `ConnectionStrings__*` inyectados por `environment:`
       (hosts internos de la red de compose en lugar de `localhost`).

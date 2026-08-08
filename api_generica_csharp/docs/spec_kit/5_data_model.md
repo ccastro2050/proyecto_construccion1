@@ -67,7 +67,7 @@ tabla `usuario`).
 
 ```powershell
 # Desde la raíz de este proyecto (usa el script incluido en script_bd/):
-docker run -d --name bdfacturas -p 15432:5432 `
+docker run -d --name bdfacturas -p 15442:5432 `
   -e POSTGRES_DB=bdfacturas_postgres_local `
   -e POSTGRES_USER=paradigmas -e POSTGRES_PASSWORD=paradigmas123 `
   -v ${PWD}/script_bd/bdfacturas_postgres.sql:/docker-entrypoint-initdb.d/init.sql:ro `
@@ -75,10 +75,10 @@ docker run -d --name bdfacturas -p 15432:5432 `
 ```
 
 Cadena para `appsettings.json` (o `ConnectionStrings__Postgres`):
-`Host=localhost;Port=15432;Database=bdfacturas_postgres_local;Username=paradigmas;Password=paradigmas123;`
+`Host=localhost;Port=15442;Database=bdfacturas_postgres_local;Username=paradigmas;Password=paradigmas123;`
 
-Para MariaDB (`mariadb:11`, puerto sugerido 13306) y SQL Server
-(`mssql/server:2022`, puerto sugerido 11433) el patrón es el mismo con su
+Para MariaDB (`mariadb:11`, puerto sugerido 13316) y SQL Server
+(`mssql/server:2022`, puerto sugerido 11443) el patrón es el mismo con su
 script de `script_bd/` correspondiente.
 
 ## 4. Advertencia de alcance

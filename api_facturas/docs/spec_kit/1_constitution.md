@@ -67,7 +67,7 @@ Un error del trigger (stock insuficiente) se propaga al cliente con su mensaje.
 
 | Cosa | Convención |
 |---|---|
-| Puerto | **8002** |
+| Puerto | **8012** |
 | Docs | `/docs` (Swagger UI, default de FastAPI) y `/redoc` |
 | Nombres | snake_case en español; clases PascalCase; interfaces `i_`/`I` |
 | Sufijos de motor | `_postgresql` · `_mysql_mariadb` · `_sqlserver` |

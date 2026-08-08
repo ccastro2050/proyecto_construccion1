@@ -9,7 +9,7 @@ Configura la aplicación FastAPI:
 
 Ejecución:
   python main.py                              (desarrollo con auto-reload)
-  uvicorn main:app --host 0.0.0.0 --port 8000  (producción)
+  uvicorn main:app --host 0.0.0.0 --port 8011  (producción)
 """
 
 from fastapi import FastAPI
@@ -38,7 +38,7 @@ app = FastAPI(
 # ================================================================
 # CORS — Permite que frontends en otros puertos consuman la API
 # ================================================================
-# Sin esto, un frontend en localhost:3000 no puede llamar a localhost:8000
+# Sin esto, un frontend en localhost:3000 no puede llamar a localhost:8011
 # porque el navegador bloquea la petición por seguridad (Same-Origin Policy).
 
 app.add_middleware(
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host="127.0.0.1",
-        port=8000,
+        port=8011,
         reload=settings.debug,
         log_level="debug" if settings.debug else "info"
     )

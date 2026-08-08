@@ -3,11 +3,11 @@
     "dockerComposeFile": "../docker-compose.yml",
     "service": "front",
     "workspaceFolder": "/workspace",
-    "forwardPorts": [8000, 8001, 8002],
+    "forwardPorts": [8010, 8011, 8012],
     "portsAttributes": {
-        "8000": { "label": "Front Flask", "onAutoForward": "notify" },
-        "8001": { "label": "API Generica", "onAutoForward": "silent" },
-        "8002": { "label": "API Facturas", "onAutoForward": "silent" }
+        "8010": { "label": "Front Flask", "onAutoForward": "notify" },
+        "8011": { "label": "API Generica", "onAutoForward": "silent" },
+        "8012": { "label": "API Facturas", "onAutoForward": "silent" }
     },
     "customizations": {
         "vscode": {

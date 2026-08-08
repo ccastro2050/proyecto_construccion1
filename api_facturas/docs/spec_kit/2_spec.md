@@ -32,7 +32,7 @@ en español con comentarios que explican cada decisión.
 
 ## 2. Contexto e independencia
 
-- La API es autónoma: corre sola con `uvicorn main:app --port 8002` o en Docker.
+- La API es autónoma: corre sola con `uvicorn main:app --port 8012` o en Docker.
   Su única dependencia externa es una BD `bdfacturas`
   ([5_data_model.md](5_data_model.md) §6 explica cómo montarla suelta).
 - Cualquier cliente HTTP la consume (Swagger, un frontend, otro servicio);
@@ -119,7 +119,7 @@ como texto por la URL.
 - **RNF3 — El orden de registro de routers importa:** los 12 específicos primero,
   el genérico al final.
 - **RNF4 — Docker:** imagen `python:3.12-slim` + driver ODBC msodbcsql18,
-  puerto **8002**.
+  puerto **8012**.
 - **RNF5 — Seguridad básica:** valores SQL siempre parametrizados; contraseñas
   jamás en texto plano (BCrypt).
 - **RNF6 — CORS (mejora recomendada):** el original no lo trae (el front lo
@@ -132,7 +132,7 @@ como texto por la URL.
 
 Con la BD de ejemplo cargada ([5_data_model.md](5_data_model.md) §4):
 
-1. `GET http://localhost:8002/` responde el diagnóstico y `/docs` abre Swagger UI
+1. `GET http://localhost:8012/` responde el diagnóstico y `/docs` abre Swagger UI
    con los 13 tags.
 2. `GET /api/persona/` lista 6 personas; `GET /api/persona/P001` → Ana Torres;
    `GET /api/persona/NOEXISTE` → 404 estructurado.

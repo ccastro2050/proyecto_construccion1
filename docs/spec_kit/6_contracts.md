@@ -11,13 +11,13 @@
 
 | Servicio | Host interno (red compose) | Puerto publicado al PC |
 |---|---|---|
-| front | `front:8000` | **8000** |
-| api-generica | `api-generica:8001` | **8001** (`/swagger`) |
-| api-facturas | `api-facturas:8002` | **8002** (`/docs`) |
-| postgres | `postgres:5432` | **15432** |
-| mariadb | `mariadb:3306` | **13306** |
-| sqlserver | `sqlserver:1433` | **11433** |
-| phpmyadmin | `phpmyadmin:80` | **8081** |
+| front | `front:8010` | **8010** |
+| api-generica | `api-generica:8011` | **8011** (`/swagger`) |
+| api-facturas | `api-facturas:8012` | **8012** (`/docs`) |
+| postgres | `postgres:5432` | **15442** |
+| mariadb | `mariadb:3306` | **13316** |
+| sqlserver | `sqlserver:1433` | **11443** |
+| phpmyadmin | `phpmyadmin:80` | **8091** |
 
 Regla: **entre contenedores** siempre el host interno con puerto estándar;
 **desde el PC** siempre localhost con el puerto publicado.
@@ -27,8 +27,8 @@ Regla: **entre contenedores** siempre el host interno con puerto estándar;
 ### front
 | Variable | Valor en compose |
 |---|---|
-| `API_GENERICA_URL` | `http://api-generica:8001` |
-| `API_FACTURAS_URL` | `http://api-facturas:8002` |
+| `API_GENERICA_URL` | `http://api-generica:8011` |
+| `API_FACTURAS_URL` | `http://api-facturas:8012` |
 
 ### api-generica y api-facturas (idénticas)
 | Variable | Valor |
@@ -82,7 +82,7 @@ phpmyadmin: `PMA_HOST=mariadb`, `PMA_USER/PMA_PASSWORD` (auto-login).
 ## 7. Devcontainer (contrato con VS Code)
 
 `.devcontainer/devcontainer.json`: `service: front`, `workspaceFolder: /workspace`,
-`forwardPorts: [8000, 8001, 8002]`, extensiones Python + Pylance + SQLTools
+`forwardPorts: [8010, 8011, 8012]`, extensiones Python + Pylance + SQLTools
 (drivers pg/mysql/mssql) y 3 conexiones SQLTools con **hosts internos**
 (`postgres:5432`, `mariadb:3306`, `sqlserver:1433` con
 `encrypt + trustServerCertificate`).

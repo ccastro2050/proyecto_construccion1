@@ -70,7 +70,7 @@ concretas — el registro condicional en el contenedor cumple el papel de fábri
 
 | Cosa | Convención |
 |---|---|
-| Puerto | **8003** |
+| Puerto | **8013** |
 | Docs | `/swagger` (Swashbuckle) y `/redoc`; OpenAPI en `/swagger/v1/swagger.json` |
 | Rutas | `/api/{tabla}` (entidades) · `/api/autenticacion` · `/api/consultas` · `/api/procedimientos` · `/api/estructuras` · `/api/diagnostico` |
 | Nombres | PascalCase en español; interfaces con prefijo `I`; carpetas `Controllers/ Servicios/ Repositorios/ Modelos/` |

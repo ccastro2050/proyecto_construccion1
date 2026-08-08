@@ -43,19 +43,19 @@ docker compose up -d --build
 
 ## Paso 4 — Verificar
 
-Abra en el navegador: **http://localhost:8000** — es el **frontend Flask**. Debe ver las dos APIs con la insignia verde "en línea" (la primera vez pueden tardar 1–2 minutos mientras arranca todo).
+Abra en el navegador: **http://localhost:8010** — es el **frontend Flask**. Debe ver las dos APIs con la insignia verde "en línea" (la primera vez pueden tardar 1–2 minutos mientras arranca todo).
 
 ## Paso 5 — Su primer recorrido por las 3 capas
 
-En http://localhost:8000:
+En http://localhost:8010:
 
 1. Clic en **Productos** → la tabla que ve la pidió el front a una **API** y la API la leyó de la **base de datos**. Tres capas trabajando.
 2. Cree un producto con el botón **Nuevo producto**, edítelo y elimínelo — es un CRUD completo.
 3. En el menú superior derecho cambie la **API activa** (Genérica ↔ Facturas) y repita: la pantalla funciona igual con las dos. El front no depende de cómo está construido el backend.
 4. Abra el **Explorador** y mire cualquiera de las 12 tablas de la base de datos.
 5. Mire las APIs por dentro (documentación interactiva):
-   - API Genérica: http://localhost:8001/swagger
-   - API Facturas: http://localhost:8002/docs
+   - API Genérica: http://localhost:8011/swagger
+   - API Facturas: http://localhost:8012/docs
 
 ## Paso 6 — Programar
 
@@ -123,7 +123,7 @@ docker compose up -d
 
 ### Lo más fácil: phpMyAdmin (ya incluido, para MariaDB)
 
-Abra **http://localhost:8081** — entra directo, sin usuario ni clave. Ahí puede ver las tablas de `bdfacturas_mariadb_local`, editar datos y ejecutar SQL. Viene como un contenedor más del proyecto: no hay que instalar nada (ni XAMPP).
+Abra **http://localhost:8091** — entra directo, sin usuario ni clave. Ahí puede ver las tablas de `bdfacturas_mariadb_local`, editar datos y ejecutar SQL. Viene como un contenedor más del proyecto: no hay que instalar nada (ni XAMPP).
 
 ### Desde VS Code con SQLTools (los 3 motores)
 
@@ -140,14 +140,14 @@ También puede usar cualquier herramienta externa con las credenciales de abajo.
 **pgAdmin (PostgreSQL):**
 1. Clic derecho en **Servers → Register → Server…**
 2. General → Name: `Construccion1 Docker`
-3. Connection → Host: `localhost` · Port: **`15432`** · Maintenance database: `bdfacturas_postgres_local` · Username: `paradigmas` · Password: `paradigmas123` (marque *Save password*)
+3. Connection → Host: `localhost` · Port: **`15442`** · Maintenance database: `bdfacturas_postgres_local` · Username: `paradigmas` · Password: `paradigmas123` (marque *Save password*)
 4. **Save** → navegue: Databases → bdfacturas_postgres_local → Schemas → public → Tables
 
-**HeidiSQL / MySQL Workbench (MariaDB):** host `localhost`, puerto **`13306`**, usuario `paradigmas`, clave `paradigmas123`.
+**HeidiSQL / MySQL Workbench (MariaDB):** host `localhost`, puerto **`13316`**, usuario `paradigmas`, clave `paradigmas123`.
 
-**SSMS / Azure Data Studio (SQL Server):** servidor `localhost,11433`, usuario `sa`, clave `Paradigmas123!` (marque *Trust server certificate*).
+**SSMS / Azure Data Studio (SQL Server):** servidor `localhost,11443`, usuario `sa`, clave `Paradigmas123!` (marque *Trust server certificate*).
 
-> Se usan los puertos 15432/13306/11433 porque así están mapeados los contenedores hacia su PC, para no chocar con motores que ya tenga instalados.
+> Se usan los puertos 15442/13316/11443 porque así están mapeados los contenedores hacia su PC, para no chocar con motores que ya tenga instalados.
 
 ## Comandos útiles del día a día
 
@@ -163,9 +163,9 @@ docker compose logs front    # errores del front (o api-generica / api-facturas)
 
 | Motor | Base de datos | Usuario | Contraseña | Puerto en su PC |
 |---|---|---|---|---|
-| PostgreSQL | `bdfacturas_postgres_local` | `paradigmas` | `paradigmas123` | `15432` |
-| MariaDB | `bdfacturas_mariadb_local` | `paradigmas` | `paradigmas123` | `13306` |
-| SQL Server | `bdfacturas_sqlserver_local` | `sa` | `Paradigmas123!` | `11433` |
+| PostgreSQL | `bdfacturas_postgres_local` | `paradigmas` | `paradigmas123` | `15442` |
+| MariaDB | `bdfacturas_mariadb_local` | `paradigmas` | `paradigmas123` | `13316` |
+| SQL Server | `bdfacturas_sqlserver_local` | `sa` | `Paradigmas123!` | `11443` |
 
 > Esos puertos son para herramientas externas (DBeaver, HeidiSQL, SSMS). Dentro de los contenedores (código Python y SQLTools) los hosts son `postgres`, `mariadb` y `sqlserver` con los puertos estándar.
 
@@ -174,6 +174,6 @@ docker compose logs front    # errores del front (o api-generica / api-facturas)
 | Problema | Solución |
 |---|---|
 | SQL Server "sin conexión" | Espere 1–2 minutos; necesita ~2 GB de RAM. En equipos limitados trabaje solo con PostgreSQL y MariaDB |
-| http://localhost:8000 no abre | `docker compose ps` para ver si los contenedores corren; `docker compose logs front` para ver el error |
-| El puerto 8000 está ocupado | Cierre el otro programa que lo usa, o cambie el puerto en `docker-compose.yml` |
+| http://localhost:8010 no abre | `docker compose ps` para ver si los contenedores corren; `docker compose logs front` para ver el error |
+| El puerto 8010 está ocupado | Cierre el otro programa que lo usa, o cambie el puerto en `docker-compose.yml` |
 | Todo se dañó y quiero empezar de cero | `docker compose down -v` y luego `docker compose up -d --build` |

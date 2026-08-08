@@ -17,10 +17,10 @@
       ejemplo, `setval` de secuencias, trigger `actualizar_totales_y_stock`, y los
       SP de facturas/usuarios/RBAC (plan §3).
 - [ ] Servicio `postgres` en un `docker-compose.yml` mínimo (imagen 16-alpine,
-      volumen `pgdata`, init.sql montado, puerto 15432, healthcheck).
+      volumen `pgdata`, init.sql montado, puerto 15442, healthcheck).
 
 **Verificar:** `docker compose up -d postgres` → conectar con pgAdmin/psql a
-localhost:15432 y comprobar: 12 tablas, 8 productos; insertar un renglón en
+localhost:15442 y comprobar: 12 tablas, 8 productos; insertar un renglón en
 `productosporfactura` recalcula subtotal, stock y total (trigger);
 `CALL sp_consultar_factura_y_productosporfactura(1, NULL)` devuelve JSON.
 
@@ -30,16 +30,16 @@ localhost:15432 y comprobar: 12 tablas, 8 productos; insertar un renglón en
 - [ ] Agregar servicios `mariadb`, `sqlserver`, `sqlserver-init` (con
       `depends_on: service_healthy`) y `phpmyadmin` al compose.
 
-**Verificar:** `docker compose up -d` → phpMyAdmin (8081) muestra las 12 tablas de
+**Verificar:** `docker compose up -d` → phpMyAdmin (8091) muestra las 12 tablas de
 MariaDB con los mismos datos; `sqlserver-init` termina Exited (0); SSMS/Azure Data
-Studio conecta a localhost,11433 y ve la BD; segundo `up -d` no re-ejecuta nada.
+Studio conecta a localhost,11443 y ve la BD; segundo `up -d` no re-ejecuta nada.
 
 ## Fase 3 — Las aplicaciones
 - [ ] Colocar en `api_generica/` una API CRUD genérica que escuche en el
-      puerto 8001 y lea `DB_PROVIDER` + `DB_*` del entorno.
+      puerto 8011 y lea `DB_PROVIDER` + `DB_*` del entorno.
 - [ ] Colocar en `api_facturas/` una API CRUD por entidad que escuche en el
-      puerto 8002 con las mismas variables.
-- [ ] Colocar en `front_flask/` un frontend Flask que escuche en el puerto 8000
+      puerto 8012 con las mismas variables.
+- [ ] Colocar en `front_flask/` un frontend Flask que escuche en el puerto 8010
       y consuma las APIs vía `API_GENERICA_URL` / `API_FACTURAS_URL`.
 
 > Cada aplicación es un proyecto independiente con su propia especificación;
@@ -47,14 +47,14 @@ Studio conecta a localhost,11433 y ve la BD; segundo `up -d` no re-ejecuta nada.
 > [6_contracts.md](6_contracts.md).
 
 ## Fase 4 — Integración en compose
-- [ ] Agregar los servicios `front` (8000), `api-generica` (8001) y `api-facturas`
-      (8002) con: build propio, volumen de código + comando con reload,
+- [ ] Agregar los servicios `front` (8010), `api-generica` (8011) y `api-facturas`
+      (8012) con: build propio, volumen de código + comando con reload,
       `restart: unless-stopped`, y las variables de entorno del plan (§2.1).
 - [ ] `DB_PROVIDER: ${DB_PROVIDER:-postgres}` en ambas APIs.
 - [ ] Front: `API_GENERICA_URL`/`API_FACTURAS_URL` con hosts internos, y montaje
       extra `.:/workspace:cached`.
 
-**Verificar:** `docker compose up -d --build` → http://localhost:8000 muestra las
+**Verificar:** `docker compose up -d --build` → http://localhost:8010 muestra las
 dos APIs "en línea"; crear/editar/eliminar un producto desde el front se refleja
 en la BD; editar un archivo Python recarga la app sin reconstruir.
 

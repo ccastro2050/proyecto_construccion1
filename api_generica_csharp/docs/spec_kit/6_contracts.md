@@ -1,7 +1,7 @@
 # Contratos HTTP — API Genérica C# (ASP.NET Core)
 
 > **Documento 6 de 8** del spec kit: los endpoints con formatos exactos.
-> Base: `http://localhost:8003`. Documentación interactiva: `/swagger` (con botón
+> Base: `http://localhost:8013`. Documentación interactiva: `/swagger` (con botón
 > **Authorize**) y `/redoc` (OpenAPI en `/swagger/v1/swagger.json`).
 
 ---

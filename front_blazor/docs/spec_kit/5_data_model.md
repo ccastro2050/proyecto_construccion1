@@ -65,7 +65,7 @@ permiten todas las rutas.
 La API es quien se conecta; para el escenario más simple (PostgreSQL suelto):
 
 ```powershell
-docker run -d --name bdfacturas -p 15432:5432 `
+docker run -d --name bdfacturas -p 15442:5432 `
   -e POSTGRES_DB=bdfacturas_postgres_local `
   -e POSTGRES_USER=paradigmas -e POSTGRES_PASSWORD=paradigmas123 `
   -v ${PWD}/script_bd/bdfacturas_postgres.sql:/docker-entrypoint-initdb.d/init.sql:ro `

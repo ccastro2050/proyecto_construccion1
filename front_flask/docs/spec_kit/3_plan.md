@@ -22,7 +22,7 @@ Sin python-dotenv, sin gunicorn, sin flask-wtf, sin JS propio.
 
 ```
 front_flask/
-├── Dockerfile                # slim + pip install + CMD flask run --port 8000
+├── Dockerfile                # slim + pip install + CMD flask run --port 8010
 ├── requirements.txt          # flask, requests
 ├── config.py                 # 3 constantes con os.getenv()
 ├── app.py                    # crea app, registra blueprints, /cambiar-api, context processor
@@ -49,12 +49,12 @@ front_flask/
 
 ### 3.1 config.py — módulo plano
 ```python
-API_GENERICA_URL = os.getenv("API_GENERICA_URL", "http://localhost:8001")
-API_FACTURAS_URL = os.getenv("API_FACTURAS_URL", "http://localhost:8002")
+API_GENERICA_URL = os.getenv("API_GENERICA_URL", "http://localhost:8011")
+API_FACTURAS_URL = os.getenv("API_FACTURAS_URL", "http://localhost:8012")
 SECRET_KEY       = os.getenv("SECRET_KEY", "clave-de-desarrollo-paradigmas")
 ```
 Defaults para correr sin Docker; en compose llegan los hosts internos
-`http://api-generica:8001` / `http://api-facturas:8002`.
+`http://api-generica:8011` / `http://api-facturas:8012`.
 
 ### 3.2 app.py
 - App global (`app = Flask(__name__)`), NO application factory. `app.secret_key = config.SECRET_KEY`.
@@ -114,7 +114,7 @@ filtra en Python `[d for d in todos if d.get("fknumfactura") == numero]`
   `{% block contenido %}`); navbar `navbar-dark bg-dark` con los 4 enlaces
   (íconos `bi-box-seam`, `bi-people`, `bi-receipt`, `bi-table`); dropdown del
   selector de API a la derecha (`btn-outline-info`, opciones "API Genérica
-  (puerto 8001)" / "API Facturas (puerto 8002)" con clase `active` según
+  (puerto 8011)" / "API Facturas (puerto 8012)" con clase `active` según
   `api_activa`); zona de flashes `alert-{{ categoria }} alert-dismissible`;
   footer oscuro con el diagrama de puertos; `bootstrap.bundle.min.js` al final.
   Sticky footer con `body.d-flex.flex-column.min-vh-100` + `main.flex-grow-1`.
@@ -151,7 +151,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-CMD ["flask", "--app", "app", "run", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["flask", "--app", "app", "run", "--host", "0.0.0.0", "--port", "8010"]
 ```
-En compose: puerto `8000:8000`, volumen `./front_flask:/app` (+ `.:/workspace:cached`
+En compose: puerto `8010:8010`, volumen `./front_flask:/app` (+ `.:/workspace:cached`
 para el devcontainer), `command` con `--debug`, y las dos variables `API_*_URL`.

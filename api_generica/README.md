@@ -279,7 +279,7 @@ Crear un archivo `.env` en la raiz (ver seccion Configuracion).
 
 ```bash
 # Desarrollo (con auto-reload)
-uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --port 8010
 
 # O directamente
 python main.py
@@ -289,9 +289,9 @@ python main.py
 
 | Documentacion | URL |
 |---------------|-----|
-| Swagger UI | http://localhost:8000/swagger |
-| ReDoc | http://localhost:8000/redoc |
-| OpenAPI JSON | http://localhost:8000/swagger/v1/swagger.json |
+| Swagger UI | http://localhost:8010/swagger |
+| ReDoc | http://localhost:8010/redoc |
+| OpenAPI JSON | http://localhost:8010/swagger/v1/swagger.json |
 
 ---
 
@@ -609,12 +609,12 @@ Dos modos, misma aplicación:
 ```mermaid
 flowchart LR
     subgraph DEV["Modo desarrollo local"]
-        VENV["venv + uvicorn --reload<br/>:8000/:8001"] --> ENVF[".env<br/>DB_PROVIDER + cadenas"]
+        VENV["venv + uvicorn --reload<br/>:8010/:8011"] --> ENVF[".env<br/>DB_PROVIDER + cadenas"]
     end
 
     subgraph DOCKER["Modo Docker (proyecto padre)"]
         IMG["Imagen python:3.12-slim<br/>+ msodbcsql18 (apt) + pip install"]
-        CONT["contenedor api-generica :8001<br/>código montado como volumen + --reload"]
+        CONT["contenedor api-generica :8011<br/>código montado como volumen + --reload"]
         IMG --> CONT
         CONT -->|"postgres:5432 · mariadb:3306 · sqlserver:1433<br/>(hosts internos de compose)"| BDS[("3 motores en contenedores")]
     end
@@ -626,7 +626,7 @@ flowchart LR
 | Caché de build | `COPY requirements.txt` + `pip install` ANTES de copiar el código (las dependencias se cachean) |
 | Configuración | 100% por variables de entorno (`DB_PROVIDER`, `DB_*`); en compose llegan por `environment:`, en local por `.env` |
 | Desarrollo | Volumen `./api_generica:/app` + `uvicorn --reload` → guardar un archivo recarga la API |
-| Puerto | 8001 dentro del proyecto padre (8000 si se corre sola, como en los ejemplos de arriba) |
+| Puerto | 8011 dentro del proyecto padre (8010 si se corre sola, como en los ejemplos de arriba) |
 | Producción | No aplica: proyecto docente. Si se llevara: quitar `--reload`, restringir CORS y poner las credenciales en un gestor de secretos |
 
 ---
@@ -668,7 +668,7 @@ pip install -r requirements.txt
 **Solucion**:
 ```bash
 # Cambiar puerto
-uvicorn main:app --reload --port 8001
+uvicorn main:app --reload --port 8011
 ```
 
 ---
@@ -685,10 +685,10 @@ source venv/bin/activate             # Linux/Mac
 pip install -r requirements.txt
 
 # Ejecutar en desarrollo
-uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --port 8010
 
 # Ejecutar en produccion
-uvicorn main:app --host 0.0.0.0 --port 8000
+uvicorn main:app --host 0.0.0.0 --port 8010
 
 # Debug en VS Code
 F5

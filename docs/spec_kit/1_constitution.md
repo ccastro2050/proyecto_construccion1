@@ -25,8 +25,8 @@ disyuntiva entre "lo más profesional" y "lo más claro para aprender", gana la 
 ## Artículo 2 — Arquitectura de 3 capas estricta
 
 ```
-CAPA 1: FRONT (Flask, :8000)  — solo pinta HTML y llama APIs; NUNCA toca la BD
-CAPA 2: APIs (FastAPI)        — api_generica :8001 y api_facturas :8002
+CAPA 1: FRONT (Flask, :8010)  — solo pinta HTML y llama APIs; NUNCA toca la BD
+CAPA 2: APIs (FastAPI)        — api_generica :8011 y api_facturas :8012
 CAPA 3: DATOS                 — PostgreSQL | MariaDB | SQL Server (bdfacturas)
 ```
 
@@ -66,9 +66,9 @@ vive completo en contenedores.
 
 | Cosa | Convención |
 |---|---|
-| Puertos públicos | front 8000 · api_generica 8001 · api_facturas 8002 · phpMyAdmin 8081 |
-| Puertos de BD hacia el host | PostgreSQL **15432** · MariaDB **13306** · SQL Server **11433** (desplazados para no chocar con motores locales) |
-| Hosts internos (entre contenedores) | `postgres:5432` · `mariadb:3306` · `sqlserver:1433` · `api-generica:8001` · `api-facturas:8002` |
+| Puertos públicos | front 8010 · api_generica 8011 · api_facturas 8012 · phpMyAdmin 8091 |
+| Puertos de BD hacia el host | PostgreSQL **15442** · MariaDB **13316** · SQL Server **11443** (desplazados para no chocar con motores locales) |
+| Hosts internos (entre contenedores) | `postgres:5432` · `mariadb:3306` · `sqlserver:1433` · `api-generica:8011` · `api-facturas:8012` |
 | Credenciales BD | usuario `paradigmas` / clave `paradigmas123` (SQL Server: `sa` / `Paradigmas123!`) |
 | Bases de datos | `bdfacturas_postgres_local` · `bdfacturas_mariadb_local` · `bdfacturas_sqlserver_local` |
 | Nombres de código | snake_case en español; clases PascalCase; interfaces con prefijo `i_`/`I` |

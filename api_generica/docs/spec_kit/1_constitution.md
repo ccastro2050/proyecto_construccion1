@@ -57,7 +57,7 @@ Comunicación entre capas por **interfaces** (`typing.Protocol`); solo la
 
 | Cosa | Convención |
 |---|---|
-| Puerto | **8001** |
+| Puerto | **8011** |
 | Docs | `/swagger` (docs_url personalizado) y `/redoc`; OpenAPI en `/swagger/v1/swagger.json` |
 | Prefijo de rutas | `/api` (tag `Entidades`) |
 | Nombres | snake_case en español; clases PascalCase; interfaces `i_`/`I` |

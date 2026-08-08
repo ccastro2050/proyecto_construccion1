@@ -24,9 +24,9 @@ proyecto_construccion1/
 │       ├── bdfacturas.sql      # ídem en dialecto T-SQL (~1480 líneas)
 │       └── init.sh             # crea la BD y ejecuta el .sql solo la primera vez
 ├── docs/                       # documentación general + este spec kit
-├── front_flask/                # capa 1 — frontend Flask (puerto 8000)
-├── api_generica/               # capa 2a — API CRUD genérica (puerto 8001)
-└── api_facturas/               # capa 2b — API por entidad (puerto 8002)
+├── front_flask/                # capa 1 — frontend Flask (puerto 8010)
+├── api_generica/               # capa 2a — API CRUD genérica (puerto 8011)
+└── api_facturas/               # capa 2b — API por entidad (puerto 8012)
 ```
 
 ## 2. docker-compose.yml — decisiones por servicio
@@ -37,7 +37,7 @@ proyecto_construccion1/
   `--debug`/`--reload` → recarga en caliente sin reconstruir.
 - `restart: unless-stopped`.
 - Variables de entorno:
-  - front: `API_GENERICA_URL=http://api-generica:8001`, `API_FACTURAS_URL=http://api-facturas:8002`.
+  - front: `API_GENERICA_URL=http://api-generica:8011`, `API_FACTURAS_URL=http://api-facturas:8012`.
   - APIs: `DB_PROVIDER: ${DB_PROVIDER:-postgres}` (interpolación con default → la
     variable del shell del host decide el motor) y las 4 cadenas SQLAlchemy async:
     ```
@@ -66,11 +66,11 @@ proyecto_construccion1/
   `entrypoint: ["/bin/bash", "/scripts/init.sh"]`; `restart: "no"` (corre y muere).
   Razón: la imagen de SQL Server **no tiene** `/docker-entrypoint-initdb.d`, hay
   que inicializar desde fuera.
-- Puertos host desplazados: `15432:5432`, `13306:3306`, `11433:1433`.
+- Puertos host desplazados: `15442:5432`, `13316:3306`, `11443:1433`.
 
 ### 2.3 phpMyAdmin
 Imagen `phpmyadmin:latest`; `PMA_HOST=mariadb`, `PMA_USER/PMA_PASSWORD=paradigmas/paradigmas123`
-(auto-login, sin pantalla de credenciales); `8081:80`; `depends_on: mariadb`.
+(auto-login, sin pantalla de credenciales); `8091:80`; `depends_on: mariadb`.
 
 ### 2.4 Volúmenes
 `volumes:` nombrados al final: `pgdata`, `mariadbdata`, `mssqldata`.
@@ -116,7 +116,7 @@ si no, `CREATE DATABASE` + ejecutar `bdfacturas.sql` con `-d $DB -i`.
 
 - `dockerComposeFile: ../docker-compose.yml`, `service: front`,
   `workspaceFolder: /workspace` (por eso el front monta el repo ahí).
-- `forwardPorts: [8000, 8001, 8002]` con etiquetas.
+- `forwardPorts: [8010, 8011, 8012]` con etiquetas.
 - Extensiones: `ms-python.python`, `ms-python.vscode-pylance`, `mtxr.sqltools`
   + drivers `sqltools-driver-pg`, `-mysql`, `-mssql`.
 - `sqltools.connections`: 3 conexiones con **hosts internos y puertos estándar**
@@ -138,6 +138,6 @@ si no, `CREATE DATABASE` + ejecutar `bdfacturas.sql` con `-d $DB -i`.
 | Riesgo | Mitigación |
 |---|---|
 | SQL Server necesita ~2 GB RAM | El resto del stack no depende de él; documentar trabajar solo con postgres/mariadb |
-| Puertos 8000/8081 ocupados en el host | Cambiar el mapeo en compose (documentado en la guía del estudiante) |
+| Puertos 8010/8091 ocupados en el host | Cambiar el mapeo en compose (documentado en la guía del estudiante) |
 | init.sql corre solo con volumen vacío | `docker compose down -v` como procedimiento oficial de reset |
 | Cambios de esquema en db/*.sql no se aplican a volúmenes existentes | Mismo procedimiento: `down -v` + `up -d` |

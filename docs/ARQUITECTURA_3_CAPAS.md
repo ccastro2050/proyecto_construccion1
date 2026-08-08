@@ -9,11 +9,11 @@ Este documento sigue **el viaje completo de una petición**: desde el clic en el
 ```
 ┌────────────────────────────────────────────────────────────────┐
 │  NAVEGADOR                                                     │
-│  http://localhost:8000/productos                               │
+│  http://localhost:8010/productos                               │
 └──────────────┬─────────────────────────────────────────────────┘
                │ HTTP (HTML)
 ┌──────────────▼─────────────────────────────────────────────────┐
-│  CAPA 1 — FRONT (Flask, carpeta front_flask/, puerto 8000)     │
+│  CAPA 1 — FRONT (Flask, carpeta front_flask/, puerto 8010)     │
 │                                                                │
 │  rutas/productos.py      → recibe la petición                  │
 │  servicios/cliente_api.py→ llama a la API elegida              │
@@ -25,7 +25,7 @@ Este documento sigue **el viaje completo de una petición**: desde el clic en el
 ┌──────────────▼─────────────────────────────────────────────────┐
 │  CAPA 2 — API (FastAPI). Hay DOS para comparar:                │
 │                                                                │
-│  api_generica/ (8001)          api_facturas/ (8002)            │
+│  api_generica/ (8011)          api_facturas/ (8012)            │
 │  Un solo CRUD que sirve        Un controller + servicio +      │
 │  para CUALQUIER tabla:         repositorio POR ENTIDAD, con    │
 │  /api/{tabla}                  validación Pydantic:            │
@@ -50,7 +50,7 @@ Este documento sigue **el viaje completo de una petición**: desde el clic en el
 
 ## El viaje de una petición: "listar productos"
 
-**1. El navegador** pide `GET http://localhost:8000/productos/`.
+**1. El navegador** pide `GET http://localhost:8010/productos/`.
 
 **2. Flask** ([front_flask/rutas/productos.py](../front_flask/rutas/productos.py)) atiende la ruta:
 
@@ -63,8 +63,8 @@ def listar():
 
 **3. El cliente HTTP** ([front_flask/servicios/cliente_api.py](../front_flask/servicios/cliente_api.py)) traduce eso a una petición HTTP según la API activa:
 
-- API genérica: `GET http://api-generica:8001/api/producto`
-- API facturas: `GET http://api-facturas:8002/api/producto/`
+- API genérica: `GET http://api-generica:8011/api/producto`
+- API facturas: `GET http://api-facturas:8012/api/producto/`
 
 **4. El controller de la API** recibe la petición y **delega** al servicio (no sabe nada de SQL):
 

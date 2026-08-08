@@ -24,7 +24,7 @@ Claridad sobre sofisticación:
 ## Artículo 2 — El front NUNCA toca la base de datos
 
 - Cero drivers de BD, cero SQL. Solo dos dependencias: `flask` y `requests`.
-- Todo dato entra y sale por HTTP contra las APIs (Genérica :8001 / Facturas :8002).
+- Todo dato entra y sale por HTTP contra las APIs (Genérica :8011 / Facturas :8012).
 - Todo `requests` vive en UNA clase (`ClienteApi`); las rutas jamás llaman HTTP directo.
 
 ## Artículo 3 — Independencia del backend
@@ -55,7 +55,7 @@ en Python o Jinja; solo formato de presentación (`$ {:,.0f}`, fechas recortadas
 
 | Cosa | Convención |
 |---|---|
-| Puerto | **8000** (`flask run --port 8000`, `--debug` en desarrollo) |
+| Puerto | **8010** (`flask run --port 8010`, `--debug` en desarrollo) |
 | Estilos | Bootstrap 5.3 + Bootstrap Icons por CDN; CSS propio mínimo (~3 reglas) |
 | Blueprints | variable `bp_<nombre>`, nombre interno sin prefijo, `url_prefix` propio |
 | Plantillas | `<entidad>_<vista>.html`; herencia de `base.html`; bloques `titulo`/`contenido` |

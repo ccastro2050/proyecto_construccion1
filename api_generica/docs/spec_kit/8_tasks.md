@@ -60,7 +60,7 @@ repositorio lista `producto` y filtra `factura` por `numero=1`.
 - [ ] `main.py`: app FastAPI (título, versión, `docs_url="/swagger"`), CORS abierto,
       `include_router`, endpoint `/` de diagnóstico.
 
-**Verificar:** `uvicorn main:app --port 8001` y en `http://localhost:8001/swagger`
+**Verificar:** `uvicorn main:app --port 8011` y en `http://localhost:8011/swagger`
 probar: listar producto (200), tabla vacía (204), factura/numero/1 (200),
 crear/actualizar/eliminar persona (200/200/200 y 404 con clave inexistente).
 
@@ -81,7 +81,7 @@ crear/actualizar/eliminar persona (200/200/200 y 404 con clave inexistente).
 ## Fase 8 — Docker y cierre
 - [ ] `Dockerfile` según el plan (§5), con msodbcsql18 — build y run standalone.
 - [ ] `.gitignore` (`__pycache__/`, `.env*`, `.venv/`).
-- [ ] Opcional — orquestar con docker-compose: servicio en el puerto 8001 con
+- [ ] Opcional — orquestar con docker-compose: servicio en el puerto 8011 con
       el código montado como volumen + `--reload`, y las variables `DB_*`
       inyectadas por `environment:` (hosts internos de la red de compose en
       lugar de `localhost`).

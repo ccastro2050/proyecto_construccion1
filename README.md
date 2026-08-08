@@ -5,11 +5,11 @@ Proyecto del curso **Construcción de Software 1** (USB Medellín). Entorno de a
 > **Para quién es esto:** estudiantes que ya cursaron *Paradigmas de Programación* y *Diseño de Software*. Aquí el foco es la **construcción**: partir de especificaciones (los **spec kits** de abajo, al estilo SDD/GitHub Spec Kit), implementar por capas con SOLID, verificar contra criterios de aceptación y desplegar con Docker. El análisis y el diseño ya vienen documentados en cada README — su trabajo es construir sobre ellos.
 
 ```
-Navegador → FRONT Flask (8000)                                         (Python/Flask)
-                ├── API GENÉRICA  (8001)  CRUD sobre cualquier tabla        (Python/FastAPI)
-                └── API FACTURAS  (8002)  CRUD por entidad + Pydantic       (Python/FastAPI)
-Navegador → FRONT Blazor (8004)  login JWT + CRUDs + facturación       (C#/Blazor Server)
-                └── API GENÉRICA C# (8003)  mismo CRUD genérico + JWT + SPs (C#/ASP.NET Core)
+Navegador → FRONT Flask (8010)                                         (Python/Flask)
+                ├── API GENÉRICA  (8011)  CRUD sobre cualquier tabla        (Python/FastAPI)
+                └── API FACTURAS  (8012)  CRUD por entidad + Pydantic       (Python/FastAPI)
+Navegador → FRONT Blazor (8014)  login JWT + CRUDs + facturación       (C#/Blazor Server)
+                └── API GENÉRICA C# (8013)  mismo CRUD genérico + JWT + SPs (C#/ASP.NET Core)
                         └── PostgreSQL · MariaDB · SQL Server  (bdfacturas)
 ```
 
@@ -39,12 +39,12 @@ docker compose up -d --build
 
 | Qué | Dónde |
 |---|---|
-| **Frontend** (Flask + Bootstrap) | http://localhost:8000 |
-| **API Genérica** — Swagger | http://localhost:8001/swagger |
-| **API Facturas** — Swagger | http://localhost:8002/docs |
-| **API Genérica C#** — Swagger (y ReDoc en `/redoc`) | http://localhost:8003/swagger |
-| **Front Blazor** (Blazor Server, consume la API C#) | http://localhost:8004 |
-| **phpMyAdmin** (admin web de MariaDB) | http://localhost:8081 |
+| **Frontend** (Flask + Bootstrap) | http://localhost:8010 |
+| **API Genérica** — Swagger | http://localhost:8011/swagger |
+| **API Facturas** — Swagger | http://localhost:8012/docs |
+| **API Genérica C#** — Swagger (y ReDoc en `/redoc`) | http://localhost:8013/swagger |
+| **Front Blazor** (Blazor Server, consume la API C#) | http://localhost:8014 |
+| **phpMyAdmin** (admin web de MariaDB) | http://localhost:8091 |
 | PostgreSQL 16 · MariaDB 11 · SQL Server 2022 | con la BD `bdfacturas` cargada |
 
 Todo el código está **comentado en español** para quien está comenzando a programar.
@@ -74,29 +74,29 @@ proyecto_construccion1/
 ├── docker-compose.yml      # Toda la infraestructura declarada aquí
 ├── db/                     # Scripts de bdfacturas para los 3 motores
 │
-├── front_flask/            # CAPA 1 — Frontend (puerto 8000)
+├── front_flask/            # CAPA 1 — Frontend (puerto 8010)
 │   ├── rutas/              #   Blueprints: productos, personas, facturas, explorador
 │   ├── servicios/          #   cliente_api.py: consume cualquiera de las 2 APIs
 │   └── templates/          #   HTML con Bootstrap 5 (herencia Jinja2)
 │
-├── api_generica/           # CAPA 2a — API CRUD genérica (puerto 8001)
+├── api_generica/           # CAPA 2a — API CRUD genérica (puerto 8011)
 │   ├── controllers/        #   /api/{tabla} sirve para CUALQUIER tabla
 │   ├── servicios/          #   ServicioCrud + Fábrica + BCrypt
 │   └── repositorios/       #   PostgreSQL | MariaDB | SQL Server
 │
-├── api_facturas/           # CAPA 2b — API por entidad (puerto 8002)
+├── api_facturas/           # CAPA 2b — API por entidad (puerto 8012)
 │   ├── controllers/        #   Un controller por tabla (12 entidades)
 │   ├── models/             #   Modelos Pydantic (validación estricta)
 │   ├── servicios/          #   Lógica de negocio por entidad
 │   └── repositorios/       #   Un repositorio por entidad y por motor
 │
-├── api_generica_csharp/    # CAPA 2c — API genérica en C#/ASP.NET Core (puerto 8003)
+├── api_generica_csharp/    # CAPA 2c — API genérica en C#/ASP.NET Core (puerto 8013)
 │   ├── Controllers/        #   Entidades (/api/{tabla}), Autenticación JWT, Consultas,
 │   │                       #   Procedimientos almacenados, Estructuras, Diagnóstico
 │   ├── Servicios/          #   ServicioCrud + ProveedorConexion + BCrypt + políticas
 │   └── Repositorios/       #   PostgreSQL | MariaDB | SQL Server (Dapper)
 │
-├── front_blazor/           # CAPA 1b — Front Blazor Server (puerto 8004), consume la API C#
+├── front_blazor/           # CAPA 1b — Front Blazor Server (puerto 8014), consume la API C#
 │   ├── Components/Pages/   #   Login, CRUDs (12 entidades), Facturación completa
 │   ├── Services/           #   ApiService + AuthService (JWT) + SpService (SPs)
 │   └── Paso1..12*.md       #   Tutorial paso a paso con el que se construyó
@@ -172,20 +172,20 @@ flowchart TB
     NAV["🌐 Navegador"]
 
     subgraph CAPA1["CAPA 1 — Presentación"]
-        FRONT["front (Flask + Jinja2 + Bootstrap)<br/>:8000 · sin drivers de BD"]
-        FBLZ["front-blazor (Blazor Server)<br/>:8004 · login JWT + CRUDs + facturación"]
+        FRONT["front (Flask + Jinja2 + Bootstrap)<br/>:8010 · sin drivers de BD"]
+        FBLZ["front-blazor (Blazor Server)<br/>:8014 · login JWT + CRUDs + facturación"]
     end
 
     subgraph CAPA2["CAPA 2 — Lógica / APIs"]
-        AG["api-generica (FastAPI)<br/>:8001 · /api/{tabla} para CUALQUIER tabla"]
-        AF["api-facturas (FastAPI)<br/>:8002 · 1 CRUD por entidad + Pydantic"]
-        AGC["api-generica-csharp (ASP.NET Core)<br/>:8003 · /api/{tabla} + JWT + SPs"]
+        AG["api-generica (FastAPI)<br/>:8011 · /api/{tabla} para CUALQUIER tabla"]
+        AF["api-facturas (FastAPI)<br/>:8012 · 1 CRUD por entidad + Pydantic"]
+        AGC["api-generica-csharp (ASP.NET Core)<br/>:8013 · /api/{tabla} + JWT + SPs"]
     end
 
     subgraph CAPA3["CAPA 3 — Datos (elegible con DB_PROVIDER)"]
-        PG[("PostgreSQL 16<br/>:15432")]
-        MA[("MariaDB 11<br/>:13306")]
-        MS[("SQL Server 2022<br/>:11433")]
+        PG[("PostgreSQL 16<br/>:15442")]
+        MA[("MariaDB 11<br/>:13316")]
+        MS[("SQL Server 2022<br/>:11443")]
     end
 
     NAV -->|HTTP| FRONT
@@ -280,7 +280,7 @@ flowchart LR
     FACT --> FDET
 ```
 
-Patrones de UI fijos: navbar oscuro con selector de API (dropdown, opción activa marcada) · mensajes **flash** `success`/`danger` como alertas Bootstrap descartables · eliminar siempre por POST con `confirm()` · formulario compartido crear/editar con la PK deshabilitada al editar · degradación elegante (API caída = alerta + página vacía navegable). Las APIs exponen su propia "interfaz": Swagger en `:8001/swagger` y `:8002/docs`.
+Patrones de UI fijos: navbar oscuro con selector de API (dropdown, opción activa marcada) · mensajes **flash** `success`/`danger` como alertas Bootstrap descartables · eliminar siempre por POST con `confirm()` · formulario compartido crear/editar con la PK deshabilitada al editar · degradación elegante (API caída = alerta + página vacía navegable). Las APIs exponen su propia "interfaz": Swagger en `:8011/swagger` y `:8012/docs`.
 
 ### Diagramas de secuencia más representativos
 
@@ -291,7 +291,7 @@ sequenceDiagram
     actor U as Usuario
     participant F as front (Flask)
     participant C as ClienteApi
-    participant A as API activa (8001/8002)
+    participant A as API activa (8011/8012)
     participant S as Servicio
     participant R as Repositorio(Motor)
     participant BD as BD (DB_PROVIDER)
@@ -340,7 +340,7 @@ sequenceDiagram
     F->>F: whitelist: ¿"generica" o "facturas"? ✓
     F->>F: session["api"] = "facturas" (cookie firmada)
     F-->>U: redirect al referrer
-    Note over U,F: Desde ahora ClienteApi arma URLs contra :8002.<br/>Ninguna plantilla ni ruta cambió.
+    Note over U,F: Desde ahora ClienteApi arma URLs contra :8012.<br/>Ninguna plantilla ni ruta cambió.
 ```
 
 ### Principios SOLID en el sistema
@@ -367,19 +367,19 @@ Todo el sistema se despliega como **10 contenedores + 3 volúmenes** en un solo 
 │   red interna de compose (los servicios se ven por su nombre)     │
 │  ┌─────────────────────────────────────────────────────────────┐  │
 │  │  APLICACIONES (imágenes construidas con build:)             │  │
-│  │   front                → Flask       :8000                  │  │
-│  │   api-generica         → FastAPI     :8001                  │  │
-│  │   api-facturas         → FastAPI     :8002                  │  │
-│  │   api-generica-csharp  → ASP.NET 10  :8003                  │  │
-│  │   front-blazor         → Blazor 10   :8004                  │  │
+│  │   front                → Flask       :8010                  │  │
+│  │   api-generica         → FastAPI     :8011                  │  │
+│  │   api-facturas         → FastAPI     :8012                  │  │
+│  │   api-generica-csharp  → ASP.NET 10  :8013                  │  │
+│  │   front-blazor         → Blazor 10   :8014                  │  │
 │  │                                                             │  │
 │  │  MOTORES DE BD (imágenes oficiales)                         │  │
-│  │   postgres:16-alpine   → :15432      ─ volumen pgdata       │  │
-│  │   mariadb:11           → :13306      ─ volumen mariadbdata  │  │
-│  │   mssql/server:2022    → :11433      ─ volumen mssqldata    │  │
+│  │   postgres:16-alpine   → :15442      ─ volumen pgdata       │  │
+│  │   mariadb:11           → :13316      ─ volumen mariadbdata  │  │
+│  │   mssql/server:2022    → :11443      ─ volumen mssqldata    │  │
 │  │                                                             │  │
 │  │  AUXILIARES                                                 │  │
-│  │   phpmyadmin           → :8081  (admin web de MariaDB)      │  │
+│  │   phpmyadmin           → :8091  (admin web de MariaDB)      │  │
 │  │   sqlserver-init       → efímero: crea la BD y muere        │  │
 │  └─────────────────────────────────────────────────────────────┘  │
 └───────────────────────────────────────────────────────────────────┘
@@ -412,13 +412,13 @@ flowchart TB
         V3[/"volumen mssqldata"/]
     end
 
-    B["🌐 Navegador"] -->|8000| F
-    B -->|8001 /swagger| G
-    B -->|8002 /docs| FA
-    B -->|8003 /swagger| CS
-    B -->|8004| FB
-    B -->|8081| PMA
-    HERR["🛠️ pgAdmin · HeidiSQL · SSMS"] -->|15432 / 13306 / 11433| P & M & S
+    B["🌐 Navegador"] -->|8010| F
+    B -->|8011 /swagger| G
+    B -->|8012 /docs| FA
+    B -->|8013 /swagger| CS
+    B -->|8014| FB
+    B -->|8091| PMA
+    HERR["🛠️ pgAdmin · HeidiSQL · SSMS"] -->|15442 / 13316 / 11443| P & M & S
 
     F --> G & FA
     FB --> CS
@@ -458,15 +458,15 @@ El front y el resto del sistema no cambian en nada — ese es el punto del curso
 
 ## Administrar las bases de datos
 
-- **phpMyAdmin** (MariaDB, sin instalar nada): http://localhost:8081
+- **phpMyAdmin** (MariaDB, sin instalar nada): http://localhost:8091
 - **SQLTools en VS Code** (los 3 motores): `F1` → *Dev Containers: Reopen in Container* → icono del cilindro
-- **Herramientas locales**: pgAdmin (`localhost:15432`), HeidiSQL (`localhost:13306`), SSMS (`localhost,11433`)
+- **Herramientas locales**: pgAdmin (`localhost:15442`), HeidiSQL (`localhost:13316`), SSMS (`localhost,11443`)
 
 | Motor | Base de datos | Usuario | Contraseña | Puerto en su PC |
 |---|---|---|---|---|
-| PostgreSQL | `bdfacturas_postgres_local` | `paradigmas` | `paradigmas123` | `15432` |
-| MariaDB | `bdfacturas_mariadb_local` | `paradigmas` | `paradigmas123` | `13306` |
-| SQL Server | `bdfacturas_sqlserver_local` | `sa` | `Paradigmas123!` | `11433` |
+| PostgreSQL | `bdfacturas_postgres_local` | `paradigmas` | `paradigmas123` | `15442` |
+| MariaDB | `bdfacturas_mariadb_local` | `paradigmas` | `paradigmas123` | `13316` |
+| SQL Server | `bdfacturas_sqlserver_local` | `sa` | `Paradigmas123!` | `11443` |
 
 ---
 

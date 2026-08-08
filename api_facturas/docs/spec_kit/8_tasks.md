@@ -57,7 +57,7 @@ lista `producto` (8 filas serializables a JSON) y filtra `factura` por
 - [ ] `controllers/persona_controller.py` (5 endpoints, patrón del plan §8).
 - [ ] `main.py` mínimo registrando solo persona + endpoint `/`.
 
-**Verificar:** `uvicorn main:app --port 8002` → en `/docs`: listar (200),
+**Verificar:** `uvicorn main:app --port 8012` → en `/docs`: listar (200),
 P001 (200), NOEXISTE (404), POST sin `nombre` (422), ciclo crear/editar/eliminar
 de P999. Repetir con `DB_PROVIDER=mariadb`.
 
@@ -101,7 +101,7 @@ crear una tabla de prueba a mano en la BD y consultarla por `/api/{tabla}` (200)
 ## Fase 8 — Docker y cierre
 - [ ] `Dockerfile` (plan §1) — build y run standalone.
 - [ ] `CORSMiddleware` si se adoptó la mejora RNF6.
-- [ ] Opcional — orquestar con docker-compose: servicio en el puerto 8002 con
+- [ ] Opcional — orquestar con docker-compose: servicio en el puerto 8012 con
       el código montado como volumen + `--reload`, y las variables `DB_*`
       inyectadas por `environment:`.
 

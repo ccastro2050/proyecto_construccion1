@@ -22,7 +22,7 @@
 
 ```
 front_blazor/
-├── Dockerfile                    # dotnet/sdk:10.0 + dotnet watch (puerto 8004)
+├── Dockerfile                    # dotnet/sdk:10.0 + dotnet watch (puerto 8014)
 ├── FrontBlazorTutorial.csproj    # net10.0, sin paquetes externos
 ├── Program.cs                    # DI: HttpClient(ApiBaseUrl) + AuthService + ApiService + SpService
 ├── appsettings.json              # ApiBaseUrl + Smtp (sin credenciales; ver 6_contracts §4)
@@ -124,7 +124,7 @@ El repositorio NUNCA contiene credenciales SMTP reales.
    porque corre `dotnet watch` (guardar un `.razor` recompila y reinicia solo).
 2. `COPY *.csproj` + `dotnet restore` antes del resto (caché de capas).
 3. `ENV DOTNET_USE_POLLING_FILE_WATCHER=true` (volúmenes desde Windows no
-   emiten eventos) · `ASPNETCORE_URLS=http://0.0.0.0:8004`.
+   emiten eventos) · `ASPNETCORE_URLS=http://0.0.0.0:8014`.
 4. `CMD dotnet watch --project FrontBlazorTutorial.csproj run --no-launch-profile`.
 5. Si se orquesta con docker-compose: código montado en `/app`, `bin/`+`obj/`
    en volúmenes anónimos, y `ApiBaseUrl` apuntando al host interno de la API.

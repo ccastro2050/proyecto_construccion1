@@ -394,7 +394,7 @@ PersonaController ──→ ServicioPersona ──→ IRepositorioPersona ──
 ### Ejemplo: `GET /api/persona/P001`
 
 ```
-1. El cliente envía:  GET http://localhost:8000/api/persona/P001
+1. El cliente envía:  GET http://localhost:8010/api/persona/P001
 
 2. FastAPI enruta la petición a persona_controller.py
    → función: obtener_persona(codigo="P001")
@@ -434,7 +434,7 @@ PersonaController ──→ ServicioPersona ──→ IRepositorioPersona ──
 
 ```
 1. El cliente envía:
-   POST http://localhost:8000/api/usuario/
+   POST http://localhost:8010/api/usuario/
    Body: {"email": "ana@test.com", "contrasena": "123456"}
 
 2. FastAPI valida el body con el modelo Pydantic Usuario:
@@ -854,7 +854,7 @@ flowchart LR
 
     subgraph DOCKER["Modo Docker (proyecto padre proyecto_construccion1)"]
         IMG["Imagen python:3.12-slim<br/>+ msodbcsql18 (apt) + pip install"]
-        CONT["contenedor api-facturas :8002<br/>./api_facturas montado + --reload"]
+        CONT["contenedor api-facturas :8012<br/>./api_facturas montado + --reload"]
         IMG --> CONT
         CONT -->|"hosts internos<br/>postgres · mariadb · sqlserver"| BDS[("3 motores<br/>en contenedores")]
     end
@@ -865,7 +865,7 @@ flowchart LR
 | Imagen | `python:3.12-slim`; `msodbcsql18` + `unixodbc` vía apt (el driver de SQL Server es del SO, no de pip) |
 | Caché de build | `requirements.txt` se copia e instala ANTES que el código → rebuilds rápidos |
 | Configuración | Solo variables de entorno: `DB_PROVIDER` decide el motor; `DB_POSTGRES/DB_MARIADB/DB_MYSQL/DB_SQLSERVER` las cadenas |
-| Puerto | **8002** dentro del proyecto padre (compose lo publica como `8002:8002`) |
+| Puerto | **8012** dentro del proyecto padre (compose lo publica como `8012:8012`) |
 | Desarrollo | Volumen de código + `uvicorn --reload`: guardar recarga sin rebuild |
 | Salud | `GET /` sirve de healthcheck (el front lo usa para el badge "en línea") |
 | Producción | No aplica (docente). Checklist si se llevara: quitar `--reload`, CORS restringido, secretos fuera del repo, engine con pool compartido |
@@ -909,8 +909,8 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 
 # 7. Abrir en el navegador
-# http://localhost:8000/docs  ← Swagger UI
-# http://localhost:8000/redoc ← ReDoc
+# http://localhost:8010/docs  ← Swagger UI
+# http://localhost:8010/redoc ← ReDoc
 ```
 
 ---

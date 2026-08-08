@@ -2,7 +2,7 @@
 
 > **Documento 6 de 8** del spec kit: referencia exhaustiva de TODOS los endpoints
 > ([2_spec.md](2_spec.md) · [3_plan.md](3_plan.md) · [5_data_model.md](5_data_model.md) · [8_tasks.md](8_tasks.md)).
-> Base: `http://localhost:8002`. Documentación interactiva: `/docs` (Swagger UI) y `/redoc`.
+> Base: `http://localhost:8012`. Documentación interactiva: `/docs` (Swagger UI) y `/redoc`.
 
 ---
 
