@@ -81,6 +81,9 @@ proyecto_construccion1/
 │   ├── mariadb/init.sql    #    cuando su volumen está vacío)
 │   └── sqlserver/          #   init.sh + bdfacturas.sql (vía inicializador)
 │
+├── backupdb/               # Respaldos (dumps/.bak) de los 3 motores — su README
+│                           #   explica cómo hacer cada backup y cómo restaurarlo
+│
 ├── .devcontainer/          # Dev Container opcional de VS Code: abrir el proyecto
 │                           #   DENTRO del contenedor del front, con SQLTools preconfigurado
 │
