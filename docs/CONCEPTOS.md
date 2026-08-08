@@ -13,22 +13,29 @@ Resumen de los conceptos que usa este proyecto. Cada uno en pocas líneas.
 - **Volumen:** disco persistente del contenedor. Por eso los datos de las BD **sobreviven** al apagar; solo se borran con `docker compose down -v`.
 - **Ventaja en este curso:** nadie instala PostgreSQL, MariaDB, SQL Server ni Python — todos tienen exactamente el mismo entorno.
 
+> Versión a fondo (jerarquía imagen→contenedor→volumen, el compose explicado por piezas, huérfanos, Kubernetes): [CONCEPTOS_DOCKER.md](CONCEPTOS_DOCKER.md).
+
 ## 2. Docker Compose
 
-Herramienta que levanta **varios contenedores a la vez** definidos en el archivo `docker-compose.yml`. En este proyecto son 4 servicios:
+Herramienta que levanta **varios contenedores a la vez** definidos en el archivo `docker-compose.yml`. En este proyecto son 10:
 
-| Servicio | Qué es |
-|---|---|
-| `app` | Contenedor de desarrollo: Python + su código |
-| `postgres` | PostgreSQL 16 con la BD cargada |
-| `mariadb` | MariaDB 11 con la BD cargada |
-| `sqlserver` (+ `sqlserver-init`) | SQL Server 2022; el "init" crea la BD la primera vez |
+| Servicio | Qué es | Puerto |
+|---|---|---|
+| `front` | Front web en Flask | 8010 |
+| `api-generica` | API genérica en FastAPI | 8011 |
+| `api-facturas` | API por entidad en FastAPI | 8012 |
+| `api-generica-csharp` | API genérica en ASP.NET Core (+JWT) | 8013 |
+| `front-blazor` | Front web en Blazor Server | 8014 |
+| `postgres` | PostgreSQL 16 con la BD cargada | 15442 |
+| `mariadb` | MariaDB 11 con la BD cargada | 13316 |
+| `phpmyadmin` | Administrador web de MariaDB | 8091 |
+| `sqlserver` (+ `sqlserver-init`) | SQL Server 2022; el "init" crea la BD la primera vez | 11443 |
 
-Los servicios se comunican por una red interna usando su **nombre como host** (ej. desde Python se conecta a `postgres`, no a `localhost`).
+Los servicios se comunican por una red interna usando su **nombre como host** (ej. desde Python se conecta a `postgres`, no a `localhost`); los puertos de la tabla son los publicados hacia SU PC.
 
 ## 3. Dev Containers (VS Code)
 
-Extensión que hace que VS Code trabaje **dentro** del contenedor `app`: el editor, la terminal y el depurador ven el Python y las librerías del contenedor, no las de su PC. La configuración está en `.devcontainer/devcontainer.json` (qué servicio usar, qué extensiones instalar, qué conexiones de BD dejar listas). Por eso el entorno queda igual para todos con un solo clic.
+Extensión que hace que VS Code trabaje **dentro** del contenedor del front (`front`): el editor, la terminal y el depurador ven el Python y las librerías del contenedor, no las de su PC. La configuración está en `.devcontainer/devcontainer.json` (qué servicio usar, qué extensiones instalar, qué conexiones de BD dejar listas). Por eso el entorno queda igual para todos con un solo clic.
 
 ## 4. Sistemas de gestión de bases de datos (SGBD)
 
