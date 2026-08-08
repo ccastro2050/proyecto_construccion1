@@ -69,10 +69,20 @@ Si un cambio no se refleja: `docker compose restart front` (o `api-generica` / `
 
 ## Estructura del proyecto
 
+Qué es cada carpeta y cada archivo, y para qué sirve:
+
 ```
 proyecto_construccion1/
-├── docker-compose.yml      # Toda la infraestructura declarada aquí
-├── db/                     # Scripts de bdfacturas para los 3 motores
+├── docker-compose.yml      # TODA la infraestructura declarada aquí: 10 contenedores
+│                           #   con un solo comando (2 fronts, 3 APIs, 3 motores,
+│                           #   phpMyAdmin y el inicializador de SQL Server)
+├── db/                     # Scripts que crean bdfacturas COMPLETA, uno por motor
+│   ├── postgres/init.sql   #   (cada motor lo ejecuta solo la PRIMERA vez,
+│   ├── mariadb/init.sql    #    cuando su volumen está vacío)
+│   └── sqlserver/          #   init.sh + bdfacturas.sql (vía inicializador)
+│
+├── .devcontainer/          # Dev Container opcional de VS Code: abrir el proyecto
+│                           #   DENTRO del contenedor del front, con SQLTools preconfigurado
 │
 ├── front_flask/            # CAPA 1 — Frontend (puerto 8010)
 │   ├── rutas/              #   Blueprints: productos, personas, facturas, explorador
@@ -101,8 +111,22 @@ proyecto_construccion1/
 │   ├── Services/           #   ApiService + AuthService (JWT) + SpService (SPs)
 │   └── Paso1..12*.md       #   Tutorial paso a paso con el que se construyó
 │
-└── docs/                   # Guías y tutoriales
+└── docs/                   # La documentación del PROYECTO (la de cada app va adentro
+    ├── spec_kit/           #   Spec kit del proyecto raíz (infraestructura como caja negra)
+    ├── GUIA_ESTUDIANTE.md  #   Cómo trabajar día a día con el entorno
+    ├── ARQUITECTURA_3_CAPAS.md      # El porqué del diseño front→API→BD
+    ├── PRINCIPIOS_SOLID_ACID.md     # Los principios aplicados, con ejercicios
+    ├── CONCEPTOS.md / CONCEPTOS_DOCKER.md  # Conceptos clave, y Docker a fondo
+    ├── SDD_SPECKIT.md      #   La metodología: la spec manda sobre el código
+    └── TUTORIAL_CONSTRUCCION.md     # Cómo se construyó este entorno, paso a paso
 ```
+
+Cada componente (`api_generica/`, `api_facturas/`, `api_generica_csharp/`,
+`front_flask/`, `front_blazor/`) lleva además su **propio spec kit
+autocontenido** en `<componente>/docs/spec_kit/` (documentos 1 a 8) — con esa
+carpeta sola se reconstruye la pieza desde cero — y las APIs cargan sus
+scripts de bdfacturas en su `database/` o `script_bd/`, para poder entregarse
+como proyectos independientes.
 
 Las dos APIs Python siguen la misma arquitectura interna de sus repos originales:
 [ApiGenericaFastApi_Crud](https://github.com/ccastro2050/ApiGenericaFastApi_Crud) y
