@@ -32,14 +32,14 @@ la levante con **un solo comando** en cualquier PC con Docker Desktop.
 
 | Servicio (compose) | Qué es | Puerto host | Detalle |
 |---|---|---|---|
-| `front` | Flask (capa 1) | 8000 | build `./front_flask` |
-| `api-generica` | FastAPI CRUD genérico (capa 2a) | 8001 | build `./api_generica` |
-| `api-facturas` | FastAPI CRUD por entidad (capa 2b) | 8002 | build `./api_facturas` |
-| `postgres` | PostgreSQL 16 (alpine) | 15432→5432 | volumen `pgdata` |
-| `mariadb` | MariaDB 11 | 13306→3306 | volumen `mariadbdata` |
-| `sqlserver` | SQL Server 2022 (Developer) | 11433→1433 | volumen `mssqldata`; ~2 GB RAM |
+| `front` | Flask (capa 1) | 8010 | build `./front_flask` |
+| `api-generica` | FastAPI CRUD genérico (capa 2a) | 8011 | build `./api_generica` |
+| `api-facturas` | FastAPI CRUD por entidad (capa 2b) | 8012 | build `./api_facturas` |
+| `postgres` | PostgreSQL 16 (alpine) | 15442→5432 | volumen `pgdata` |
+| `mariadb` | MariaDB 11 | 13316→3306 | volumen `mariadbdata` |
+| `sqlserver` | SQL Server 2022 (Developer) | 11443→1433 | volumen `mssqldata`; ~2 GB RAM |
 | `sqlserver-init` | contenedor efímero | — | crea la BD de SQL Server la primera vez y termina |
-| `phpmyadmin` | admin web de MariaDB | 8081→80 | auto-login con PMA_USER/PMA_PASSWORD |
+| `phpmyadmin` | admin web de MariaDB | 8091→80 | auto-login con PMA_USER/PMA_PASSWORD |
 
 ## 3. Requisitos funcionales
 
@@ -73,8 +73,8 @@ apuntando a los **hosts internos** (`postgres`, `mariadb`, `sqlserver`).
 Cambiar motor: `$env:DB_PROVIDER = "mariadb"; docker compose up -d`.
 
 ### RF4 — Cableado del front
-El front recibe `API_GENERICA_URL=http://api-generica:8001` y
-`API_FACTURAS_URL=http://api-facturas:8002` (nombres de servicio, no localhost:
+El front recibe `API_GENERICA_URL=http://api-generica:8011` y
+`API_FACTURAS_URL=http://api-facturas:8012` (nombres de servicio, no localhost:
 entre contenedores se resuelve por la red interna de compose).
 
 ### RF5 — Recarga en caliente
@@ -94,11 +94,11 @@ re-inicialización en el siguiente `up`).
 - `sqlserver-init` usa `depends_on: condition: service_healthy`.
 
 ### RF8 — Administración de BD
-- phpMyAdmin en 8081 conectado a `mariadb`, entra directo (PMA_USER/PMA_PASSWORD).
+- phpMyAdmin en 8091 conectado a `mariadb`, entra directo (PMA_USER/PMA_PASSWORD).
 - Devcontainer de VS Code (`.devcontainer/devcontainer.json`): se adosa al servicio
   `front`, workspace `/workspace`, instala Python + Pylance + SQLTools con drivers
   pg/mysql/mssql y **las 3 conexiones preconfiguradas** (hosts internos, puertos estándar).
-- Puertos 15432/13306/11433 publicados para herramientas externas del host
+- Puertos 15442/13316/11443 publicados para herramientas externas del host
   (pgAdmin, HeidiSQL, SSMS).
 
 ## 4. Requisitos no funcionales
@@ -113,7 +113,7 @@ re-inicialización en el siguiente `up`).
 ## 5. Criterios de aceptación
 
 1. En una máquina limpia (solo Docker): `git clone` + `docker compose up -d --build`
-   → http://localhost:8000 muestra las dos APIs "en línea".
+   → http://localhost:8010 muestra las dos APIs "en línea".
 2. `docker compose ps` muestra front, api-generica, api-facturas, postgres, mariadb,
    sqlserver y phpmyadmin corriendo; `sqlserver-init` con estado Exited (0).
 3. Los datos de ejemplo aparecen: 8 productos, 6 personas, 6 facturas.

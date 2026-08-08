@@ -6,7 +6,7 @@
 > validación final: [7_quickstart.md](7_quickstart.md).
 >
 > Prerrequisito: una API que cumpla [6_contracts.md](6_contracts.md) §2
-> corriendo en `localhost:8003`, con la BD `bdfacturas` cargada.
+> corriendo en `localhost:8013`, con la BD `bdfacturas` cargada.
 > (El tutorial narrado de esta misma construcción está en `Paso0..12*.md`;
 > `sdd/05_tareas.md` conserva el desglose original por estudiante y rama.)
 
@@ -15,7 +15,7 @@
 ## Fase 0 — Esqueleto
 - [ ] `dotnet new blazor -n FrontBlazorTutorial` y fijar
       `<TargetFramework>net10.0</TargetFramework>` (sin paquetes NuGet extra).
-- [ ] `appsettings.json` con `ApiBaseUrl` (`http://localhost:8003`) y sección
+- [ ] `appsettings.json` con `ApiBaseUrl` (`http://localhost:8013`) y sección
       `Smtp` **vacía** (las credenciales van por entorno).
 - [ ] `.gitignore` (`bin/`, `obj/`, `.vs/`, `appsettings.Development.json`).
 
@@ -95,9 +95,9 @@ mala muestra alerta; en F12→Network toda petición de datos lleva
 
 ## Fase 8 — Docker y cierre
 - [ ] `Dockerfile` según el plan (§5): sdk:10.0, restore cacheado, polling
-      watcher, `dotnet watch` en el puerto 8004.
+      watcher, `dotnet watch` en el puerto 8014.
 - [ ] `.dockerignore` (`bin/`, `obj/`, `.git/`, documentos).
-- [ ] Opcional — orquestar con docker-compose: servicio en el puerto 8004 con
+- [ ] Opcional — orquestar con docker-compose: servicio en el puerto 8014 con
       el código montado como volumen, `bin/`+`obj/` en volúmenes anónimos, y
       `ApiBaseUrl` + `Smtp__*` inyectados por `environment:` (host interno de
       la API en lugar de `localhost`).

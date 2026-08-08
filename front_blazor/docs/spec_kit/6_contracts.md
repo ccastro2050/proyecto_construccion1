@@ -73,7 +73,7 @@ POST /api/procedimientos/ejecutarsp    body { nombreSP, …parámetros }
 
 | Variable | Default (sin Docker) | Ejemplo en docker-compose (hosts internos) |
 |---|---|---|
-| `ApiBaseUrl` | `http://localhost:8003` | `http://api-generica-csharp:8003` |
+| `ApiBaseUrl` | `http://localhost:8013` | `http://api-generica-csharp:8013` |
 | `Smtp__Host` / `Smtp__Port` | `smtp.gmail.com` / `587` | ídem |
 | `Smtp__User` / `Smtp__Pass` / `Smtp__From` | vacíos (recuperar contraseña deshabilitado) | inyectados desde el entorno del host |
 

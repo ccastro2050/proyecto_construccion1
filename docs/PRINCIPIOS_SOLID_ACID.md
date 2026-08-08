@@ -46,7 +46,7 @@ SOLID son cinco principios para que el código aguante el cambio: agregar cosas 
 
 ```powershell
 $env:DB_PROVIDER = "mariadb"; docker compose up -d
-# GET http://localhost:8001/api/persona → mismo JSON que con postgres
+# GET http://localhost:8011/api/persona → mismo JSON que con postgres
 ```
 
 Si el repositorio de MariaDB retornara los datos "a su manera", violaría Liskov y el servicio tendría que llenarse de `if motor == ...` — justo lo que este diseño evita.
@@ -124,7 +124,7 @@ Una **transacción** es un grupo de operaciones que la BD trata como una sola. A
 **Aplicado — pruébelo usted mismo:**
 
 ```powershell
-# 1. Cree un producto en el front (http://localhost:8000/productos)
+# 1. Cree un producto en el front (http://localhost:8010/productos)
 # 2. Apague TODO:
 docker compose down
 # 3. Vuelva a encender:

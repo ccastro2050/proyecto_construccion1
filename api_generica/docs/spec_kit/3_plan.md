@@ -168,7 +168,7 @@ Router con `prefix="/api"`, `tags=["Entidades"]`.
    `ACCEPT_EULA=Y apt-get install msodbcsql18 unixodbc`).
 3. `COPY requirements.txt` + `pip install` **antes** de copiar el código
    (aprovecha la caché de capas).
-4. `CMD uvicorn main:app --host 0.0.0.0 --port 8001`
+4. `CMD uvicorn main:app --host 0.0.0.0 --port 8011`
    (en desarrollo, docker-compose lo sobreescribe agregando `--reload` y monta
    `./api_generica:/app` para recarga en caliente).
 

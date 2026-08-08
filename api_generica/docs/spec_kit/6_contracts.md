@@ -1,7 +1,7 @@
 # Contratos HTTP — API Genérica CRUD
 
 > **Documento 6 de 8** del spec kit: los 7 endpoints con formatos exactos.
-> Base: `http://localhost:8001`. Documentación interactiva: `/swagger` y `/redoc`
+> Base: `http://localhost:8011`. Documentación interactiva: `/swagger` y `/redoc`
 > (OpenAPI en `/swagger/v1/swagger.json`).
 
 ---

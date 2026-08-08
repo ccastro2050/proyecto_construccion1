@@ -165,16 +165,16 @@ Los scripts de los 3 motores vienen incluidos en `database/`
 (`bdfacturas_postgres.sql`, `bdfacturas_mariadb.sql`, `bdfacturas_sqlserver.sql`):
 
 ```powershell
-docker run -d --name bdfacturas -p 15432:5432 `
+docker run -d --name bdfacturas -p 15442:5432 `
   -e POSTGRES_DB=bdfacturas_postgres_local `
   -e POSTGRES_USER=paradigmas -e POSTGRES_PASSWORD=paradigmas123 `
   -v ${PWD}/database/bdfacturas_postgres.sql:/docker-entrypoint-initdb.d/init.sql:ro `
   postgres:16-alpine
 ```
 
-Para MariaDB (`mariadb:11`, puerto sugerido 13306) y SQL Server
-(`mssql/server:2022`, puerto sugerido 11433) el patrón es el mismo con su
+Para MariaDB (`mariadb:11`, puerto sugerido 13316) y SQL Server
+(`mssql/server:2022`, puerto sugerido 11443) el patrón es el mismo con su
 script correspondiente.
 
 Cadena de conexión resultante para la API:
-`DB_POSTGRES=postgresql+asyncpg://paradigmas:paradigmas123@localhost:15432/bdfacturas_postgres_local`
+`DB_POSTGRES=postgresql+asyncpg://paradigmas:paradigmas123@localhost:15442/bdfacturas_postgres_local`

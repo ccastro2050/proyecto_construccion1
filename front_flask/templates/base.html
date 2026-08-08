@@ -48,10 +48,10 @@
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item {{ 'active' if api_activa == 'generica' }}"
                                href="{{ url_for('cambiar_api', nombre='generica') }}">
-                               API Genérica (puerto 8001)</a></li>
+                               API Genérica (puerto 8011)</a></li>
                         <li><a class="dropdown-item {{ 'active' if api_activa == 'facturas' }}"
                                href="{{ url_for('cambiar_api', nombre='facturas') }}">
-                               API Facturas (puerto 8002)</a></li>
+                               API Facturas (puerto 8012)</a></li>
                     </ul>
                 </div>
             </div>
@@ -78,7 +78,7 @@
     {# ============ PIE DE PÁGINA ============ #}
     <footer class="bg-dark text-secondary text-center py-3 mt-auto">
         <small>
-            Proyecto Construcción 1 · Front Flask (8000) → API Genérica (8001) / API Facturas (8002)
+            Proyecto Construcción 1 · Front Flask (8010) → API Genérica (8011) / API Facturas (8012)
             → PostgreSQL · MariaDB · SQL Server
         </small>
     </footer>

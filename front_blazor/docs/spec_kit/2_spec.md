@@ -100,7 +100,7 @@ descubierta, no con nombres fijos.
 - **RNF3 — Configuración externa:** `ApiBaseUrl` y `Smtp:*` en
   `appsettings.json`, sobrescribibles por variables de entorno
   (`ApiBaseUrl`, `Smtp__User`, `Smtp__Pass`) — la vía natural en contenedores.
-- **RNF4 — Contenedor Docker:** puerto **8004**, imagen `dotnet/sdk:10.0` con
+- **RNF4 — Contenedor Docker:** puerto **8014**, imagen `dotnet/sdk:10.0` con
   `dotnet watch` (guardar un `.razor` recompila y reinicia solo).
 - **RNF5 — Un circuito por usuario:** servicios registrados `AddScoped` — cada
   usuario tiene su propia instancia (su token no se comparte).

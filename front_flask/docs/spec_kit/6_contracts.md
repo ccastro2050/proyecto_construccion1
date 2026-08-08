@@ -33,7 +33,7 @@ elige la base según la API activa:
 
 | | API Genérica | API Facturas |
 |---|---|---|
-| URL base (env) | `API_GENERICA_URL` (default `http://localhost:8001`) | `API_FACTURAS_URL` (default `http://localhost:8002`) |
+| URL base (env) | `API_GENERICA_URL` (default `http://localhost:8011`) | `API_FACTURAS_URL` (default `http://localhost:8012`) |
 | Listar tabla | `GET {base}/api/{tabla}` | `GET {base}/api/{tabla}/` ← **barra final** |
 | Un registro | `GET {base}/api/{tabla}/{clave}/{valor}` | `GET {base}/api/{tabla}/{valor}` ← la API ya conoce su PK |
 | Crear | `POST` a la URL de listar, body JSON | igual |
@@ -84,6 +84,6 @@ muestran tal cual como flash.
 
 | Variable | Default (sin Docker) | Ejemplo en docker-compose (hosts internos) |
 |---|---|---|
-| `API_GENERICA_URL` | `http://localhost:8001` | `http://api-generica:8001` |
-| `API_FACTURAS_URL` | `http://localhost:8002` | `http://api-facturas:8002` |
+| `API_GENERICA_URL` | `http://localhost:8011` | `http://api-generica:8011` |
+| `API_FACTURAS_URL` | `http://localhost:8012` | `http://api-facturas:8012` |
 | `SECRET_KEY` | `clave-de-desarrollo-paradigmas` | (no se define → default) |

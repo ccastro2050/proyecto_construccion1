@@ -106,12 +106,12 @@ Las cadenas de conexión llegan por variables `DB_POSTGRES`, `DB_MARIADB`,
   con OpenAPI en `/swagger/v1/swagger.json`.
 - **RNF5 — Serialización JSON segura:** `datetime`/`date` → ISO 8601,
   `Decimal` → float, `UUID` → string.
-- **RNF6 — Contenedor Docker:** la API corre en el puerto **8001** y es
+- **RNF6 — Contenedor Docker:** la API corre en el puerto **8011** y es
   empaquetable como contenedor Docker (Dockerfile propio).
 
 ## 5. Criterios de aceptación
 
-1. `docker compose up -d` y `GET http://localhost:8001/` responde con el JSON de diagnóstico.
+1. `docker compose up -d` y `GET http://localhost:8011/` responde con el JSON de diagnóstico.
 2. `GET /api/producto` devuelve los 8 productos de ejemplo con envoltura `{total, datos}`.
 3. `GET /api/factura/numero/1` devuelve la factura 1 (conversión texto→entero automática).
 4. `POST /api/persona` con `{"codigo":"P999","nombre":"Test","email":"t@t.co","telefono":"300"}`

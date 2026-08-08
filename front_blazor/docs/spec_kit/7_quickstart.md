@@ -7,7 +7,7 @@
 
 ## 1. Prerrequisito: la API y su base de datos
 
-Se necesita una API corriendo en `http://localhost:8003` que cumpla los
+Se necesita una API corriendo en `http://localhost:8013` que cumpla los
 contratos de [6_contracts.md](6_contracts.md) §2, conectada a la BD
 `bdfacturas` (scripts incluidos en `script_bd/`; receta de montaje en
 [5_data_model.md](5_data_model.md) §3).
@@ -16,19 +16,19 @@ contratos de [6_contracts.md](6_contracts.md) §2, conectada a la BD
 
 ```powershell
 # Opción local (requiere .NET 10 SDK):
-dotnet run          # appsettings.json ya apunta a http://localhost:8003
-# abre en el puerto de launchSettings; con Docker queda fijo en 8004
+dotnet run          # appsettings.json ya apunta a http://localhost:8013
+# abre en el puerto de launchSettings; con Docker queda fijo en 8014
 
-# Opción Docker (el Dockerfile del proyecto; puerto 8004 con dotnet watch):
+# Opción Docker (el Dockerfile del proyecto; puerto 8014 con dotnet watch):
 docker build -t front-blazor .
-docker run -d -p 8004:8004 `
-  -e ApiBaseUrl="http://host.docker.internal:8003" `
+docker run -d -p 8014:8014 `
+  -e ApiBaseUrl="http://host.docker.internal:8013" `
   front-blazor
 ```
 
 ## 3. Recorrido de validación (5 minutos, en el navegador)
 
-1. **http://localhost:8004** → sin sesión, redirige solo a `/login`
+1. **http://localhost:8014** → sin sesión, redirige solo a `/login`
    (spinner breve mientras intenta restaurar sesión: es el diseño).
 2. **Login fallido**: `admin@correo.com` / `mala` → alerta roja
    "Contraseña incorrecta", sin crash.

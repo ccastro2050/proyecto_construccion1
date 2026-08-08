@@ -1,5 +1,5 @@
 # ==============================================================
-# API Genérica C# — ASP.NET Core / .NET 10 (puerto 8003)
+# API Genérica C# — ASP.NET Core / .NET 10 (puerto 8013)
 #
 # Usa la imagen SDK (no la runtime) porque el contenedor corre
 # "dotnet watch": al guardar un .cs recompila y reinicia solo,
@@ -22,9 +22,9 @@ COPY . .
 # por volúmenes montados desde Windows: se usa sondeo (polling).
 ENV DOTNET_USE_POLLING_FILE_WATCHER=true \
     ASPNETCORE_ENVIRONMENT=Development \
-    ASPNETCORE_URLS=http://0.0.0.0:8003
+    ASPNETCORE_URLS=http://0.0.0.0:8013
 
-EXPOSE 8003
+EXPOSE 8013
 
 # --no-launch-profile ignora launchSettings.json (puertos locales)
 # y respeta ASPNETCORE_URLS definido arriba.

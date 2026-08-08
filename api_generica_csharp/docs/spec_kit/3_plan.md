@@ -25,7 +25,7 @@
 
 ```
 api_generica_csharp/
-├── Dockerfile                    # dotnet/sdk:10.0 + dotnet watch (puerto 8003)
+├── Dockerfile                    # dotnet/sdk:10.0 + dotnet watch (puerto 8013)
 ├── ApiGenericaCsharp.csproj      # net10.0 + paquetes del stack
 ├── Program.cs                    # DI, JWT, CORS, Swagger/ReDoc, switch de proveedor
 ├── appsettings.json              # DatabaseProvider, ConnectionStrings, Jwt, TablasProhibidas
@@ -168,7 +168,7 @@ CORS `PermitirTodo` → sesión (cache en memoria) → Swagger/SwaggerUI (`/swag
 2. `COPY ApiGenericaCsharp.csproj` + `dotnet restore` **antes** del resto del
    código (caché de capas).
 3. `ENV DOTNET_USE_POLLING_FILE_WATCHER=true` (los volúmenes desde Windows no
-   emiten eventos de archivo) · `ASPNETCORE_URLS=http://0.0.0.0:8003`.
+   emiten eventos de archivo) · `ASPNETCORE_URLS=http://0.0.0.0:8013`.
 4. `CMD dotnet watch --project ApiGenericaCsharp.csproj run --no-launch-profile`.
 5. Si se orquesta con docker-compose: montar el código en `/app` y dejar
    `bin/`+`obj/` en volúmenes anónimos de Linux, para que los compilados del

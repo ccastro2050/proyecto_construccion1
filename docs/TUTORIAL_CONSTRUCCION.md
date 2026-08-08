@@ -39,7 +39,7 @@ Puntos clave del archivo:
 | Montaje `./db/...:/docker-entrypoint-initdb.d/...` | Carga automática de la BD en el primer arranque |
 | `healthcheck:` | Docker sabe cuándo cada BD está realmente lista, no solo "encendida" |
 | `depends_on: condition: service_healthy` | `sqlserver-init` espera a que SQL Server esté sano antes de crear la BD |
-| `ports: "15432:5432"` etc. | Puertos alternativos hacia el PC para no chocar con instalaciones locales |
+| `ports: "15442:5432"` etc. | Puertos alternativos hacia el PC para no chocar con instalaciones locales |
 | Variables de entorno con las URL de conexión | El código Python no tiene credenciales quemadas: las recibe del entorno |
 
 **Concepto:** *orquestación* — un solo archivo declara toda la infraestructura; `docker compose up` la materializa idéntica en cualquier máquina.
@@ -67,7 +67,7 @@ Las librerías se instalan **en la imagen** para que el arranque sea rápido.
 - `extensions:` → instalar solo Python + SQLTools con sus 3 drivers.
 - `settings.sqltools.connections` → dejar las 3 conexiones de BD **preconfiguradas**.
 - `postCreateCommand` → reinstalar dependencias si `requirements.txt` cambió.
-- `forwardPorts: [8000]` → exponer la API al navegador del estudiante.
+- `forwardPorts: [8010]` → exponer la API al navegador del estudiante.
 
 Además `.vscode/tasks.json` define una tarea con `"runOn": "folderOpen"` que **arranca la API automáticamente** al abrir el proyecto.
 
@@ -105,8 +105,8 @@ docker compose up -d --build         # levantar los 5 servicios
 docker compose logs sqlserver-init   # ¿la BD de SQL Server se creó?
 docker compose exec postgres psql -U paradigmas -d bdfacturas_postgres_local -c "SELECT COUNT(*) FROM producto;"
 docker compose exec mariadb mariadb -uparadigmas -pparadigmas123 bdfacturas_mariadb_local -e "SELECT COUNT(*) FROM factura;"
-curl http://localhost:8000/api/salud # {"postgres":"ok","mariadb":"ok","sqlserver":"ok"}
-curl http://localhost:8000/api/sqlserver/productos
+curl http://localhost:8010/api/salud # {"postgres":"ok","mariadb":"ok","sqlserver":"ok"}
+curl http://localhost:8010/api/sqlserver/productos
 ```
 
 **Concepto:** *verificación end-to-end* — no basta con que los contenedores "arranquen": se comprueba que los datos existen y que la API responde contra los tres motores antes de entregar a los estudiantes.
@@ -143,4 +143,4 @@ git clone  ──►  VS Code + Dev Containers  ──►  docker compose (autom
 | Contenedor auxiliar para SQL Server | Su imagen no soporta scripts de inicialización automática |
 | Volúmenes con nombre | El trabajo de los estudiantes sobrevive a los reinicios |
 | Credenciales simples en texto plano | Es un entorno **local de aprendizaje**; en producción irían en secretos |
-| Puertos alternativos hacia el host (15432/13306/11433) | No chocar con MySQL/PostgreSQL ya instalados en el PC |
+| Puertos alternativos hacia el host (15442/13316/11443) | No chocar con MySQL/PostgreSQL ya instalados en el PC |

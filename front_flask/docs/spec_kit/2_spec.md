@@ -20,7 +20,7 @@
 
 Construir la **capa de presentación** de la arquitectura de 3 capas: una
 aplicación Flask que renderiza HTML con Bootstrap y consume por HTTP las dos
-APIs del proyecto (Genérica en :8001 y Facturas en :8002). El front **nunca**
+APIs del proyecto (Genérica en :8011 y Facturas en :8012). El front **nunca**
 toca la base de datos: no importa drivers, solo hace peticiones HTTP.
 
 Objetivo pedagógico central: el usuario puede **cambiar de API activa en
@@ -45,7 +45,7 @@ maneja la BD con triggers y SP), paginación/búsqueda/ordenamiento.
   con timeout de 5 s; si responde → `en línea` (verde, borde success); si no →
   `sin conexión` (rojo, borde danger).
 - Cada tarjeta: descripción del enfoque de esa API, botón a su Swagger
-  (`localhost:8001/swagger` y `localhost:8002/swagger`, abren en pestaña nueva)
+  (`localhost:8011/swagger` y `localhost:8012/swagger`, abren en pestaña nueva)
   y botón "Usar esta API".
 - Cierra con una alerta informativa invitando a cambiar de API y comparar.
 
@@ -121,9 +121,9 @@ BD llega hasta la alerta del navegador.
 - **RNF1 — Solo 2 dependencias:** `flask>=3.0` y `requests>=2.31`.
 - **RNF2 — Bootstrap 5.3 + Bootstrap Icons por CDN**; CSS propio mínimo
   (~3 reglas: hover de tarjetas y encabezados de tabla en versalitas).
-- **RNF3 — Puerto 8000**, `--debug` en desarrollo (recarga en caliente).
+- **RNF3 — Puerto 8010**, `--debug` en desarrollo (recarga en caliente).
 - **RNF4 — Configuración por entorno:** `API_GENERICA_URL`, `API_FACTURAS_URL`
-  (defaults `http://localhost:8001/8002` para correr sin Docker), `SECRET_KEY`.
+  (defaults `http://localhost:8011/8012` para correr sin Docker), `SECRET_KEY`.
 - **RNF5 — Timeouts:** 10 s para CRUD, 5 s para el chequeo de estado.
 - **RNF6 — Degradación elegante:** API caída → flash de error + página vacía,
   nunca un traceback.
@@ -131,7 +131,7 @@ BD llega hasta la alerta del navegador.
 
 ## 5. Criterios de aceptación
 
-1. `http://localhost:8000` carga con las dos APIs "en línea"; apagar una API
+1. `http://localhost:8010` carga con las dos APIs "en línea"; apagar una API
    (`docker compose stop api-generica`) y recargar → badge rojo "sin conexión".
 2. Ciclo completo en Productos: crear PR009 → aparece en la lista → editar stock
    → eliminar con confirmación. Cada paso muestra su flash verde.

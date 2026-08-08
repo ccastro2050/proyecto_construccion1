@@ -37,10 +37,10 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8012"]
 ```
 
-En desarrollo: `uvicorn main:app --port 8002 --reload` (o en compose, montar el
+En desarrollo: `uvicorn main:app --port 8012 --reload` (o en compose, montar el
 código como volumen y agregar `--reload` al command).
 
 ## 2. Estructura de carpetas (el "corte vertical" por entidad)

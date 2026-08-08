@@ -125,14 +125,14 @@ correr en contenedores.
   ReDoc en `/redoc`.
 - **RNF5 — Serialización segura:** `DBNull` → `null`; nombres de columna en
   minúsculas en consultas/SPs; `JsonElement` del body → tipos nativos .NET.
-- **RNF6 — Contenedor Docker:** puerto **8003**, imagen `dotnet/sdk:10.0` con
+- **RNF6 — Contenedor Docker:** puerto **8013**, imagen `dotnet/sdk:10.0` con
   `dotnet watch` (guardar un `.cs` recompila y reinicia solo).
 - **RNF7 — Logging estructurado** (`ILogger`) en cada fase: inicio, éxito,
   sin-datos, validación, acceso denegado, error crítico.
 
 ## 5. Criterios de aceptación
 
-1. La API arranca (Docker o `dotnet run`) y `GET http://localhost:8003/`
+1. La API arranca (Docker o `dotnet run`) y `GET http://localhost:8013/`
    responde la bienvenida; `/swagger` y `/redoc` abren.
 2. `GET /api/producto` **sin token → 401**; con token Bearer → los 8 productos
    con envoltura `{tabla, esquema, limite, total, datos}`.

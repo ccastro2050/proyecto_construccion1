@@ -43,7 +43,7 @@ Navegador ←SignalR→ BLAZOR SERVER
                       └── Services/           (ApiService · AuthService · SpService)
                             │ HTTP + Authorization: Bearer {JWT}
                             ▼
-                      API REST genérica (:8003)
+                      API REST genérica (:8013)
 ```
 
 - El navegador **no ejecuta C#**: el servidor renderiza y los eventos viajan por
@@ -77,7 +77,7 @@ verifican en **cada navegación**.
 
 | Cosa | Convención |
 |---|---|
-| Puerto | **8004** |
+| Puerto | **8014** |
 | Nombres | PascalCase para clases/métodos/archivos `.razor`; rutas URL en `minusculas-guiones` (`/cambiar-contrasena`) |
 | Estructura | `Components/Pages/` (una página por tabla) · `Components/Layout/` · `Services/` |
 | Patrón CRUD | Cada `{Tabla}.razor`: `@page "/{tabla}"` + `@inject ApiService` + listar/crear/editar/eliminar |

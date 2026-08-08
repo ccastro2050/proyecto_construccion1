@@ -5,7 +5,7 @@
 > [3_plan.md](3_plan.md) · contratos: [6_contracts.md](6_contracts.md) ·
 > validación final: [7_quickstart.md](7_quickstart.md).
 > Prerrequisito: al menos una de las dos APIs corriendo en
-> `localhost:8001`/`localhost:8002` (cualquier implementación que cumpla los
+> `localhost:8011`/`localhost:8012` (cualquier implementación que cumpla los
 > contratos de [6_contracts.md](6_contracts.md) §2).
 
 ---
@@ -34,7 +34,7 @@ con las APIs apagadas → `(False, "No se pudo conectar…")`.
       badge según `estado()`, botones Swagger y "Usar esta API").
 - [ ] `static/estilos.css` (3 reglas).
 
-**Verificar:** `flask --app app run --port 8000 --debug` →
+**Verificar:** `flask --app app run --port 8010 --debug` →
 la página muestra los badges correctos (probar apagando una API);
 el dropdown cambia `API: Genérica ↔ Facturas` y la opción queda `active`.
 
@@ -77,7 +77,7 @@ cambiar de API y comprobar que el encabezado lo refleja.
 
 ## Fase 8 — Docker
 - [ ] `Dockerfile` del plan (§5).
-- [ ] Alta en el compose raíz: servicio `front`, puerto 8000, volumen de código,
+- [ ] Alta en el compose raíz: servicio `front`, puerto 8010, volumen de código,
       `command` con `--debug`, variables `API_GENERICA_URL`/`API_FACTURAS_URL`
       con hosts internos.
 
