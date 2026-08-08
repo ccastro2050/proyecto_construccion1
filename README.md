@@ -13,7 +13,7 @@ Navegador → FRONT Blazor (8014)  login JWT + CRUDs + facturación       (C#/Bl
                         └── PostgreSQL · MariaDB · SQL Server  (bdfacturas)
 ```
 
-> 📖 **Documentación:** [Guía del estudiante](docs/GUIA_ESTUDIANTE.md) · [Arquitectura de 3 capas](docs/ARQUITECTURA_3_CAPAS.md) · [Principios SOLID y ACID aplicados](docs/PRINCIPIOS_SOLID_ACID.md) · [Conceptos clave](docs/CONCEPTOS.md) · [Cómo se construyó el entorno](docs/TUTORIAL_CONSTRUCCION.md) · [SDD y Spec Kit](docs/SDD_SPECKIT.md)
+> 📖 **Documentación:** [Guía del estudiante](docs/GUIA_ESTUDIANTE.md) · [Arquitectura de 3 capas](docs/ARQUITECTURA_3_CAPAS.md) · [Principios SOLID y ACID aplicados](docs/PRINCIPIOS_SOLID_ACID.md) · [Conceptos clave](docs/CONCEPTOS.md) · [Conceptos de Docker](docs/CONCEPTOS_DOCKER.md) · [Cómo se construyó el entorno](docs/TUTORIAL_CONSTRUCCION.md) · [SDD y Spec Kit](docs/SDD_SPECKIT.md)
 >
 > 📐 **Spec kits** (especificación + plan + tareas para reconstruir cada pieza desde cero):
 > [Proyecto e infraestructura](docs/spec_kit/2_spec.md) (con la [constitución](docs/spec_kit/1_constitution.md)) ·
