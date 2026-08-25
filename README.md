@@ -210,7 +210,7 @@ flowchart TB
     end
 
     subgraph CAPA3["CAPA 3 — Datos (elegible con DB_PROVIDER)"]
-        PG[("PostgreSQL 16<br/>:15442")]
+        PG[("PostgreSQL 16<br/>:15448")]
         MA[("MariaDB 11<br/>:13316")]
         MS[("SQL Server 2022<br/>:11443")]
     end
@@ -401,7 +401,7 @@ Todo el sistema se despliega como **10 contenedores + 3 volúmenes** en un solo 
 │  │   front-blazor         → Blazor 10   :8014                  │  │
 │  │                                                             │  │
 │  │  MOTORES DE BD (imágenes oficiales)                         │  │
-│  │   postgres:16-alpine   → :15442      ─ volumen pgdata       │  │
+│  │   postgres:16-alpine   → :15448      ─ volumen pgdata       │  │
 │  │   mariadb:11           → :13316      ─ volumen mariadbdata  │  │
 │  │   mssql/server:2022    → :11443      ─ volumen mssqldata    │  │
 │  │                                                             │  │
@@ -445,7 +445,7 @@ flowchart TB
     B -->|8013 /swagger| CS
     B -->|8014| FB
     B -->|8091| PMA
-    HERR["🛠️ pgAdmin · HeidiSQL · SSMS"] -->|15442 / 13316 / 11443| P & M & S
+    HERR["🛠️ pgAdmin · HeidiSQL · SSMS"] -->|15448 / 13316 / 11443| P & M & S
 
     F --> G & FA
     FB --> CS
@@ -487,11 +487,11 @@ El front y el resto del sistema no cambian en nada — ese es el punto del curso
 
 - **phpMyAdmin** (MariaDB, sin instalar nada): http://localhost:8091
 - **SQLTools en VS Code** (los 3 motores): `F1` → *Dev Containers: Reopen in Container* → icono del cilindro
-- **Herramientas locales**: pgAdmin (`localhost:15442`), HeidiSQL (`localhost:13316`), SSMS (`localhost,11443`)
+- **Herramientas locales**: pgAdmin (`localhost:15448`), HeidiSQL (`localhost:13316`), SSMS (`localhost,11443`)
 
 | Motor | Base de datos | Usuario | Contraseña | Puerto en su PC |
 |---|---|---|---|---|
-| PostgreSQL | `bdfacturas_postgres_local` | `paradigmas` | `paradigmas123` | `15442` |
+| PostgreSQL | `bdfacturas_postgres_local` | `paradigmas` | `paradigmas123` | `15448` |
 | MariaDB | `bdfacturas_mariadb_local` | `paradigmas` | `paradigmas123` | `13316` |
 | SQL Server | `bdfacturas_sqlserver_local` | `sa` | `Paradigmas123!` | `11443` |
 

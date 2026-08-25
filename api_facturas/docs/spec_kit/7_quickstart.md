@@ -13,7 +13,7 @@ por motor, receta exacta en [5_data_model.md](5_data_model.md) §6. La mínima,
 solo PostgreSQL:
 
 ```powershell
-docker run -d --name bdfacturas -p 15442:5432 `
+docker run -d --name bdfacturas -p 15448:5432 `
   -e POSTGRES_DB=bdfacturas_postgres_local `
   -e POSTGRES_USER=paradigmas -e POSTGRES_PASSWORD=paradigmas123 `
   -v ${PWD}/database/bdfacturas_postgres.sql:/docker-entrypoint-initdb.d/init.sql:ro `
@@ -25,7 +25,7 @@ docker run -d --name bdfacturas -p 15442:5432 `
 ```powershell
 # local (desde la carpeta api_facturas, con el venv activo)
 $env:DB_PROVIDER = "postgres"
-$env:DB_POSTGRES = "postgresql+asyncpg://paradigmas:paradigmas123@localhost:15442/bdfacturas_postgres_local"
+$env:DB_POSTGRES = "postgresql+asyncpg://paradigmas:paradigmas123@localhost:15448/bdfacturas_postgres_local"
 uvicorn main:app --port 8012 --reload
 ```
 

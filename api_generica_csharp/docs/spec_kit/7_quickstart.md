@@ -9,18 +9,18 @@
 
 Montar `bdfacturas` con el script incluido en `script_bd/` — un `docker run`
 por motor, receta exacta en [5_data_model.md](5_data_model.md) §3
-(PostgreSQL en `localhost:15442`, usuario `paradigmas`/`paradigmas123`).
+(PostgreSQL en `localhost:15448`, usuario `paradigmas`/`paradigmas123`).
 
 ## 2. Arrancar la API
 
 ```powershell
 # Opción local (requiere .NET 10 SDK):
-dotnet run          # appsettings.json ya apunta a localhost:15442 con DatabaseProvider=Postgres
+dotnet run          # appsettings.json ya apunta a localhost:15448 con DatabaseProvider=Postgres
 
 # Opción Docker (el Dockerfile del proyecto; puerto 8013 con dotnet watch):
 docker build -t api-generica-csharp .
 docker run -d -p 8013:8013 `
-  -e ConnectionStrings__Postgres="Host=host.docker.internal;Port=15442;Database=bdfacturas_postgres_local;Username=paradigmas;Password=paradigmas123;" `
+  -e ConnectionStrings__Postgres="Host=host.docker.internal;Port=15448;Database=bdfacturas_postgres_local;Username=paradigmas;Password=paradigmas123;" `
   api-generica-csharp
 ```
 
@@ -87,7 +87,7 @@ dotnet run
 |---|---|
 | 401 en `GET /api/{tabla}` | Es el contrato: falta el header `Authorization: Bearer` o el token expiró (60 min) — pedir otro |
 | `No se encontró la cadena de conexión para el proveedor 'X'` | `DatabaseProvider` no coincide con ninguna clave de `ConnectionStrings` |
-| 500 con detalle de conexión | BD abajo o cadena apuntando mal (dentro de Docker: hosts `postgres`/`mariadb`/`sqlserver`; fuera: `localhost:15442/13316/11443`) |
+| 500 con detalle de conexión | BD abajo o cadena apuntando mal (dentro de Docker: hosts `postgres`/`mariadb`/`sqlserver`; fuera: `localhost:15448/13316/11443`) |
 | 204 donde esperaba datos | La tabla existe pero está vacía (es el contrato) |
 | El cambio de proveedor no surte efecto | El `switch` de Program.cs corre al arrancar: reiniciar el proceso/contenedor |
 | En Docker, cambié un `.cs` y no pasa nada | `dotnet watch` tarda unos segundos en recompilar: revisar `docker logs` del contenedor |

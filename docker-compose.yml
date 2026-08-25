@@ -115,7 +115,7 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./db/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "15442:5432"     # puerto en el host (para DBeaver/pgAdmin opcional)
+      - "15448:5432"     # puerto en el host (para DBeaver/pgAdmin opcional)
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U paradigmas -d bdfacturas_postgres_local"]
       interval: 5s

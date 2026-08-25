@@ -66,7 +66,7 @@ proyecto_construccion1/
   `entrypoint: ["/bin/bash", "/scripts/init.sh"]`; `restart: "no"` (corre y muere).
   Razón: la imagen de SQL Server **no tiene** `/docker-entrypoint-initdb.d`, hay
   que inicializar desde fuera.
-- Puertos host desplazados: `15442:5432`, `13316:3306`, `11443:1433`.
+- Puertos host desplazados: `15448:5432`, `13316:3306`, `11443:1433`.
 
 ### 2.3 phpMyAdmin
 Imagen `phpmyadmin:latest`; `PMA_HOST=mariadb`, `PMA_USER/PMA_PASSWORD=paradigmas/paradigmas123`

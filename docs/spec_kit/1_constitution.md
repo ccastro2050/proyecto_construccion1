@@ -67,7 +67,7 @@ vive completo en contenedores.
 | Cosa | Convención |
 |---|---|
 | Puertos públicos | front 8010 · api_generica 8011 · api_facturas 8012 · phpMyAdmin 8091 |
-| Puertos de BD hacia el host | PostgreSQL **15442** · MariaDB **13316** · SQL Server **11443** (desplazados para no chocar con motores locales) |
+| Puertos de BD hacia el host | PostgreSQL **15448** · MariaDB **13316** · SQL Server **11443** (desplazados para no chocar con motores locales) |
 | Hosts internos (entre contenedores) | `postgres:5432` · `mariadb:3306` · `sqlserver:1433` · `api-generica:8011` · `api-facturas:8012` |
 | Credenciales BD | usuario `paradigmas` / clave `paradigmas123` (SQL Server: `sa` / `Paradigmas123!`) |
 | Bases de datos | `bdfacturas_postgres_local` · `bdfacturas_mariadb_local` · `bdfacturas_sqlserver_local` |

@@ -17,10 +17,10 @@
       ejemplo, `setval` de secuencias, trigger `actualizar_totales_y_stock`, y los
       SP de facturas/usuarios/RBAC (plan §3).
 - [ ] Servicio `postgres` en un `docker-compose.yml` mínimo (imagen 16-alpine,
-      volumen `pgdata`, init.sql montado, puerto 15442, healthcheck).
+      volumen `pgdata`, init.sql montado, puerto 15448, healthcheck).
 
 **Verificar:** `docker compose up -d postgres` → conectar con pgAdmin/psql a
-localhost:15442 y comprobar: 12 tablas, 8 productos; insertar un renglón en
+localhost:15448 y comprobar: 12 tablas, 8 productos; insertar un renglón en
 `productosporfactura` recalcula subtotal, stock y total (trigger);
 `CALL sp_consultar_factura_y_productosporfactura(1, NULL)` devuelve JSON.
 
