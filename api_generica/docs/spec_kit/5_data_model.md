@@ -71,7 +71,7 @@ El script incluido en `database/` montado en un contenedor (desde la raíz de
 este proyecto):
 
 ```powershell
-docker run -d --name bdfacturas -p 15442:5432 `
+docker run -d --name bdfacturas -p 15448:5432 `
   -e POSTGRES_DB=bdfacturas_postgres_local `
   -e POSTGRES_USER=paradigmas -e POSTGRES_PASSWORD=paradigmas123 `
   -v ${PWD}/database/bdfacturas_postgres.sql:/docker-entrypoint-initdb.d/init.sql:ro `
@@ -83,7 +83,7 @@ Para MariaDB (`mariadb:11`, puerto sugerido 13316) y SQL Server
 script de `database/` correspondiente.
 
 Cadena para la API:
-`DB_POSTGRES=postgresql+asyncpg://paradigmas:paradigmas123@localhost:15442/bdfacturas_postgres_local`
+`DB_POSTGRES=postgresql+asyncpg://paradigmas:paradigmas123@localhost:15448/bdfacturas_postgres_local`
 
 ## 3. Advertencia de alcance
 

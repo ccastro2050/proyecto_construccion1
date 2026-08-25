@@ -35,7 +35,7 @@ la levante con **un solo comando** en cualquier PC con Docker Desktop.
 | `front` | Flask (capa 1) | 8010 | build `./front_flask` |
 | `api-generica` | FastAPI CRUD genérico (capa 2a) | 8011 | build `./api_generica` |
 | `api-facturas` | FastAPI CRUD por entidad (capa 2b) | 8012 | build `./api_facturas` |
-| `postgres` | PostgreSQL 16 (alpine) | 15442→5432 | volumen `pgdata` |
+| `postgres` | PostgreSQL 16 (alpine) | 15448→5432 | volumen `pgdata` |
 | `mariadb` | MariaDB 11 | 13316→3306 | volumen `mariadbdata` |
 | `sqlserver` | SQL Server 2022 (Developer) | 11443→1433 | volumen `mssqldata`; ~2 GB RAM |
 | `sqlserver-init` | contenedor efímero | — | crea la BD de SQL Server la primera vez y termina |
@@ -98,7 +98,7 @@ re-inicialización en el siguiente `up`).
 - Devcontainer de VS Code (`.devcontainer/devcontainer.json`): se adosa al servicio
   `front`, workspace `/workspace`, instala Python + Pylance + SQLTools con drivers
   pg/mysql/mssql y **las 3 conexiones preconfiguradas** (hosts internos, puertos estándar).
-- Puertos 15442/13316/11443 publicados para herramientas externas del host
+- Puertos 15448/13316/11443 publicados para herramientas externas del host
   (pgAdmin, HeidiSQL, SSMS).
 
 ## 4. Requisitos no funcionales

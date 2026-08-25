@@ -39,7 +39,7 @@ Puntos clave del archivo:
 | Montaje `./db/...:/docker-entrypoint-initdb.d/...` | Carga automática de la BD en el primer arranque |
 | `healthcheck:` | Docker sabe cuándo cada BD está realmente lista, no solo "encendida" |
 | `depends_on: condition: service_healthy` | `sqlserver-init` espera a que SQL Server esté sano antes de crear la BD |
-| `ports: "15442:5432"` etc. | Puertos alternativos hacia el PC para no chocar con instalaciones locales |
+| `ports: "15448:5432"` etc. | Puertos alternativos hacia el PC para no chocar con instalaciones locales |
 | Variables de entorno con las URL de conexión | El código Python no tiene credenciales quemadas: las recibe del entorno |
 
 **Concepto:** *orquestación* — un solo archivo declara toda la infraestructura; `docker compose up` la materializa idéntica en cualquier máquina.
@@ -143,4 +143,4 @@ git clone  ──►  VS Code + Dev Containers  ──►  docker compose (autom
 | Contenedor auxiliar para SQL Server | Su imagen no soporta scripts de inicialización automática |
 | Volúmenes con nombre | El trabajo de los estudiantes sobrevive a los reinicios |
 | Credenciales simples en texto plano | Es un entorno **local de aprendizaje**; en producción irían en secretos |
-| Puertos alternativos hacia el host (15442/13316/11443) | No chocar con MySQL/PostgreSQL ya instalados en el PC |
+| Puertos alternativos hacia el host (15448/13316/11443) | No chocar con MySQL/PostgreSQL ya instalados en el PC |

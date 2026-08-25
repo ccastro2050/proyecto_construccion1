@@ -140,14 +140,14 @@ También puede usar cualquier herramienta externa con las credenciales de abajo.
 **pgAdmin (PostgreSQL):**
 1. Clic derecho en **Servers → Register → Server…**
 2. General → Name: `Construccion1 Docker`
-3. Connection → Host: `localhost` · Port: **`15442`** · Maintenance database: `bdfacturas_postgres_local` · Username: `paradigmas` · Password: `paradigmas123` (marque *Save password*)
+3. Connection → Host: `localhost` · Port: **`15448`** · Maintenance database: `bdfacturas_postgres_local` · Username: `paradigmas` · Password: `paradigmas123` (marque *Save password*)
 4. **Save** → navegue: Databases → bdfacturas_postgres_local → Schemas → public → Tables
 
 **HeidiSQL / MySQL Workbench (MariaDB):** host `localhost`, puerto **`13316`**, usuario `paradigmas`, clave `paradigmas123`.
 
 **SSMS / Azure Data Studio (SQL Server):** servidor `localhost,11443`, usuario `sa`, clave `Paradigmas123!` (marque *Trust server certificate*).
 
-> Se usan los puertos 15442/13316/11443 porque así están mapeados los contenedores hacia su PC, para no chocar con motores que ya tenga instalados.
+> Se usan los puertos 15448/13316/11443 porque así están mapeados los contenedores hacia su PC, para no chocar con motores que ya tenga instalados.
 
 ## Comandos útiles del día a día
 
@@ -163,7 +163,7 @@ docker compose logs front    # errores del front (o api-generica / api-facturas)
 
 | Motor | Base de datos | Usuario | Contraseña | Puerto en su PC |
 |---|---|---|---|---|
-| PostgreSQL | `bdfacturas_postgres_local` | `paradigmas` | `paradigmas123` | `15442` |
+| PostgreSQL | `bdfacturas_postgres_local` | `paradigmas` | `paradigmas123` | `15448` |
 | MariaDB | `bdfacturas_mariadb_local` | `paradigmas` | `paradigmas123` | `13316` |
 | SQL Server | `bdfacturas_sqlserver_local` | `sa` | `Paradigmas123!` | `11443` |
 

@@ -26,7 +26,7 @@ Herramienta que levanta **varios contenedores a la vez** definidos en el archivo
 | `api-facturas` | API por entidad en FastAPI | 8012 |
 | `api-generica-csharp` | API genérica en ASP.NET Core (+JWT) | 8013 |
 | `front-blazor` | Front web en Blazor Server | 8014 |
-| `postgres` | PostgreSQL 16 con la BD cargada | 15442 |
+| `postgres` | PostgreSQL 16 con la BD cargada | 15448 |
 | `mariadb` | MariaDB 11 con la BD cargada | 13316 |
 | `phpmyadmin` | Administrador web de MariaDB | 8091 |
 | `sqlserver` (+ `sqlserver-init`) | SQL Server 2022; el "init" crea la BD la primera vez | 11443 |

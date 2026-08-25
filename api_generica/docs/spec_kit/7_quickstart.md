@@ -9,14 +9,14 @@
 
 Montar `bdfacturas` con los scripts incluidos en `database/` — un `docker run`
 por motor, receta exacta en [5_data_model.md](5_data_model.md) §2
-(PostgreSQL en `localhost:15442`, usuario `paradigmas`/`paradigmas123`).
+(PostgreSQL en `localhost:15448`, usuario `paradigmas`/`paradigmas123`).
 
 ## 2. Arrancar la API
 
 ```powershell
 # local (desde la raíz del proyecto, con el venv activo)
 $env:DB_PROVIDER = "postgres"
-$env:DB_POSTGRES = "postgresql+asyncpg://paradigmas:paradigmas123@localhost:15442/bdfacturas_postgres_local"
+$env:DB_POSTGRES = "postgresql+asyncpg://paradigmas:paradigmas123@localhost:15448/bdfacturas_postgres_local"
 uvicorn main:app --port 8011 --reload
 ```
 

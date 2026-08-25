@@ -18,7 +18,7 @@ MariaDB y SQL Server simultáneos, con idénticas tablas/datos/triggers/SP en su
 dialecto, permite cambiar `DB_PROVIDER` y comparar en vivo. **Costo aceptado:**
 mantener 3 scripts SQL equivalentes a mano.
 
-## D3 — Puertos de BD desplazados (15442/13316/11443)
+## D3 — Puertos de BD desplazados (15448/13316/11443)
 Muchos estudiantes ya tienen PostgreSQL/MySQL/SQL Server locales en los puertos
 estándar. Publicar 5432/3306/1433 chocaría. Dentro de la red de compose se usan
 los estándar (los contenedores no chocan entre sí).

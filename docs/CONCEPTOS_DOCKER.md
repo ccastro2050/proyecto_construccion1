@@ -113,7 +113,7 @@ El archivo completo está en la raíz; estas son sus piezas representativas
         # ↑ bind mount: SU script entra al contenedor (:ro = solo lectura) y
         #   se ejecuta SOLO la primera vez (volumen vacío) — el reset es `down -v`
     ports:
-      - "15442:5432"               # "puerto en su PC : puerto interno del contenedor"
+      - "15448:5432"               # "puerto en su PC : puerto interno del contenedor"
     healthcheck:                   # cómo saber si la BD ya RESPONDE (no solo "existe")
       test: ["CMD-SHELL", "pg_isready -U paradigmas -d bdfacturas_postgres_local"]
 ```
@@ -174,7 +174,7 @@ El archivo completo está en la raíz; estas son sus piezas representativas
 Las tres ideas que este archivo demuestra:
 
 1. **Dos redes de nombres**: hacia su PC, puertos publicados
-   (`localhost:8010`…`8014`, `15442`, `13316`, `11443`, `8091`); entre
+   (`localhost:8010`…`8014`, `15448`, `13316`, `11443`, `8091`); entre
    contenedores, nombres de servicio (`postgres:5432`,
    `api-generica-csharp:8013`). El mismo servicio tiene dos "direcciones"
    según quién lo llame.

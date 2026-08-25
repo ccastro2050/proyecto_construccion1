@@ -39,7 +39,7 @@ docker compose ps
 8. Persistencia: insertar un registro → `docker compose down` → `up -d` →
    sigue ahí.
 9. Reset: `docker compose down -v` → `up -d` → datos originales de vuelta.
-10. Herramienta externa: pgAdmin a `localhost:15442` /
+10. Herramienta externa: pgAdmin a `localhost:15448` /
     `paradigmas`/`paradigmas123` ve las 12 tablas (o HeidiSQL 13316 / SSMS 11443).
 
 Opcional: `F1 → Dev Containers: Reopen in Container` → SQLTools con las 3

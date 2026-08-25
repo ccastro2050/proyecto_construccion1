@@ -14,7 +14,7 @@
 | front | `front:8010` | **8010** |
 | api-generica | `api-generica:8011` | **8011** (`/swagger`) |
 | api-facturas | `api-facturas:8012` | **8012** (`/docs`) |
-| postgres | `postgres:5432` | **15442** |
+| postgres | `postgres:5432` | **15448** |
 | mariadb | `mariadb:3306` | **13316** |
 | sqlserver | `sqlserver:1433` | **11443** |
 | phpmyadmin | `phpmyadmin:80` | **8091** |
