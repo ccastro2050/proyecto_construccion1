@@ -98,6 +98,68 @@ Dockerfile   →  IMAGEN      →  CONTENEDOR   →  VOLUMEN
 > Para una demo con las semillas exactas:
 > `docker compose down -v` y luego `docker compose up -d --build`.
 
+### El despliegue de ESTE proyecto, dibujado (Mermaid)
+
+Todo lo anterior, junto: lo que `docker compose up -d` levanta aquí es un
+**sistema de servidores en miniatura** — cada contenedor es un servidor
+con su propio hostname, unidos por la red interna del compose:
+
+```mermaid
+flowchart LR
+    NAV["Navegador / curl / Swagger"]
+    subgraph PC["Su PC — Docker Desktop (el 'centro de datos')"]
+        subgraph RED["red interna del compose (LAN virtual, con DNS propio)"]
+            FRONT["SERVIDOR WEB (front)<br/>contenedor front<br/>hostname: front · escucha en 8010"]
+            FRONTBLAZOR["SERVIDOR WEB (front)<br/>contenedor front-blazor<br/>hostname: front-blazor · escucha en 8014"]
+            APIGENERICA["SERVIDOR DE APLICACIONES<br/>contenedor api-generica<br/>hostname: api-generica · escucha en 8011"]
+            APIFACTURAS["SERVIDOR DE APLICACIONES<br/>contenedor api-facturas<br/>hostname: api-facturas · escucha en 8012"]
+            APIGENERICACSHARP["SERVIDOR DE APLICACIONES<br/>contenedor api-generica-csharp<br/>hostname: api-generica-csharp · escucha en 8013"]
+            PHPMYADMIN["SERVIDOR DE APLICACIONES<br/>contenedor phpmyadmin<br/>hostname: phpmyadmin · escucha en 80"]
+            POSTGRES[("SERVIDOR DE BASE DE DATOS<br/>PostgreSQL · contenedor postgres<br/>hostname: postgres · escucha en 5432")]
+            MARIADB[("SERVIDOR DE BASE DE DATOS<br/>MariaDB/MySQL · contenedor mariadb<br/>hostname: mariadb · escucha en 3306")]
+            SQLSERVER[("SERVIDOR DE BASE DE DATOS<br/>SQL Server · contenedor sqlserver<br/>hostname: sqlserver · escucha en 1433")]
+            SQLSERVERINIT["sqlserver-init<br/>siembra la BD UNA vez<br/>y muere: Exited(0) = éxito"]
+        end
+    end
+    NAV -->|"localhost:8010"| FRONT
+    NAV -->|"localhost:8014"| FRONTBLAZOR
+    NAV -->|"localhost:8011"| APIGENERICA
+    NAV -->|"localhost:8012"| APIFACTURAS
+    NAV -->|"localhost:8013"| APIGENERICACSHARP
+    NAV -->|"localhost:8091"| PHPMYADMIN
+    FRONT -->|"consume la API por la LAN"| APIGENERICA
+    FRONT -->|"consume la API por la LAN"| APIFACTURAS
+    FRONT -->|"consume la API por la LAN"| APIGENERICACSHARP
+    FRONT -->|"consume la API por la LAN"| PHPMYADMIN
+    FRONTBLAZOR -->|"consume la API por la LAN"| APIGENERICA
+    FRONTBLAZOR -->|"consume la API por la LAN"| APIFACTURAS
+    FRONTBLAZOR -->|"consume la API por la LAN"| APIGENERICACSHARP
+    FRONTBLAZOR -->|"consume la API por la LAN"| PHPMYADMIN
+    APIGENERICA -->|"postgres:5432 (DNS de Docker)"| POSTGRES
+    APIGENERICA -->|"mariadb:3306 (DNS de Docker)"| MARIADB
+    APIGENERICA -->|"sqlserver:1433 (DNS de Docker)"| SQLSERVER
+    APIFACTURAS -->|"postgres:5432 (DNS de Docker)"| POSTGRES
+    APIFACTURAS -->|"mariadb:3306 (DNS de Docker)"| MARIADB
+    APIFACTURAS -->|"sqlserver:1433 (DNS de Docker)"| SQLSERVER
+    APIGENERICACSHARP -->|"postgres:5432 (DNS de Docker)"| POSTGRES
+    APIGENERICACSHARP -->|"mariadb:3306 (DNS de Docker)"| MARIADB
+    APIGENERICACSHARP -->|"sqlserver:1433 (DNS de Docker)"| SQLSERVER
+    PHPMYADMIN -->|"postgres:5432 (DNS de Docker)"| POSTGRES
+    PHPMYADMIN -->|"mariadb:3306 (DNS de Docker)"| MARIADB
+    PHPMYADMIN -->|"sqlserver:1433 (DNS de Docker)"| SQLSERVER
+    SQLSERVERINIT -->|"espera el healthcheck,<br/>siembra y termina"| SQLSERVER
+    NAV -.->|"opcional (diagnóstico):<br/>localhost:15448"| POSTGRES
+    NAV -.->|"opcional (diagnóstico):<br/>localhost:13316"| MARIADB
+    NAV -.->|"opcional (diagnóstico):<br/>localhost:11443"| SQLSERVER
+```
+
+**Guía de lectura:** los servicios se hablan entre sí **por nombre**
+(el DNS interno de Docker resuelve `postgres`, `api-facturas`, etc. a la
+IP del contenedor — jamás `localhost`, que dentro de un contenedor es él
+mismo). Hacia su PC solo existen las puertas `localhost:PUERTO` que el
+compose publica. Por eso este mismo diseño se despliega igual en un
+servidor real: cambiar de máquina no cambia la arquitectura.
+
 ## 5. Docker Compose (el "un solo comando" del proyecto)
 
 ¿Cómo levantar 10 contenedores sin escribir 10 comandos `docker run` con
