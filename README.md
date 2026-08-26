@@ -29,6 +29,26 @@ Navegador → FRONT Blazor (8014)  login JWT + CRUDs + facturación       (C#/Bl
 
 En la terminal de VS Code:
 
+> ⚠️ **ANTES de clonar — solo si usted ya corrió OTRO proyecto de estos
+> cursos en este PC:** puede quedar un contenedor viejo encendido ocupando
+> el puerto 8010 (pasa al reiniciar el PC: la API vieja revive sin su
+> base de datos y "secuestra" el puerto — el contenedor huérfano). El
+> síntoma: Swagger abre, pero todo responde 500 con *"No address
+> associated with hostname"*, y usted cree que el error es de ESTE
+> proyecto cuando en realidad está hablando con el viejo. Verifíquelo y
+> apáguelo primero:
+>
+> ```powershell
+> docker ps --filter "name=proyecto_"
+> # ↑ VERIFICAR: ¿aparece algún proyecto del curso todavía encendido?
+> docker ps --filter "name=proyecto_" -q | ForEach-Object { docker stop $_ }
+> # ↑ LIMPIAR: apaga TODOS los contenedores del curso de una sola vez
+> ```
+>
+> La limpieza no borra nada (los datos quedan en sus volúmenes) y
+> funciona aunque ya no tenga la carpeta vieja. También sirve el botón
+> Stop de Docker Desktop. Solo entonces continúe.
+
 ```bash
 git clone https://github.com/ccastro2050/proyecto_construccion1.git
 cd proyecto_construccion1
