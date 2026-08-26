@@ -78,9 +78,12 @@ los 12 específicos van primero, el genérico de último. Esto es un requisito,
 no un estilo.
 
 ## D11 — Hallazgos del código original (elegir al reconstruir)
-1. **Controller genérico roto:** `ServicioCrud` llama `obtener_filas(...)` pero
-   las bases solo exponen `_obtener_filas(...)` → 500. *Recomendación:* exponer
-   las 6 operaciones públicas (el plan ya lo incorpora).
+1. **Controller genérico roto (CORREGIDO, agosto de 2026):** `ServicioCrud`
+   llama `obtener_filas(...)` pero las bases solo exponían
+   `_obtener_filas(...)` → 500. Resuelto en
+   `repositorios/repositorio_lectura_generico.py`: las clases
+   `RepositorioLectura*` ahora exponen las 6 operaciones públicas del
+   contrato delegando en los métodos protegidos de las bases.
 2. **DELETE de PK compuesta filtra solo el primer segmento** en las 3 tablas
    puente → borra de más. *Recomendación:* corregir (WHERE por ambas columnas)
    y anotarlo; réplica fiel solo si se quiere estudiar el bug.
